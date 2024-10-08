@@ -1,8 +1,8 @@
 package servive_http
 
 import (
-	"GophKeeper/internal/dto"
-	"GophKeeper/internal/modules/auth/services/auth-service"
+	"gophKeeper/internal/dto"
+	"gophKeeper/internal/modules/auth/services/auth-service"
 	"net/http"
 )
 
@@ -10,7 +10,7 @@ type ServiceHTTP struct {
 	authService auth_service.AuthService
 }
 
-func NewServiceHTTP() *ServiceHTTP {
+func NewAuthServiceHTTP() *ServiceHTTP {
 	return &ServiceHTTP{}
 }
 

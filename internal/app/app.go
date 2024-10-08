@@ -1,11 +1,67 @@
 package app
 
+import (
+	"context"
+	"errors"
+	"fmt"
+	"github.com/go-chi/chi/v5"
+	"golang.org/x/crypto/acme/autocert"
+	"gophKeeper/internal/config"
+	"net/http"
+	"time"
+)
+
+const readTimeout = 5 * time.Second
+const writeTimeout = 5 * time.Second
+
+// App представляет приложение с HTTP сервером и логгером.
 type App struct {
+	server       *http.Server
+	readTimeout  time.Duration
+	writeTimeout time.Duration
 }
 
-func (a *App) Init() {}
+// NewApp создает новый экземпляр приложения.
+func NewApp(
+	ctx context.Context,
+	cfg *config.Config,
+) *App {
+	router := chi.NewRouter()
 
-func (a *App) StartHTTP() {}
-func (a *App) StopHTTP()  {}
-func (a *App) StartGRPC() {}
-func (a *App) StopGRPC()  {}
+	router = registrationMiddleware(router, cfg)
+	router = registrationHandlersHTTP(ctx, router)
+
+	manager := &autocert.Manager{
+		// перечень доменов, для которых будут поддерживаться сертификаты
+		HostPolicy: autocert.HostWhitelist("localhost"),
+	}
+
+	return &App{
+		server: &http.Server{
+			Addr:         cfg.Address,
+			Handler:      router,
+			ReadTimeout:  readTimeout,
+			WriteTimeout: writeTimeout,
+			// для TLS-конфигурации используем менеджер сертификатов
+			TLSConfig: manager.TLSConfig(),
+		},
+	}
+}
+
+// Start запускает HTTP сервер.
+func (a *App) Start() error {
+	err := a.server.ListenAndServe()
+	if err != nil && !errors.Is(err, http.ErrServerClosed) {
+		return fmt.Errorf("error listen and serve: %w", err)
+	}
+	return nil
+}
+
+// Stop корректно завершает работу приложения.
+func (a *App) Stop(ctx context.Context) error {
+	// Закрытие сервера с учетом переданного контекста.
+	if err := a.server.Shutdown(ctx); err != nil {
+		return fmt.Errorf("err Shutdown server: %w", err)
+	}
+	return nil
+}

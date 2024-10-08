@@ -4,21 +4,15 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a6441f53-51fa-47d2-bd78-7fb235d20428" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/internal/config/log-level.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/config/parse-env.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/config/parse_flags.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/logger/logger.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/logger/logger_test.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/postgres/migrations/1_create_users_table.down.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/postgres/migrations/1_create_users_table.up.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/postgres/postgres.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/postgres/run-migrations.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+    <list default="true" id="a6441f53-51fa-47d2-bd78-7fb235d20428" name="Changes" comment="upd">
+      <change afterPath="$PROJECT_DIR$/internal/app/register_middleware.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmd/goph-keeper/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/goph-keeper/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/config/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/config/config.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/app/app.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/app/app.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/app/register_grpc.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/app/register_http.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/app/register_http.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/modules/auth/http/service-http.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/modules/auth/http/service-http.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/modules/auth/services/auth-service/auth-service.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/modules/auth/services/auth-service/auth-service.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,7 +48,7 @@
     "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
     "git-widget-placeholder": "master",
     "go.import.settings.migrated": "true",
-    "last_opened_file_path": "C:/Users/Admin/Desktop/golang/GophKeeper/internal/postgres",
+    "last_opened_file_path": "C:/Users/Admin/Desktop/golang/GophKeeper/internal/app",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "nodejs_package_manager_path": "npm"
@@ -62,6 +56,7 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Admin\Desktop\golang\GophKeeper\internal\app" />
       <recent name="C:\Users\Admin\Desktop\golang\GophKeeper\internal\postgres" />
       <recent name="C:\Users\Admin\Desktop\golang\GophKeeper\internal" />
     </key>
@@ -77,6 +72,12 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="create base struct" />
+    <MESSAGE value="config ide" />
+    <MESSAGE value="upd" />
+    <option name="LAST_COMMIT_MESSAGE" value="upd" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
