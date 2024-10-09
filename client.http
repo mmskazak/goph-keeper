@@ -1,0 +1,8 @@
+###
+POST http://localhost:8080/registration
+Content-Type: application/json
+
+{
+  "login": "mmsgold",
+  "password":"12345"
+}

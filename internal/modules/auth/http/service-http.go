@@ -2,6 +2,7 @@ package servive_http
 
 import (
 	"gophKeeper/internal/dto"
+	"gophKeeper/internal/logger"
 	"gophKeeper/internal/modules/auth/services/auth-service"
 	"net/http"
 )
@@ -15,7 +16,10 @@ func NewAuthServiceHTTP() *ServiceHTTP {
 }
 
 func (s *ServiceHTTP) Registration(w http.ResponseWriter, r *http.Request) {
-	regDTO := dto.GetRegistrationDTOFromHTTP(r)
+	regDTO, err := dto.GetRegistrationDTOFromHTTP(r)
+	if err != nil {
+		logger.Log.Errorf("DTO Error: %v", err)
+	}
 	s.authService.Registration(regDTO)
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte("ok"))

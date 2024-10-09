@@ -2,6 +2,7 @@ package auth_service
 
 import (
 	"gophKeeper/internal/dto"
+	"gophKeeper/internal/logger"
 	"gophKeeper/internal/repositories/contract"
 )
 
@@ -13,8 +14,8 @@ func NewAuthService(repo contract.IRepository) *AuthService {
 	return &AuthService{repo: repo}
 }
 
-func (a *AuthService) Registration(dto dto.RegistrationDTO) {
-
+func (a *AuthService) Registration(_ *dto.RegistrationDTO) {
+	logger.Log.Debugln("Регистрация пользователя.")
 }
 
 func (a *AuthService) Login(dto dto.LoginDTO) {
