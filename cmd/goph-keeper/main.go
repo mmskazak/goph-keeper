@@ -1,4 +1,4 @@
-package goph_keeper
+package main
 
 import (
 	"context"
@@ -29,18 +29,17 @@ func main() {
 	//Инициализируем базу данных
 	pool, err := postgres.InitPostgres(ctx, cfg)
 	if err != nil {
-		logger.Log.Errorf("Ошибка инициализаци базы данных Postgres: %v", err)
+		logger.Log.Fatalf("Ошибка инициализаци базы данных Postgres: %v", err)
 	}
-	_ = pool
 
 	//Накатываем миграции
 	err = postgres.RunMigrations(cfg)
 	if err != nil {
-		logger.Log.Errorf("Ошибка запуска миграций: %v", err)
+		logger.Log.Fatalf("Ошибка запуска миграций: %v", err)
 	}
 
 	err = runApp(ctx, cfg, pool, shutdownDuration)
 	if err != nil {
-		logger.Log.Errorf("Ошибка запусака приложения: %v", err)
+		logger.Log.Fatalf("Ошибка запусака приложения: %v", err)
 	}
 }

@@ -1,4 +1,4 @@
-package goph_keeper
+package main
 
 import (
 	"context"
@@ -25,6 +25,7 @@ func runApp(
 
 	newApp := app.NewApp(ctx, cfg)
 	err := newApp.Start()
+	logger.Log.Infoln("Приложение запущено.")
 	if err != nil {
 		return fmt.Errorf("error start app: %w", err)
 	}
