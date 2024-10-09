@@ -24,11 +24,12 @@ func runApp(
 	}()
 
 	newApp := app.NewApp(ctx, cfg)
-	err := newApp.Start()
-	logger.Log.Infoln("Приложение запущено.")
-	if err != nil {
-		return fmt.Errorf("error start app: %w", err)
-	}
+	go func() {
+		err := newApp.Start()
+		if err != nil {
+			logger.Log.Errorf("error start app: %v", err)
+		}
+	}()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)

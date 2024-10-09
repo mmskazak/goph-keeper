@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"golang.org/x/crypto/acme/autocert"
 	"gophKeeper/internal/config"
+	"gophKeeper/internal/logger"
 	"net/http"
 	"time"
 )
@@ -50,6 +51,7 @@ func NewApp(
 
 // Start запускает HTTP сервер.
 func (a *App) Start() error {
+	logger.Log.Infoln("Приложение запущено.")
 	err := a.server.ListenAndServe()
 	if err != nil && !errors.Is(err, http.ErrServerClosed) {
 		return fmt.Errorf("error listen and serve: %w", err)

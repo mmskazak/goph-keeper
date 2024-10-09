@@ -18,7 +18,7 @@ func NewConfig() *Config {
 		Address:     ":8080",
 		LogLevel:    "info",
 		SecretKey:   "secret",
-		DataBaseDSN: "postgresql://gkuser:gkpass@localhost:5432/goph_keeper",
+		DataBaseDSN: "postgresql://gkuser:gkpass@localhost:5432/goph_keeper?sslmode=disable",
 	}
 }
 
