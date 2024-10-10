@@ -1,4 +1,4 @@
-package postgres
+package psql
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"gophKeeper/internal/config"
 )
 
-func InitPostgres(ctx context.Context, cfg *config.Config) (*pgxpool.Pool, error) {
+func NewPgxPool(ctx context.Context, cfg *config.Config) (*pgxpool.Pool, error) {
 	pool, err := pgxpool.New(ctx, cfg.DataBaseDSN)
 	if err != nil {
 		return nil, fmt.Errorf("failed NewPostgres to connect: %w", err)
@@ -17,6 +17,5 @@ func InitPostgres(ctx context.Context, cfg *config.Config) (*pgxpool.Pool, error
 	if err != nil {
 		return nil, fmt.Errorf("failed to ping dbshorturl connection: %w", err)
 	}
-
 	return pool, nil
 }

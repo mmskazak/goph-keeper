@@ -1,21 +1,27 @@
 package auth_service
 
 import (
+	"context"
+	"fmt"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"gophKeeper/internal/dto"
-	"gophKeeper/internal/logger"
-	"gophKeeper/internal/repositories/contract"
 )
 
 type AuthService struct {
-	repo contract.IRepository
+	pool *pgxpool.Pool
 }
 
-func NewAuthService(repo contract.IRepository) *AuthService {
-	return &AuthService{repo: repo}
+func NewAuthService(pool *pgxpool.Pool) *AuthService {
+	return &AuthService{pool: pool}
 }
 
-func (a *AuthService) Registration(_ *dto.RegistrationDTO) {
-	logger.Log.Debugln("Регистрация пользователя.")
+func (a *AuthService) Registration(ctx context.Context, regDTO *dto.RegistrationDTO) error {
+	sql := "INSERT INTO users (login, password) VALUES ($1, $2);"
+	_, err := a.pool.Exec(ctx, sql, regDTO.Login, regDTO.Password)
+	if err != nil {
+		return fmt.Errorf("error registration user from service: %w", err)
+	}
+	return nil
 }
 
 func (a *AuthService) Login(dto dto.LoginDTO) {

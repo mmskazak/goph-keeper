@@ -3,8 +3,7 @@ package app
 import (
 	"context"
 	"github.com/go-chi/chi/v5"
-	serviveHttp "gophKeeper/internal/modules/auth/http"
-
+	"gophKeeper/internal/logger"
 	"net/http"
 )
 
@@ -13,18 +12,28 @@ func registrationHandlersHTTP(
 	router *chi.Mux,
 ) *chi.Mux {
 	router.Post("/registration", func(w http.ResponseWriter, r *http.Request) {
-		authServiceHTTP := serviveHttp.NewAuthServiceHTTP()
-		authServiceHTTP.Registration(w, r)
+		authHandlers, err := GetAuthHandlersHTTP()
+		if err != nil {
+			http.Error(w, "", http.StatusInternalServerError)
+		}
+		logger.Log.Infoln("Handling registration request")
+		authHandlers.Registration(w, r)
 	})
 
 	router.Post("/login", func(w http.ResponseWriter, r *http.Request) {
-		authServiceHTTP := serviveHttp.NewAuthServiceHTTP()
-		authServiceHTTP.Login(w, r)
+		authHandlers, err := GetAuthHandlersHTTP()
+		if err != nil {
+			http.Error(w, "", http.StatusInternalServerError)
+		}
+		authHandlers.Login(w, r)
 	})
 
 	router.Get("/logout", func(w http.ResponseWriter, r *http.Request) {
-		authServiceHTTP := serviveHttp.NewAuthServiceHTTP()
-		authServiceHTTP.Logout(w, r)
+		authHandlers, err := GetAuthHandlersHTTP()
+		if err != nil {
+			http.Error(w, "", http.StatusInternalServerError)
+		}
+		authHandlers.Logout(w, r)
 	})
 	return router
 }
