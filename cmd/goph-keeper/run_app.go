@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"gophKeeper/internal/app"
 	"gophKeeper/internal/logger"
+	"gophKeeper/internal/service_locator"
 	"os"
 	"os/signal"
 	"syscall"
@@ -15,7 +16,7 @@ func runApp(
 	ctx context.Context,
 	shutdownDuration time.Duration,
 ) error {
-	cfg, err := app.GetConfig()
+	cfg, err := service_locator.GetConfig()
 	if err != nil {
 		logger.Log.Errorf("Error getting config: %v", err)
 	}

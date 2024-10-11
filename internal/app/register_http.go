@@ -4,6 +4,8 @@ import (
 	"context"
 	"github.com/go-chi/chi/v5"
 	"gophKeeper/internal/logger"
+	"gophKeeper/internal/modules/auth/http"
+	"gophKeeper/internal/service_locator"
 	"net/http"
 )
 
@@ -12,28 +14,28 @@ func registrationHandlersHTTP(
 	router *chi.Mux,
 ) *chi.Mux {
 	router.Post("/registration", func(w http.ResponseWriter, r *http.Request) {
-		authHandlers, err := GetAuthHandlersHTTP()
-		if err != nil {
-			http.Error(w, "", http.StatusInternalServerError)
-		}
 		logger.Log.Infoln("Handling registration request")
-		authHandlers.Registration(w, r)
+		getAuthHandlers(w).Registration(w, r)
 	})
 
 	router.Post("/login", func(w http.ResponseWriter, r *http.Request) {
-		authHandlers, err := GetAuthHandlersHTTP()
-		if err != nil {
-			http.Error(w, "", http.StatusInternalServerError)
-		}
-		authHandlers.Login(w, r)
+		getAuthHandlers(w).Login(w, r)
 	})
 
 	router.Get("/logout", func(w http.ResponseWriter, r *http.Request) {
-		authHandlers, err := GetAuthHandlersHTTP()
-		if err != nil {
-			http.Error(w, "", http.StatusInternalServerError)
-		}
-		authHandlers.Logout(w, r)
+		getAuthHandlers(w).Logout(w, r)
 	})
 	return router
+}
+
+func getAuthHandlers(w http.ResponseWriter) *auth_http.AuthHandlers {
+	sl := service_locator.InitServiceLocator()
+	ah := sl.Get("auth_handlers_http")
+	authHandlers, ok := ah.(auth_http.AuthHandlers)
+	if !ok {
+		w.WriteHeader(http.StatusInternalServerError)
+		return nil
+	}
+
+	return &authHandlers
 }

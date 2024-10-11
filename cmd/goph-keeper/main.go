@@ -3,11 +3,11 @@ package main
 import (
 	"context"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"gophKeeper/internal/app"
 	"gophKeeper/internal/config"
 	"gophKeeper/internal/logger"
 	servive_http "gophKeeper/internal/modules/auth/http"
-	auth_service "gophKeeper/internal/modules/auth/services/auth-service"
+	auth_service "gophKeeper/internal/modules/auth/services/auth_service"
+	"gophKeeper/internal/service_locator"
 	"gophKeeper/internal/storage/psql"
 	"log"
 	"time"
@@ -56,7 +56,7 @@ func registrationServices(
 	cfg *config.Config,
 	pool *pgxpool.Pool,
 ) {
-	sc := app.InitServiceLocator()
+	sc := service_locator.InitServiceLocator()
 	sc.Register("config", cfg)
 	sc.Register("pool", pool)
 

@@ -7,6 +7,7 @@ toolchain go1.22.2
 require (
 	dario.cat/mergo v1.0.1
 	github.com/go-chi/chi/v5 v5.1.0
+	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang-migrate/migrate/v4 v4.18.1
 	github.com/jackc/pgx/v5 v5.7.1
 	github.com/stretchr/testify v1.9.0

@@ -5,26 +5,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a6441f53-51fa-47d2-bd78-7fb235d20428" name="Changes" comment="upd">
-      <change afterPath="$PROJECT_DIR$/internal/app/service_container.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/modules/auth/http/auth_handlers.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/modules/auth/services/auth_service/auth_service.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/modules/auth/services/hashpwd/hashpwd.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/modules/auth/services/jwt_service/jwt_service.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/service_locator/get_config.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/service_locator/service_locator.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client.http" beforeDir="false" afterPath="$PROJECT_DIR$/client.http" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmd/goph-keeper/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/goph-keeper/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/goph-keeper/run-app.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/goph-keeper/run_app.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmd/goph-keeper/run_app.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/goph-keeper/run_app.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/app/register_http.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/app/register_http.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/config/log-level.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/config/log_level.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/config/parse-env.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/config/parse_env.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/dto/loginDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/dto/login_dto.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/dto/logoutDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/dto/logout_dto.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/dto/registrationDTO.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/dto/registration_dto.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/modules/auth/grpc/service-grpc.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/modules/auth/http/service-http.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/modules/auth/services/auth-service/auth-service.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/modules/auth/services/auth-service/auth-service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/modules/auth/services/contract/iauth-service.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/modules/auth/services/contract/iauth-service.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/postgres/migrations/1_create_users_table.down.sql" beforeDir="false" afterPath="$PROJECT_DIR$/internal/storage/psql/migrations/1_create_users_table.down.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/postgres/migrations/1_create_users_table.up.sql" beforeDir="false" afterPath="$PROJECT_DIR$/internal/storage/psql/migrations/1_create_users_table.up.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/postgres/postgres.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/storage/psql/postgres.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/postgres/run-migrations.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/storage/psql/run-migrations.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/repositories/contract/irepositories.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/storage/contract/storage.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/app/service_container.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/dto/login_dto.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/dto/login_dto.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/dto/logout_dto.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/modules/auth/http/auth_handlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/modules/auth/http/auth_handlers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/modules/auth/services/auth-service/auth-service.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/modules/auth/services/contract/iauth-service.go" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -60,6 +58,8 @@
     "Go Test.TestMerGo in gophKeeper/internal/config.executor": "Run",
     "Go Test.TestMergo in gophKeeper/internal/config.executor": "Run",
     "HTTP Request.client | #1.executor": "Run",
+    "HTTP Request.client | #2.executor": "Run",
+    "HTTP Request.client | #3.executor": "Run",
     "Makefile Target.db.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.go.formatter.settings.were.checked": "true",
@@ -87,10 +87,14 @@
       <recent name="C:\Users\Admin\Desktop\golang\GophKeeper\internal" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/internal/service_container" />
+      <recent name="$PROJECT_DIR$/internal/helpers" />
+      <recent name="$PROJECT_DIR$/internal/service_container/get_auth_handlers_http" />
+      <recent name="$PROJECT_DIR$/internal/service_container/get_config" />
       <recent name="$PROJECT_DIR$/internal/storage" />
     </key>
   </component>
-  <component name="RunManager" selected="HTTP Request.client | #1">
+  <component name="RunManager" selected="HTTP Request.client | #2">
     <configuration name="TestMerGo in gophKeeper/internal/config" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="GophKeeper" />
       <working_directory value="$PROJECT_DIR$/internal/config" />
@@ -103,19 +107,13 @@
       <pattern value="^\QTestMerGo\E$" />
       <method v="2" />
     </configuration>
-    <configuration name="TestMergo in gophKeeper/internal/config" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="GophKeeper" />
-      <working_directory value="$PROJECT_DIR$/internal/config" />
-      <root_directory value="$PROJECT_DIR$" />
-      <kind value="PACKAGE" />
-      <package value="gophKeeper/internal/config" />
-      <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
-      <framework value="gotest" />
-      <pattern value="^\QTestMergo\E$" />
+    <configuration name="client | #1" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/client.http" requestIdentifier="#1" runType="Run single request">
       <method v="2" />
     </configuration>
-    <configuration name="client | #1" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/client.http" requestIdentifier="#1" runType="Run single request">
+    <configuration name="client | #2" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/client.http" index="2" requestIdentifier="#2" runType="Run single request">
+      <method v="2" />
+    </configuration>
+    <configuration name="client | #3" type="HttpClient.HttpRequestRunConfigurationType" factoryName="HTTP Request" temporary="true" nameIsGenerated="true" path="$PROJECT_DIR$/client.http" index="3" requestIdentifier="#3" runType="Run single request">
       <method v="2" />
     </configuration>
     <configuration name="db" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
@@ -126,10 +124,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="HTTP Request.client | #2" />
         <item itemvalue="HTTP Request.client | #1" />
+        <item itemvalue="HTTP Request.client | #3" />
         <item itemvalue="Makefile Target.db" />
         <item itemvalue="Go Test.TestMerGo in gophKeeper/internal/config" />
-        <item itemvalue="Go Test.TestMergo in gophKeeper/internal/config" />
       </list>
     </recent_temporary>
   </component>
