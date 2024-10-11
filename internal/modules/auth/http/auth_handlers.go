@@ -67,17 +67,7 @@ func (s *AuthHandlers) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *AuthHandlers) Logout(w http.ResponseWriter, r *http.Request) {
-	userID := -1
-	cfg, _ := service_locator.GetConfig()
-	token, err := jwt_service.GenerateToken(userID, cfg.SecretKey)
-	if err != nil {
-		logger.Log.Errorf("Error GenerateToken: %v", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Authorization", "Bearer "+token)
-
+	w.Header().Set("Authorization", "")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("ok"))
+	w.Write([]byte("logout"))
 }

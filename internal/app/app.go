@@ -28,8 +28,6 @@ func NewApp(
 	cfg *config.Config,
 ) *App {
 	router := chi.NewRouter()
-
-	router = registrationMiddleware(router, cfg)
 	router = registrationHandlersHTTP(ctx, router)
 
 	manager := &autocert.Manager{

@@ -5,24 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a6441f53-51fa-47d2-bd78-7fb235d20428" name="Changes" comment="upd">
-      <change afterPath="$PROJECT_DIR$/internal/modules/auth/services/auth_service/auth_service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/modules/auth/services/hashpwd/hashpwd.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/modules/auth/services/jwt_service/jwt_service.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/service_locator/get_config.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/internal/service_locator/service_locator.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/internal/middleware/auth.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/client.http" beforeDir="false" afterPath="$PROJECT_DIR$/client.http" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/goph-keeper/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/goph-keeper/main.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmd/goph-keeper/run_app.go" beforeDir="false" afterPath="$PROJECT_DIR$/cmd/goph-keeper/run_app.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/app/app.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/app/app.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/app/register_http.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/app/register_http.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/app/service_container.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/dto/login_dto.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/dto/login_dto.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/dto/logout_dto.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/app/register_middleware.go" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/modules/auth/http/auth_handlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/modules/auth/http/auth_handlers.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/modules/auth/services/auth-service/auth-service.go" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/modules/auth/services/contract/iauth-service.go" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
