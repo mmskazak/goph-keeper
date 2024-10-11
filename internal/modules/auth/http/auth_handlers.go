@@ -1,6 +1,9 @@
 package auth_http
 
 import (
+	"errors"
+	"github.com/jackc/pgerrcode"
+	"github.com/jackc/pgx/v5/pgconn"
 	"gophKeeper/internal/dto"
 	"gophKeeper/internal/logger"
 	"gophKeeper/internal/modules/auth/services/auth_service"
@@ -25,6 +28,12 @@ func (s *AuthHandlers) Registration(w http.ResponseWriter, r *http.Request) {
 		logger.Log.Errorf("Error GetRegistrationDTOFromHTTP: %v", err)
 	}
 	userID, err := s.authService.Registration(r.Context(), regDTO)
+	var pgErr *pgconn.PgError
+	if errors.As(err, &pgErr) && pgErr.Code == pgerrcode.UniqueViolation {
+		logger.Log.Errorf(`Registration failed due to unique violation`)
+		http.Error(w, "Пользователь ранне уже был зарегистрирован", http.StatusBadRequest)
+		return
+	}
 	if err != nil {
 		logger.Log.Errorf("Error authService.Registration: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)

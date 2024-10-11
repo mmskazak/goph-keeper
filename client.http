@@ -3,7 +3,7 @@ POST http://localhost:8080/registration
 Content-Type: application/json
 
 {
-  "login": "roman",
+  "login": "roman1",
   "password":"12345"
 }
 

@@ -8,6 +8,8 @@ import (
 	"gophKeeper/internal/modules/auth/services/hashpwd"
 )
 
+const UserIsAlreadyRegistered = "user is already registered: %w"
+
 type AuthService struct {
 	pool *pgxpool.Pool
 }
@@ -46,3 +48,13 @@ func (a *AuthService) Login(ctx context.Context, logDTO *dto.LoginDTO) (int, err
 	}
 	return id, nil
 }
+
+// handleError обрабатывает ошибки, возникающие при выполнении SQL-запроса.
+//func (a *AuthService) handleError(ctx context.Context, err error, targetURL string) error {
+//	var pgErr *pgconn.PgError
+//	if errors.As(err, &pgErr) && pgErr.Code == pgerrcode.UniqueViolation {
+//		logger.Log.Infoln("Произошел конфликт UniqueViolation в поле " + pgErr.ConstraintName)
+//		return fmt.Errorf(UserIsAlreadyRegistered, err)
+//	}
+//	return fmt.Errorf("failed to insert record %w", err)
+//}

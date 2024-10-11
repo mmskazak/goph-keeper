@@ -3,8 +3,8 @@ package app
 import (
 	"context"
 	"github.com/go-chi/chi/v5"
-	"gophKeeper/internal/middleware"
 	"gophKeeper/internal/modules/auth/http"
+	"gophKeeper/internal/modules/auth/middleware"
 	"gophKeeper/internal/service_locator"
 	"net/http"
 )

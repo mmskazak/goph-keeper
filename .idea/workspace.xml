@@ -5,12 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a6441f53-51fa-47d2-bd78-7fb235d20428" name="Changes" comment="upd">
-      <change afterPath="$PROJECT_DIR$/internal/middleware/auth.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/app/app.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/app/app.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client.http" beforeDir="false" afterPath="$PROJECT_DIR$/client.http" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/app/register_http.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/app/register_http.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/internal/app/register_middleware.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/middleware/auth.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/modules/auth/middleware/auth.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/internal/modules/auth/http/auth_handlers.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/modules/auth/http/auth_handlers.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/modules/auth/services/auth_service/auth_service.go" beforeDir="false" afterPath="$PROJECT_DIR$/internal/modules/auth/services/auth_service/auth_service.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/internal/storage/psql/migrations/1_create_users_table.up.sql" beforeDir="false" afterPath="$PROJECT_DIR$/internal/storage/psql/migrations/1_create_users_table.up.sql" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,14 +78,14 @@
       <recent name="C:\Users\Admin\Desktop\golang\GophKeeper\internal" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/internal/modules/auth" />
       <recent name="$PROJECT_DIR$/internal/service_container" />
       <recent name="$PROJECT_DIR$/internal/helpers" />
       <recent name="$PROJECT_DIR$/internal/service_container/get_auth_handlers_http" />
       <recent name="$PROJECT_DIR$/internal/service_container/get_config" />
-      <recent name="$PROJECT_DIR$/internal/storage" />
     </key>
   </component>
-  <component name="RunManager" selected="HTTP Request.client | #2">
+  <component name="RunManager" selected="HTTP Request.client | #1">
     <configuration name="TestMerGo in gophKeeper/internal/config" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="GophKeeper" />
       <working_directory value="$PROJECT_DIR$/internal/config" />
@@ -112,8 +115,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="HTTP Request.client | #2" />
         <item itemvalue="HTTP Request.client | #1" />
+        <item itemvalue="HTTP Request.client | #2" />
         <item itemvalue="HTTP Request.client | #3" />
         <item itemvalue="Makefile Target.db" />
         <item itemvalue="Go Test.TestMerGo in gophKeeper/internal/config" />
