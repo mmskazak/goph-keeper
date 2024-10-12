@@ -19,9 +19,9 @@ func (pwd *PwdService) DeletePassword(username string) error {
 }
 
 func (pwd *PwdService) GetPassword(username string) (string, error) {
-	return "", nil
+	return "secret", nil
 }
 
-func (pwd *PwdService) GetAllPasswords(username string, password string) error {
-	return nil
+func (pwd *PwdService) GetAllPasswords(username string, password string) (AllPasswords, error) {
+	return AllPasswords{}, nil
 }

@@ -12,15 +12,15 @@ type SavePwdDTO struct {
 	Password string `json:"password"`
 }
 
-func GetSavePwdDTOFromHTTP(r *http.Request) (*SavePwdDTO, error) {
+func SavePwdDTOFromHTTP(r *http.Request) (SavePwdDTO, error) {
 	data, err := io.ReadAll(r.Body)
 	if err != nil {
-		return nil, fmt.Errorf("reading body registration: %w", err)
+		return SavePwdDTO{}, fmt.Errorf("reading body registration: %w", err)
 	}
 	var savePwdDTO SavePwdDTO
 	err = json.Unmarshal(data, &savePwdDTO)
 	if err != nil {
-		return nil, fmt.Errorf("unmarshalling body registration: %w", err)
+		return SavePwdDTO{}, fmt.Errorf("unmarshalling body registration: %w", err)
 	}
-	return &savePwdDTO, nil
+	return savePwdDTO, nil
 }
