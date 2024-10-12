@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gophKeeper/internal/dto"
-	"gophKeeper/internal/modules/auth/services/hashpwd"
+	"gophKeeper/internal/modules/auth/auth_services/auth_hashpwd"
 )
 
 type AuthService struct {
@@ -17,7 +17,7 @@ func NewAuthService(pool *pgxpool.Pool) *AuthService {
 }
 
 func (a *AuthService) Registration(ctx context.Context, regDTO *dto.RegistrationDTO) (int, error) {
-	hashedPassword, _ := hashpwd.HashAndStorePassword(regDTO.Password)
+	hashedPassword, _ := auth_hashpwd.HashAndStorePassword(regDTO.Password)
 	sql := "INSERT INTO users (login, password) VALUES ($1, $2) RETURNING id;"
 	row := a.pool.QueryRow(ctx, sql, regDTO.Login, hashedPassword)
 	var id int
@@ -40,7 +40,7 @@ func (a *AuthService) Login(ctx context.Context, logDTO *dto.LoginDTO) (int, err
 	if err != nil {
 		return 0, fmt.Errorf("error while scanning user: %w", err)
 	}
-	isLogin := hashpwd.CheckHashedPassword(hashedPassword, logDTO.Password)
+	isLogin := auth_hashpwd.CheckHashedPassword(hashedPassword, logDTO.Password)
 	if !isLogin {
 		return 0, fmt.Errorf("user not found")
 	}

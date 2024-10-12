@@ -3,8 +3,8 @@ package app
 import (
 	"context"
 	"github.com/go-chi/chi/v5"
-	"gophKeeper/internal/modules/auth/http"
-	"gophKeeper/internal/modules/auth/middleware"
+	"gophKeeper/internal/modules/auth/auth_http"
+	"gophKeeper/internal/modules/auth/auth_middleware"
 	"gophKeeper/internal/service_locator"
 	"net/http"
 )
@@ -23,7 +23,7 @@ func registrationHandlersHTTP(
 	})
 
 	r.Group(func(r chi.Router) {
-		r.Use(middleware.Authentication)
+		r.Use(auth_middleware.Authentication)
 
 		r.Get("/logout", func(w http.ResponseWriter, r *http.Request) {
 			getAuthHandlers(w).Logout(w, r)

@@ -1,4 +1,4 @@
-package hashpwd
+package auth_hashpwd
 
 import (
 	"fmt"
