@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"gophKeeper/internal/dto"
+	dto2 "gophKeeper/internal/modules/auth/auth_dto"
 	"gophKeeper/internal/modules/auth/auth_services/auth_hashpwd"
 )
 
@@ -16,7 +16,7 @@ func NewAuthService(pool *pgxpool.Pool) *AuthService {
 	return &AuthService{pool: pool}
 }
 
-func (a *AuthService) Registration(ctx context.Context, regDTO *dto.RegistrationDTO) (int, error) {
+func (a *AuthService) Registration(ctx context.Context, regDTO *dto2.RegistrationDTO) (int, error) {
 	hashedPassword, _ := auth_hashpwd.HashAndStorePassword(regDTO.Password)
 	sql := "INSERT INTO users (login, password) VALUES ($1, $2) RETURNING id;"
 	row := a.pool.QueryRow(ctx, sql, regDTO.Login, hashedPassword)
@@ -28,7 +28,7 @@ func (a *AuthService) Registration(ctx context.Context, regDTO *dto.Registration
 	return id, nil
 }
 
-func (a *AuthService) Login(ctx context.Context, logDTO *dto.LoginDTO) (int, error) {
+func (a *AuthService) Login(ctx context.Context, logDTO *dto2.LoginDTO) (int, error) {
 	sql := "SELECT id, password FROM users WHERE login = $1;"
 	row := a.pool.QueryRow(ctx, sql, logDTO.Login)
 	if row == nil {
