@@ -22,6 +22,6 @@ func (pwd *PwdService) GetPassword(username string) (string, error) {
 	return "secret", nil
 }
 
-func (pwd *PwdService) GetAllPasswords(username string, password string) (AllPasswords, error) {
+func (pwd *PwdService) GetAllPasswords(username string) (AllPasswords, error) {
 	return AllPasswords{}, nil
 }
