@@ -2,11 +2,8 @@ package main
 
 import (
 	"context"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"gophKeeper/internal/config"
 	"gophKeeper/internal/logger"
-	servive_http "gophKeeper/internal/modules/auth/http"
-	auth_service "gophKeeper/internal/modules/auth/services/auth_service"
 	"gophKeeper/internal/service_locator"
 	"gophKeeper/internal/storage/psql"
 	"log"
@@ -43,26 +40,10 @@ func main() {
 	}
 
 	//Регистрация всех сервисов приложения
-	registrationServices(ctx, cfg, pool)
+	service_locator.RegistrationServices(ctx, cfg, pool)
 
 	err = runApp(ctx, shutdownDuration)
 	if err != nil {
 		logger.Log.Fatalf("Ошибка запусака приложения: %v", err)
 	}
-}
-
-func registrationServices(
-	_ context.Context,
-	cfg *config.Config,
-	pool *pgxpool.Pool,
-) {
-	sc := service_locator.InitServiceLocator()
-	sc.Register("config", cfg)
-	sc.Register("pool", pool)
-
-	authService := auth_service.NewAuthService(pool)
-	sc.Register("auth_service", authService)
-
-	authHandlersHTTP := servive_http.NewAuthHandlersHTTP(authService)
-	sc.Register("auth_handlers_http", authHandlersHTTP)
 }
