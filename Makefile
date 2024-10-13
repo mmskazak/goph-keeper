@@ -1,7 +1,19 @@
+.PHONY: lint
 lint:
 	# | jq > ./golangci-lint/report.json
 	golangci-lint run --fix -c .golangci.yml > golangci-lint/report-unformatted.json
 	goimports -local mmskazak -w .
+
+.PHONY: lind
+lind:
+	docker run --rm \
+		-v $(pwd):/app \
+		-v $(pwd)/golangci-lint/.cache/golangci-lint/v1.57.2:/root/.cache \
+		-w /app \
+		golangci/golangci-lint:v1.57.2 \
+			golangci-lint run \
+				-c .golangci.yml \
+			> ./golangci-lint/report-unformatted.json
 
 lint-clean:
 	sudo rm -rf ./golangci-lint
