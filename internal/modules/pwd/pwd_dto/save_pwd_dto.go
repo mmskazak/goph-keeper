@@ -8,6 +8,8 @@ import (
 )
 
 type SavePwdDTO struct {
+	UserID   string `json:"user_id"`
+	Resource string `json:"resource"`
 	Login    string `json:"login"`
 	Password string `json:"password"`
 }

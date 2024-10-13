@@ -8,7 +8,7 @@ import (
 )
 
 type AllPwdDTO struct {
-	Login string `json:"login"`
+	UserID string `json:"user_id"`
 }
 
 func AllPwdDTOFromHTTP(r *http.Request) (DeletePwdDTO, error) {

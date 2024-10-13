@@ -8,7 +8,8 @@ import (
 )
 
 type GetPwdDTO struct {
-	Login string `json:"login"`
+	UserID string `json:"user_id"`
+	Login  string `json:"login"`
 }
 
 func GetPwdDTOFromHTTP(r *http.Request) (GetPwdDTO, error) {

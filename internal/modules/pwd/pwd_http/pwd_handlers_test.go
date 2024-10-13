@@ -1,7 +1,9 @@
 package pwd_http
 
 import (
+	"context"
 	"github.com/stretchr/testify/assert"
+	"gophKeeper/internal/modules/pwd/pwd_dto"
 	"gophKeeper/internal/modules/pwd/pwd_services"
 	"net/http"
 	"net/http/httptest"
@@ -10,9 +12,7 @@ import (
 
 type FakePwdService struct{}
 
-func (f FakePwdService) SavePassword(username string, password string) error {
-	_ = username
-	_ = password
+func (f FakePwdService) SavePassword(ctx context.Context, dto pwd_dto.SavePwdDTO) error {
 	return nil
 }
 

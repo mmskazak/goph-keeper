@@ -23,7 +23,7 @@ func (p PwdHandlers) SavePassword(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	err = p.pwdService.SavePassword(savePwdDTO.Login, savePwdDTO.Password)
+	err = p.pwdService.SavePassword(r.Context(), savePwdDTO)
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
 		return
