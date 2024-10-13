@@ -11,8 +11,8 @@ permissions:
   contents: read
 
 jobs:
-  golangci:
-    name: lint and test
+  lint:
+    name: Lint Code
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -27,6 +27,18 @@ jobs:
         with:
           version: v1.57.2
           args: --out-format=json
+
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    needs: lint  # Указывает, что тесты должны выполняться после линтинга
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-go@v4
+        with:
+          go-version: "1.22"
+          cache: false
 
       - name: Run Go tests
         run: |
