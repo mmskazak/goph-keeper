@@ -47,7 +47,7 @@ func registrationHandlersHTTP(
 		r.Delete("/pwd/delete", func(w http.ResponseWriter, req *http.Request) {
 			getPwdHandlers(pool).DeletePassword(w, req)
 		})
-		r.Get("/pwd/get", func(w http.ResponseWriter, req *http.Request) {
+		r.Post("/pwd/get", func(w http.ResponseWriter, req *http.Request) {
 			getPwdHandlers(pool).GetPassword(w, req)
 		})
 
