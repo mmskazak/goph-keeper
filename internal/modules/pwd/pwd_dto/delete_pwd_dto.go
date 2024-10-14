@@ -8,8 +8,8 @@ import (
 )
 
 type DeletePwdDTO struct {
-	UserID string `json:"user_id"`
-	Login  string `json:"login"`
+	UserID   string `json:"user_id"`
+	Resource string `json:"resource"`
 }
 
 func DeletePwdDTOFromHTTP(r *http.Request) (DeletePwdDTO, error) {

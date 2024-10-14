@@ -30,8 +30,8 @@ func (pwd *PwdService) SavePassword(ctx context.Context, dto pwd_dto.SavePwdDTO)
 }
 
 func (pwd *PwdService) DeletePassword(ctx context.Context, dto pwd_dto.DeletePwdDTO) error {
-	sql := `DELETE FROM passwords WHERE user_id = $1 AND login = $2;`
-	_, err := pwd.pool.Exec(ctx, sql, dto.UserID, dto.Login)
+	sql := `DELETE FROM passwords WHERE user_id = $1 AND resource = $2;`
+	_, err := pwd.pool.Exec(ctx, sql, dto.UserID, dto.Resource)
 	if err != nil {
 		return fmt.Errorf("error save password from pwd service: %w", err)
 	}
