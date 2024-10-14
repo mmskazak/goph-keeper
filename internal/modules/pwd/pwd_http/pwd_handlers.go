@@ -38,7 +38,7 @@ func (p PwdHandlers) GetPassword(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	password, err := p.pwdService.GetPassword(getPwdDTO.Login)
+	password, err := p.pwdService.GetPassword(r.Context, getPwdDTO)
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
 		return
@@ -48,12 +48,12 @@ func (p PwdHandlers) GetPassword(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p PwdHandlers) DeletePassword(w http.ResponseWriter, r *http.Request) {
-	getPwdDTO, err := pwd_dto.DeletePwdDTOFromHTTP(r)
+	deletePwdDTO, err := pwd_dto.DeletePwdDTOFromHTTP(r)
 	if err != nil {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	err = p.pwdService.DeletePassword(getPwdDTO.Login)
+	err = p.pwdService.DeletePassword(r.Context(), deletePwdDTO)
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
 		return

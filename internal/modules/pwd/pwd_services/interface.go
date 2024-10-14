@@ -13,7 +13,7 @@ type InfoByPassword struct {
 
 type IPwdService interface {
 	SavePassword(ctx context.Context, dto pwd_dto.SavePwdDTO) error
-	DeletePassword(username string) error
-	GetPassword(username string) (string, error)
-	GetAllPasswords(username string) ([]InfoByPassword, error)
+	DeletePassword(ctx context.Context, dto pwd_dto.DeletePwdDTO) error
+	GetPassword(ctx context.Context, dto pwd_dto.GetPwdDTO) (string, error)
+	GetAllPasswords(ctx context.Context, dto pwd_dto.AllPwdDTO) ([]InfoByPassword, error)
 }

@@ -8,6 +8,8 @@ import (
 	"gophKeeper/internal/modules/auth/auth_http"
 	"gophKeeper/internal/modules/auth/auth_middleware"
 	"gophKeeper/internal/modules/auth/auth_services/auth_service"
+	"gophKeeper/internal/modules/pwd/pwd_http"
+	"gophKeeper/internal/modules/pwd/pwd_services"
 	"net/http"
 )
 
@@ -43,4 +45,10 @@ func getAuthHandlers(pool *pgxpool.Pool, secretKey string) *auth_http.AuthHandle
 	authService := auth_service.NewAuthService(pool)
 	authHandlers := auth_http.NewAuthHandlersHTTP(authService, secretKey)
 	return &authHandlers
+}
+
+func getPwdHandlers(pool *pgxpool.Pool) *pwd_http.PwdHandlers {
+	pwdService := pwd_services.NewPwdService(pool)
+	pwdHandlers := pwd_http.NewPwdHandlersHTTP(pwdService)
+	return &pwdHandlers
 }
