@@ -4,11 +4,11 @@ import (
 	"errors"
 	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5/pgconn"
+	"gophKeeper/internal/dig"
 	"gophKeeper/internal/logger"
 	dto2 "gophKeeper/internal/modules/auth/auth_dto"
 	"gophKeeper/internal/modules/auth/auth_services/auth_jwt_service"
 	"gophKeeper/internal/modules/auth/auth_services/auth_service"
-	"gophKeeper/internal/service_locator"
 	"net/http"
 )
 
@@ -39,7 +39,7 @@ func (s *AuthHandlers) Registration(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	cfg, _ := service_locator.GetConfig()
+	cfg, _ := dig.GetConfig()
 	token, err := auth_jwt_service.GenerateToken(userID, cfg.SecretKey)
 	if err != nil {
 		logger.Log.Errorf("Error GenerateToken: %v", err)
@@ -61,7 +61,7 @@ func (s *AuthHandlers) Login(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	cfg, _ := service_locator.GetConfig()
+	cfg, _ := dig.GetConfig()
 	token, err := auth_jwt_service.GenerateToken(userID, cfg.SecretKey)
 	if err != nil {
 		logger.Log.Errorf("Error GenerateToken: %v", err)

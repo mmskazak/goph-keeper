@@ -3,9 +3,9 @@ package auth_middleware
 import (
 	"context"
 	"github.com/golang-jwt/jwt"
+	"gophKeeper/internal/dig"
 	"gophKeeper/internal/logger"
 	"gophKeeper/internal/modules/auth/auth_services/auth_jwt_service"
-	"gophKeeper/internal/service_locator"
 	"net/http"
 	"strings"
 )
@@ -21,7 +21,7 @@ func Authentication(next http.Handler) http.Handler {
 			return
 		}
 		logger.Log.Infoln(strArr[1])
-		cfg, _ := service_locator.GetConfig()
+		cfg, _ := dig.GetConfig()
 		token, err := auth_jwt_service.ParseAndValidateToken(strArr[1], cfg.SecretKey)
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)

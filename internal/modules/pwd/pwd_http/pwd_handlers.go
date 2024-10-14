@@ -11,7 +11,7 @@ type PwdHandlers struct {
 	pwdService pwd_services.IPwdService
 }
 
-func NewAuthHandlersHTTP(service pwd_services.IPwdService) PwdHandlers {
+func NewPwdHandlersHTTP(service pwd_services.IPwdService) PwdHandlers {
 	return PwdHandlers{
 		pwdService: service,
 	}

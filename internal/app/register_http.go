@@ -3,9 +3,9 @@ package app
 import (
 	"context"
 	"github.com/go-chi/chi/v5"
+	"gophKeeper/internal/dig"
 	"gophKeeper/internal/modules/auth/auth_http"
 	"gophKeeper/internal/modules/auth/auth_middleware"
-	"gophKeeper/internal/service_locator"
 	"net/http"
 )
 
@@ -34,13 +34,9 @@ func registrationHandlersHTTP(
 }
 
 func getAuthHandlers(w http.ResponseWriter) *auth_http.AuthHandlers {
-	sl := service_locator.InitServiceLocator()
-	ah := sl.Get("auth_handlers_http")
-	authHandlers, ok := ah.(auth_http.AuthHandlers)
-	if !ok {
-		w.WriteHeader(http.StatusInternalServerError)
-		return nil
+	authHandlers, err := dig.GetAuthHandlers()
+	if err != nil {
+		http.Error(w, "", http.StatusInternalServerError)
 	}
-
-	return &authHandlers
+	return authHandlers
 }

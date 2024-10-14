@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"gophKeeper/internal/config"
+	"gophKeeper/internal/dig"
 	"gophKeeper/internal/logger"
-	"gophKeeper/internal/service_locator"
 	"gophKeeper/internal/storage/psql"
 	"log"
 	"time"
@@ -40,7 +40,10 @@ func main() {
 	}
 
 	//Регистрация всех сервисов приложения
-	service_locator.RegistrationServices(ctx, cfg, pool)
+	err = dig.RegistrationServices(ctx, cfg, pool)
+	if err != nil {
+		logger.Log.Fatalf("Ошибка регистрации сервисов: %v", err)
+	}
 
 	err = runApp(ctx, shutdownDuration)
 	if err != nil {
