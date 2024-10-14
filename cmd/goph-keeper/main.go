@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"gophKeeper/internal/config"
-	"gophKeeper/internal/dig"
 	"gophKeeper/internal/logger"
 	"gophKeeper/internal/storage/psql"
 	"log"
@@ -39,13 +38,7 @@ func main() {
 		logger.Log.Fatalf("Ошибка запуска миграций: %v", err)
 	}
 
-	//Регистрация всех сервисов приложения
-	err = dig.RegistrationServices(ctx, cfg, pool)
-	if err != nil {
-		logger.Log.Fatalf("Ошибка регистрации сервисов: %v", err)
-	}
-
-	err = runApp(ctx, shutdownDuration)
+	err = runApp(ctx, cfg, pool, shutdownDuration)
 	if err != nil {
 		logger.Log.Fatalf("Ошибка запусака приложения: %v", err)
 	}

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-chi/chi/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"golang.org/x/crypto/acme/autocert"
 	"gophKeeper/internal/config"
 	"gophKeeper/internal/logger"
@@ -26,9 +27,10 @@ type App struct {
 func NewApp(
 	ctx context.Context,
 	cfg *config.Config,
+	pool *pgxpool.Pool,
 ) *App {
 	router := chi.NewRouter()
-	router = registrationHandlersHTTP(ctx, router)
+	router = registrationHandlersHTTP(ctx, router, cfg, pool)
 
 	manager := &autocert.Manager{
 		// перечень доменов, для которых будут поддерживаться сертификаты

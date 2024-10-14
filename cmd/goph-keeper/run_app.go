@@ -2,9 +2,10 @@ package main
 
 import (
 	"context"
-	"dig"
 	"fmt"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"gophKeeper/internal/app"
+	"gophKeeper/internal/config"
 	"gophKeeper/internal/logger"
 	"os"
 	"os/signal"
@@ -14,16 +15,11 @@ import (
 
 func runApp(
 	ctx context.Context,
+	cfg *config.Config,
+	pool *pgxpool.Pool,
 	shutdownDuration time.Duration,
 ) error {
-	var authHandlersHTTP *AuthHandlersHTTP
-
-	dig.I
-	if err := dig.Invoke(&authService); err != nil {
-		return fmt.Errorf("error getting auth service %w", err)
-	}
-
-	newApp := app.NewApp(ctx, cfg)
+	newApp := app.NewApp(ctx, cfg, pool)
 	go func() {
 		err := newApp.Start()
 		if err != nil {

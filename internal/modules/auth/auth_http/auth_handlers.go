@@ -4,7 +4,6 @@ import (
 	"errors"
 	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5/pgconn"
-	"gophKeeper/internal/dig"
 	"gophKeeper/internal/logger"
 	dto "gophKeeper/internal/modules/auth/auth_dto"
 	"gophKeeper/internal/modules/auth/auth_services/auth_jwt_service"
@@ -14,11 +13,13 @@ import (
 
 type AuthHandlers struct {
 	authService *auth_service.AuthService
+	secretKey   string
 }
 
-func NewAuthHandlersHTTP(authService *auth_service.AuthService) AuthHandlers {
+func NewAuthHandlersHTTP(authService *auth_service.AuthService, secretKey string) AuthHandlers {
 	return AuthHandlers{
 		authService: authService,
+		secretKey:   secretKey,
 	}
 }
 
@@ -39,8 +40,8 @@ func (s *AuthHandlers) Registration(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	cfg, _ := dig.GetConfig()
-	token, err := auth_jwt_service.GenerateToken(userID, cfg.SecretKey)
+
+	token, err := auth_jwt_service.GenerateToken(userID, s.secretKey)
 	if err != nil {
 		logger.Log.Errorf("Error GenerateToken: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -61,8 +62,8 @@ func (s *AuthHandlers) Login(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	cfg, _ := dig.GetConfig()
-	token, err := auth_jwt_service.GenerateToken(userID, cfg.SecretKey)
+
+	token, err := auth_jwt_service.GenerateToken(userID, s.secretKey)
 	if err != nil {
 		logger.Log.Errorf("Error GenerateToken: %v", err)
 		w.WriteHeader(http.StatusInternalServerError)
