@@ -6,7 +6,7 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 	"gophKeeper/internal/dig"
 	"gophKeeper/internal/logger"
-	dto2 "gophKeeper/internal/modules/auth/auth_dto"
+	dto "gophKeeper/internal/modules/auth/auth_dto"
 	"gophKeeper/internal/modules/auth/auth_services/auth_jwt_service"
 	"gophKeeper/internal/modules/auth/auth_services/auth_service"
 	"net/http"
@@ -23,7 +23,7 @@ func NewAuthHandlersHTTP(authService *auth_service.AuthService) AuthHandlers {
 }
 
 func (s *AuthHandlers) Registration(w http.ResponseWriter, r *http.Request) {
-	regDTO, err := dto2.GetRegistrationDTOFromHTTP(r)
+	regDTO, err := dto.GetRegistrationDTOFromHTTP(r)
 	if err != nil {
 		logger.Log.Errorf("Error GetRegistrationDTOFromHTTP: %v", err)
 	}
@@ -54,7 +54,7 @@ func (s *AuthHandlers) Registration(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *AuthHandlers) Login(w http.ResponseWriter, r *http.Request) {
-	inDTO, _ := dto2.GetLoginDTOFromHTTP(r)
+	inDTO, _ := dto.GetLoginDTOFromHTTP(r)
 	userID, err := s.authService.Login(r.Context(), inDTO)
 	if err != nil {
 		logger.Log.Errorf("Error authService.Login: %v", err)

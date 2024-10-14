@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
+	"dig"
 	"fmt"
 	"gophKeeper/internal/app"
-	"gophKeeper/internal/dig"
 	"gophKeeper/internal/logger"
 	"os"
 	"os/signal"
@@ -16,9 +16,11 @@ func runApp(
 	ctx context.Context,
 	shutdownDuration time.Duration,
 ) error {
-	cfg, err := dig.GetConfig()
-	if err != nil {
-		logger.Log.Errorf("Error getting config: %v", err)
+	var authHandlersHTTP *AuthHandlersHTTP
+
+	dig.I
+	if err := dig.Invoke(&authService); err != nil {
+		return fmt.Errorf("error getting auth service %w", err)
 	}
 
 	newApp := app.NewApp(ctx, cfg)

@@ -2,7 +2,6 @@ package dig
 
 import (
 	"context"
-	"fmt"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gophKeeper/internal/config"
 	"gophKeeper/internal/modules/auth/auth_http"
@@ -16,38 +15,26 @@ func RegistrationServices(
 	cfg *config.Config,
 	pool *pgxpool.Pool,
 ) error {
-	err := RegisterConfig(*cfg)
-	if err != nil {
-		return fmt.Errorf("error setting config %w", err)
-	}
-	err = RegisterPgxPool(pool)
-	if err != nil {
-		return fmt.Errorf("error setting pgx pool %w", err)
-	}
 
-	authService := auth_service.NewAuthService(pool)
-	err = RegisterAuthService(*authService)
-	if err != nil {
-		return fmt.Errorf("error setting auth service %w", err)
-	}
+	_ = dg.Provide(func(cfg *config.Config) *config.Config {
+		return cfg
+	})
 
-	authHandlersHTTP := auth_http.NewAuthHandlersHTTP(authService)
-	err = RegisterAuthHandlers(authHandlersHTTP)
-	if err != nil {
-		return fmt.Errorf("error setting auth handlers %w", err)
-	}
+	_ = dg.Provide(func(pool *pgxpool.Pool) *auth_service.AuthService {
+		return auth_service.NewAuthService(pool)
+	})
 
-	pwdService := pwd_services.NewPwdService(pool)
-	err = RegisterPwdService(*pwdService)
-	if err != nil {
-		return fmt.Errorf("error setting pwd service %w", err)
-	}
+	_ = dg.Provide(func(auth *auth_service.AuthService) auth_http.AuthHandlers {
+		return auth_http.NewAuthHandlersHTTP(auth)
+	})
 
-	pwdHandlers := pwd_http.NewPwdHandlersHTTP(pwdService)
-	err = RegisterPwdHandlers(pwdHandlers)
-	if err != nil {
-		return fmt.Errorf("error setting pwd handlers %w", err)
-	}
+	_ = dg.Provide(func(pool *pgxpool.Pool) *pwd_services.PwdService {
+		return pwd_services.NewPwdService(pool)
+	})
+
+	_ = dg.Provide(func(pwd *pwd_services.PwdService) pwd_http.PwdHandlers {
+		return pwd_http.NewPwdHandlersHTTP(pwd)
+	})
 
 	return nil
 }
