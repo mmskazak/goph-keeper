@@ -11,15 +11,15 @@ type AllPwdDTO struct {
 	UserID string `json:"user_id"`
 }
 
-func AllPwdDTOFromHTTP(r *http.Request) (DeletePwdDTO, error) {
+func AllPwdDTOFromHTTP(r *http.Request) (AllPwdDTO, error) {
 	data, err := io.ReadAll(r.Body)
 	if err != nil {
-		return DeletePwdDTO{}, fmt.Errorf("reading body registration: %w", err)
+		return AllPwdDTO{}, fmt.Errorf("reading body registration: %w", err)
 	}
-	var deletePwdDTO DeletePwdDTO
-	err = json.Unmarshal(data, &deletePwdDTO)
+	var allPwdDTO AllPwdDTO
+	err = json.Unmarshal(data, &allPwdDTO)
 	if err != nil {
-		return DeletePwdDTO{}, fmt.Errorf("unmarshalling body registration: %w", err)
+		return AllPwdDTO{}, fmt.Errorf("unmarshalling body registration: %w", err)
 	}
-	return deletePwdDTO, nil
+	return allPwdDTO, nil
 }

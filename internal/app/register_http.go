@@ -36,6 +36,21 @@ func registrationHandlersHTTP(
 		r.Get("/logout", func(w http.ResponseWriter, r *http.Request) {
 			getAuthHandlers(pool, cfg.SecretKey).Logout(w, r)
 		})
+
+		//Пароли
+		r.Post("/pwd/save", func(w http.ResponseWriter, req *http.Request) {
+			getPwdHandlers(pool).SavePassword(w, req)
+		})
+		r.Post("/pwd/all", func(w http.ResponseWriter, req *http.Request) {
+			getPwdHandlers(pool).GetAllPasswords(w, req)
+		})
+		r.Delete("/pwd/delete", func(w http.ResponseWriter, req *http.Request) {
+			getPwdHandlers(pool).DeletePassword(w, req)
+		})
+		r.Get("/pwd/get", func(w http.ResponseWriter, req *http.Request) {
+			getPwdHandlers(pool).GetPassword(w, req)
+		})
+
 	})
 
 	return r

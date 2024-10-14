@@ -38,7 +38,7 @@ func (p PwdHandlers) GetPassword(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	password, err := p.pwdService.GetPassword(r.Context, getPwdDTO)
+	password, err := p.pwdService.GetPassword(r.Context(), getPwdDTO)
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
 		return
@@ -68,7 +68,7 @@ func (p PwdHandlers) GetAllPasswords(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	allPasswords, err := p.pwdService.GetAllPasswords(allPwdDTO.Login)
+	allPasswords, err := p.pwdService.GetAllPasswords(r.Context(), allPwdDTO)
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
 		return
