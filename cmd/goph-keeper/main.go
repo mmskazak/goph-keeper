@@ -4,7 +4,6 @@ import (
 	"context"
 	"gophKeeper/internal/config"
 	"gophKeeper/internal/logger"
-	"gophKeeper/internal/service_locator"
 	"gophKeeper/internal/storage/psql"
 	"log"
 	"time"
@@ -39,10 +38,7 @@ func main() {
 		logger.Log.Fatalf("Ошибка запуска миграций: %v", err)
 	}
 
-	//Регистрация всех сервисов приложения
-	service_locator.RegistrationServices(ctx, cfg, pool)
-
-	err = runApp(ctx, shutdownDuration)
+	err = runApp(ctx, cfg, pool, shutdownDuration)
 	if err != nil {
 		logger.Log.Fatalf("Ошибка запусака приложения: %v", err)
 	}

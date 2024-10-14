@@ -28,7 +28,7 @@ func (f FakePwdService) GetAllPasswords(username string) (pwd_services.AllPasswo
 
 func TestPwdHandlers_SavePassword(t *testing.T) {
 	fake := FakePwdService{}
-	authHandlers := NewAuthHandlersHTTP(fake)
+	authHandlers := NewPwdHandlersHTTP(fake)
 	r := httptest.NewRequest(http.MethodPost, "/save-password", http.NoBody)
 	w := httptest.NewRecorder()
 	authHandlers.SavePassword(w, r)

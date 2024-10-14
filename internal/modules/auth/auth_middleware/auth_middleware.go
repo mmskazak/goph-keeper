@@ -5,12 +5,11 @@ import (
 	"github.com/golang-jwt/jwt"
 	"gophKeeper/internal/logger"
 	"gophKeeper/internal/modules/auth/auth_services/auth_jwt_service"
-	"gophKeeper/internal/service_locator"
 	"net/http"
 	"strings"
 )
 
-func Authentication(next http.Handler) http.Handler {
+func Authentication(next http.Handler, secretKey string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		jwtBearer := r.Header.Get("Authorization")
 		logger.Log.Infoln(jwtBearer)
@@ -21,8 +20,7 @@ func Authentication(next http.Handler) http.Handler {
 			return
 		}
 		logger.Log.Infoln(strArr[1])
-		cfg, _ := service_locator.GetConfig()
-		token, err := auth_jwt_service.ParseAndValidateToken(strArr[1], cfg.SecretKey)
+		token, err := auth_jwt_service.ParseAndValidateToken(strArr[1], secretKey)
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
 			return

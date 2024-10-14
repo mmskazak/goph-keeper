@@ -3,44 +3,44 @@ package app
 import (
 	"context"
 	"github.com/go-chi/chi/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"gophKeeper/internal/config"
 	"gophKeeper/internal/modules/auth/auth_http"
 	"gophKeeper/internal/modules/auth/auth_middleware"
-	"gophKeeper/internal/service_locator"
+	"gophKeeper/internal/modules/auth/auth_services/auth_service"
 	"net/http"
 )
 
 func registrationHandlersHTTP(
 	_ context.Context,
 	r *chi.Mux,
+	cfg *config.Config,
+	pool *pgxpool.Pool,
 ) *chi.Mux {
 	r.Group(func(r chi.Router) {
-		r.Post("/registration", func(w http.ResponseWriter, r *http.Request) {
-			getAuthHandlers(w).Registration(w, r)
+		r.Post("/registration", func(w http.ResponseWriter, req *http.Request) {
+			getAuthHandlers(pool, cfg.SecretKey).Registration(w, req)
 		})
-		r.Post("/login", func(w http.ResponseWriter, r *http.Request) {
-			getAuthHandlers(w).Login(w, r)
+		r.Post("/login", func(w http.ResponseWriter, req *http.Request) {
+			getAuthHandlers(pool, cfg.SecretKey).Login(w, req)
 		})
 	})
 
 	r.Group(func(r chi.Router) {
-		r.Use(auth_middleware.Authentication)
+		r.Use(func(next http.Handler) http.Handler {
+			return auth_middleware.Authentication(next, cfg.SecretKey)
+		})
 
 		r.Get("/logout", func(w http.ResponseWriter, r *http.Request) {
-			getAuthHandlers(w).Logout(w, r)
+			getAuthHandlers(pool, cfg.SecretKey).Logout(w, r)
 		})
 	})
 
 	return r
 }
 
-func getAuthHandlers(w http.ResponseWriter) *auth_http.AuthHandlers {
-	sl := service_locator.InitServiceLocator()
-	ah := sl.Get("auth_handlers_http")
-	authHandlers, ok := ah.(auth_http.AuthHandlers)
-	if !ok {
-		w.WriteHeader(http.StatusInternalServerError)
-		return nil
-	}
-
+func getAuthHandlers(pool *pgxpool.Pool, secretKey string) *auth_http.AuthHandlers {
+	authService := auth_service.NewAuthService(pool)
+	authHandlers := auth_http.NewAuthHandlersHTTP(authService, secretKey)
 	return &authHandlers
 }

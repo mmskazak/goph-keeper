@@ -35,6 +35,7 @@ func InitConfig() (*Config, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error merge: %w", err)
 	}
+
 	return config, nil
 }
 

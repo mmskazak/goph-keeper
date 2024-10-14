@@ -3,9 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"gophKeeper/internal/app"
+	"gophKeeper/internal/config"
 	"gophKeeper/internal/logger"
-	"gophKeeper/internal/service_locator"
 	"os"
 	"os/signal"
 	"syscall"
@@ -14,14 +15,11 @@ import (
 
 func runApp(
 	ctx context.Context,
+	cfg *config.Config,
+	pool *pgxpool.Pool,
 	shutdownDuration time.Duration,
 ) error {
-	cfg, err := service_locator.GetConfig()
-	if err != nil {
-		logger.Log.Errorf("Error getting config: %v", err)
-	}
-
-	newApp := app.NewApp(ctx, cfg)
+	newApp := app.NewApp(ctx, cfg, pool)
 	go func() {
 		err := newApp.Start()
 		if err != nil {
