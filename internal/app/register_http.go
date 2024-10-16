@@ -8,8 +8,8 @@ import (
 	"gophKeeper/internal/modules/auth/auth_http"
 	"gophKeeper/internal/modules/auth/auth_middleware"
 	"gophKeeper/internal/modules/auth/auth_services/auth_service"
-	"gophKeeper/internal/modules/pwd/pwd_http"
 	"gophKeeper/internal/modules/pwd/pwd_services"
+	"gophKeeper/internal/modules/text/pwd_http"
 	"net/http"
 )
 
