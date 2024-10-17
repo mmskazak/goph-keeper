@@ -9,6 +9,11 @@ import (
 	"strings"
 )
 
+// Тип для ключей контекста
+type contextKey string
+
+const UserIDKey contextKey = "userID"
+
 func Authentication(next http.Handler, secretKey string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		jwtBearer := r.Header.Get("Authorization")
@@ -31,7 +36,7 @@ func Authentication(next http.Handler, secretKey string) http.Handler {
 		}
 
 		ctx := context.Background()
-		ctx = context.WithValue(ctx, "token", token)
+		ctx = context.WithValue(ctx, UserIDKey, token)
 		r.WithContext(ctx)
 
 		next.ServeHTTP(w, r)
