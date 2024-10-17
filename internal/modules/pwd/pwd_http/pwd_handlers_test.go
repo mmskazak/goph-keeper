@@ -2,7 +2,11 @@ package pwd_http
 
 import (
 	"context"
+	"github.com/stretchr/testify/assert"
 	"gophKeeper/internal/modules/pwd/pwd_dto"
+	"gophKeeper/internal/modules/pwd/pwd_services"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 )
 
@@ -12,23 +16,22 @@ func (f FakePwdService) SavePassword(ctx context.Context, dto pwd_dto.SavePwdDTO
 	return nil
 }
 
-func (f FakePwdService) DeletePassword(username string) error {
+func (f FakePwdService) DeletePassword(ctx context.Context, dto pwd_dto.DeletePwdDTO) error {
 	return nil
 }
-func (f FakePwdService) GetPassword(username string) (string, error) {
+func (f FakePwdService) GetPassword(ctx context.Context, dto pwd_dto.GetPwdDTO) (string, error) {
 	return "secret", nil
 }
 
-//func (f FakePwdService) GetAllPasswords(username string) (pwd_services.AllPasswords, error) {
-//	return pwd_services.AllPasswords{}, nil
-//}
+func (f FakePwdService) GetAllPasswords(ctx context.Context, dto pwd_dto.AllPwdDTO) ([]pwd_services.InfoByPassword, error) {
+	return []pwd_services.InfoByPassword{}, nil
+}
 
 func TestPwdHandlers_SavePassword(t *testing.T) {
-	t.Skip()
-	//fake := FakePwdService{}
-	//authHandlers := NewPwdHandlersHTTP(fake)
-	//r := httptest.NewRequest(http.MethodPost, "/save-password", http.NoBody)
-	//w := httptest.NewRecorder()
-	//authHandlers.SavePassword(w, r)
-	//assert.Equal(t, http.StatusBadRequest, w.Code)
+	fake := FakePwdService{}
+	authHandlers := NewPwdHandlersHTTP(fake)
+	r := httptest.NewRequest(http.MethodPost, "/save-password", http.NoBody)
+	w := httptest.NewRecorder()
+	authHandlers.SavePassword(w, r)
+	assert.Equal(t, http.StatusBadRequest, w.Code)
 }
