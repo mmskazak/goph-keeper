@@ -8,11 +8,8 @@ import (
 )
 
 type DeletePwdDTO struct {
-	ID          string `json:"id"`
-	UserID      string `json:"user_id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Credentials string `json:"credentials"`
+	PwdID  string `json:"pwd_id"`
+	UserID int    `json:"user_id"`
 }
 
 func DeletePwdDTOFromHTTP(r *http.Request) (DeletePwdDTO, error) {
@@ -25,5 +22,13 @@ func DeletePwdDTOFromHTTP(r *http.Request) (DeletePwdDTO, error) {
 	if err != nil {
 		return DeletePwdDTO{}, fmt.Errorf("unmarshalling body registration: %w", err)
 	}
+
+	// Извлекаем userID из контекста
+	userID, err := getUserIDFromContext(r.Context())
+	if err != nil {
+		return DeletePwdDTO{}, fmt.Errorf("error getUserIDFromContext: %w", err)
+	}
+
+	deletePwdDTO.UserID = userID
 	return deletePwdDTO, nil
 }

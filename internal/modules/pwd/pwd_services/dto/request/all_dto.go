@@ -1,29 +1,21 @@
 package request
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 )
 
 type AllPwdDTO struct {
-	ID          string      `json:"pwd_id"`
-	UserID      string      `json:"user_id"`
-	Title       string      `json:"title"`
-	Description string      `json:"description"`
-	Credentials Credentials `json:"credentials"`
+	UserID int `json:"user_id"`
 }
 
 func AllPwdDTOFromHTTP(r *http.Request) (AllPwdDTO, error) {
-	data, err := io.ReadAll(r.Body)
+	// Извлекаем userID из контекста
+	userID, err := getUserIDFromContext(r.Context())
 	if err != nil {
-		return AllPwdDTO{}, fmt.Errorf("reading body registration: %w", err)
+		return AllPwdDTO{}, fmt.Errorf("error getUserIDFromContext: %w", err)
 	}
-	var allPwdDTO AllPwdDTO
-	err = json.Unmarshal(data, &allPwdDTO)
-	if err != nil {
-		return AllPwdDTO{}, fmt.Errorf("unmarshalling body registration: %w", err)
-	}
-	return allPwdDTO, nil
+	return AllPwdDTO{
+		UserID: userID,
+	}, nil
 }

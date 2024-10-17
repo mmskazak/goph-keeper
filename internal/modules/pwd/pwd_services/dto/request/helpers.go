@@ -6,11 +6,6 @@ import (
 	"gophKeeper/internal/modules/auth/auth_middleware"
 )
 
-type Credentials struct {
-	Login    string `json:"login"`
-	Password string `json:"password"`
-}
-
 // GetUserIDFromContext Функция для извлечения userID из контекста
 func getUserIDFromContext(ctx context.Context) (int, error) {
 	if userID, ok := ctx.Value(auth_middleware.UserIDKey).(int); ok {
