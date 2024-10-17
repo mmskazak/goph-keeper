@@ -36,7 +36,7 @@ func registrationHandlersHTTP(
 			getAuthHandlers(pool, cfg.SecretKey).Logout(w, r)
 		})
 
-		r = routes.RegistrationRoutesPwd(r, pool)
+		r = routes.RegistrationRoutesPwd(r, pool, cfg)
 	})
 
 	return r

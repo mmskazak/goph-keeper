@@ -3,6 +3,7 @@ package pwd_services
 import (
 	"context"
 	"gophKeeper/internal/modules/pwd/pwd_services/dto/request"
+	"gophKeeper/internal/modules/pwd/pwd_services/dto/response"
 )
 
 type InfoByPassword struct {
@@ -14,6 +15,6 @@ type InfoByPassword struct {
 type IPwdService interface {
 	SavePassword(ctx context.Context, dto request.SavePwdDTO) error
 	DeletePassword(ctx context.Context, dto request.DeletePwdDTO) error
-	GetPassword(ctx context.Context, dto request.GetPwdDTO) (string, error)
 	GetAllPasswords(ctx context.Context, dto request.AllPwdDTO) ([]InfoByPassword, error)
+	GetPassword(ctx context.Context, dto request.GetPwdDTO) (response.PwdDTO, error)
 }

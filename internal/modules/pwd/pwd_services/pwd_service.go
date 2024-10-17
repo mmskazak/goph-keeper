@@ -17,14 +17,17 @@ type PwdService struct {
 	cryptoKey [32]byte
 }
 
-func NewPwdService(pool *pgxpool.Pool) *PwdService {
-	return &PwdService{pool: pool}
+func NewPwdService(pool *pgxpool.Pool, enKey [32]byte) *PwdService {
+	return &PwdService{
+		pool:      pool,
+		cryptoKey: enKey,
+	}
 }
 
 func (pwd *PwdService) SavePassword(ctx context.Context, dto request.SavePwdDTO) error {
 	sql := `INSERT INTO passwords (user_id, title, description, credentials) VALUES ($1, $2, $3)`
-	key := [32]byte{}
-	encryptedCredentials, err := crypto.Encrypt(key, []byte(dto.Credentials))
+	//Шифруем данные
+	encryptedCredentials, err := crypto.Encrypt(pwd.cryptoKey, []byte(dto.Credentials))
 	if err != nil {
 		return fmt.Errorf("error while encrypting credentials: %w", err)
 	}
