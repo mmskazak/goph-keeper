@@ -3,16 +3,16 @@ package request
 import (
 	"encoding/json"
 	"fmt"
-	"gophKeeper/internal/modules/pwd/pwd_services/dto/common"
+	"gophKeeper/internal/modules/pwd/pwd_services/value_obj"
 	"io"
 	"net/http"
 )
 
 type SavePwdDTO struct {
-	UserID      int                `json:"user_id"`
-	Title       string             `json:"title"`
-	Description string             `json:"description"`
-	Credentials common.Credentials `json:"credentials"`
+	UserID      int                   `json:"user_id"`
+	Title       string                `json:"title"`
+	Description string                `json:"description"`
+	Credentials value_obj.Credentials `json:"credentials"`
 }
 
 func SavePwdDTOFromHTTP(r *http.Request) (SavePwdDTO, error) {

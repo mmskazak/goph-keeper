@@ -1,10 +1,11 @@
 package response
 
-import "gophKeeper/internal/modules/pwd/pwd_services/dto/common"
+import (
+	"gophKeeper/internal/modules/pwd/pwd_services/value_obj"
+)
 
 type PwdDTO struct {
-	UserID      int                `json:"user_id"`
-	Title       string             `json:"title"`
-	Description string             `json:"description"`
-	Credentials common.Credentials `json:"credentials"`
+	Title       string                `json:"title"`
+	Description string                `json:"description"`
+	Credentials value_obj.Credentials `json:"credentials"`
 }

@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"gophKeeper/internal/modules/pwd/pwd_services/dto/common"
 	"gophKeeper/internal/modules/pwd/pwd_services/dto/request"
 	"gophKeeper/internal/modules/pwd/pwd_services/dto/response"
+	"gophKeeper/internal/modules/pwd/pwd_services/value_obj"
 	"gophKeeper/pkg/crypto"
 )
 
@@ -97,7 +97,7 @@ func (pwd *PwdService) GetAllPasswords(ctx context.Context, dto request.AllPwdDT
 	for rows.Next() {
 		var title string
 		var description string
-		var credentials common.Credentials
+		var credentials value_obj.Credentials
 		err := rows.Scan(&title, &description, &credentials)
 		if err != nil {
 			return []response.PwdDTO{}, fmt.Errorf("error scan get all passwords from pwd service: %w", err)

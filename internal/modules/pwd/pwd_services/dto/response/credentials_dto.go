@@ -1,7 +1,9 @@
 package response
 
-import "gophKeeper/internal/modules/pwd/pwd_services/dto/common"
+import (
+	"gophKeeper/internal/modules/pwd/pwd_services/value_obj"
+)
 
 type CredentialsDTO struct {
-	common.Credentials
+	value_obj.Credentials
 }
