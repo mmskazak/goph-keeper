@@ -6,8 +6,8 @@ import (
 	"golang.org/x/crypto/chacha20" // Пакет для работы с ChaCha20
 )
 
-// Функция для шифрования текста
-func encrypt(key [32]byte, plaintext []byte) (string, error) {
+// Encrypt Функция для шифрования текста
+func Encrypt(key [32]byte, plaintext []byte) (string, error) {
 	// Создаём новый объект шифрования ChaCha20 с заданным ключом и инициализационным вектором (nonce)
 	var nonce [12]byte
 	if _, err := rand.Read(nonce[:]); err != nil {
@@ -25,8 +25,8 @@ func encrypt(key [32]byte, plaintext []byte) (string, error) {
 	return fmt.Sprintf("%x:%x", nonce, ciphertext), nil
 }
 
-// Функция для расшифровки текста
-func decrypt(key [32]byte, encrypted string) ([]byte, error) {
+// Decrypt Функция для расшифровки текста
+func Decrypt(key [32]byte, encrypted string) ([]byte, error) {
 	// Разделяем зашифрованный текст и nonce
 	var nonce [12]byte
 	var ciphertext []byte
@@ -42,34 +42,4 @@ func decrypt(key [32]byte, encrypted string) ([]byte, error) {
 	stream.XORKeyStream(plaintext, ciphertext) // Расшифровываем текст
 
 	return plaintext, nil
-}
-
-func main() {
-	// Секретный ключ, который должен быть длиной 32 байта
-	var key [32]byte
-	if _, err := rand.Read(key[:]); err != nil {
-		fmt.Println("Ошибка при генерации ключа:", err)
-		return
-	}
-
-	// Открытый текст для шифрования
-	plaintext := []byte("password123")
-
-	// Шифруем текст
-	encrypted, err := encrypt(key, plaintext)
-	if err != nil {
-		fmt.Println("Ошибка шифрования:", err)
-		return
-	}
-
-	fmt.Println("Encrypted:", encrypted)
-
-	// Расшифровываем текст
-	decrypted, err := decrypt(key, encrypted)
-	if err != nil {
-		fmt.Println("Ошибка расшифровки:", err)
-		return
-	}
-
-	fmt.Println("Decrypted:", string(decrypted))
 }
