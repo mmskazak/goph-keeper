@@ -38,14 +38,14 @@ func (p PwdHandlers) GetPassword(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	password, err := p.pwdService.GetPassword(r.Context(), getPwdDTO)
+	credentials, err := p.pwdService.GetPassword(r.Context(), getPwdDTO)
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	jsonResponse, err := json.Marshal(password)
+	jsonResponse, err := json.Marshal(credentials)
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
 		return

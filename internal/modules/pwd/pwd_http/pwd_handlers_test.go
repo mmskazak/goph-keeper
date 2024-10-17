@@ -5,6 +5,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"gophKeeper/internal/modules/pwd/pwd_services"
 	"gophKeeper/internal/modules/pwd/pwd_services/dto/request"
+	"gophKeeper/internal/modules/pwd/pwd_services/dto/response"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -19,8 +20,8 @@ func (f FakePwdService) SavePassword(ctx context.Context, dto request.SavePwdDTO
 func (f FakePwdService) DeletePassword(ctx context.Context, dto request.DeletePwdDTO) error {
 	return nil
 }
-func (f FakePwdService) GetPassword(ctx context.Context, dto request.GetPwdDTO) (string, error) {
-	return "secret", nil
+func (f FakePwdService) GetPassword(ctx context.Context, dto request.GetPwdDTO) (response.PwdDTO, error) {
+	return response.PwdDTO{}, nil
 }
 
 func (f FakePwdService) GetAllPasswords(ctx context.Context, dto request.AllPwdDTO) ([]pwd_services.InfoByPassword, error) {

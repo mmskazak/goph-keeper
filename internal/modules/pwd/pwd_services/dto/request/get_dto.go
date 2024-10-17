@@ -1,10 +1,8 @@
 package request
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
-	"gophKeeper/internal/modules/auth/auth_middleware"
 	"io"
 	"net/http"
 )
@@ -37,12 +35,4 @@ func GetPwdDTOFromHTTP(r *http.Request) (GetPwdDTO, error) {
 
 	getPwdDTO.UserID = userID // Устанавливаем userID в структуру
 	return getPwdDTO, nil     // Возвращаем структуру и nil (без ошибки)
-}
-
-// GetUserIDFromContext Функция для извлечения userID из контекста
-func getUserIDFromContext(ctx context.Context) (int, error) {
-	if userID, ok := ctx.Value(auth_middleware.UserIDKey).(int); ok {
-		return userID, nil // Возвращаем userID
-	}
-	return 0, fmt.Errorf("userID not found in context") // Ошибка, если не найден
 }
