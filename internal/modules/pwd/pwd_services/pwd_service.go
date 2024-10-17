@@ -86,7 +86,7 @@ func (pwd *PwdService) GetPassword(ctx context.Context, dto request.GetPwdDTO) (
 }
 
 func (pwd *PwdService) GetAllPasswords(ctx context.Context, dto request.AllPwdDTO) ([]response.PwdDTO, error) {
-	sql := `SELECT resource, login, password FROM passwords WHERE user_id = $1`
+	sql := `SELECT id,resource, login, password FROM passwords WHERE user_id = $1`
 	rows, err := pwd.pool.Query(ctx, sql, dto.UserID)
 	if err != nil {
 		return []response.PwdDTO{}, fmt.Errorf("error query get all passwords: %w", err)
@@ -95,15 +95,17 @@ func (pwd *PwdService) GetAllPasswords(ctx context.Context, dto request.AllPwdDT
 	var listPasswords []response.PwdDTO
 
 	for rows.Next() {
+		var id string
 		var title string
 		var description string
 		var credentials value_obj.Credentials
-		err := rows.Scan(&title, &description, &credentials)
+		err := rows.Scan(&id, &title, &description, &credentials)
 		if err != nil {
 			return []response.PwdDTO{}, fmt.Errorf("error scan get all passwords from pwd service: %w", err)
 		}
 
 		listPasswords = append(listPasswords, response.PwdDTO{
+			ID:          id,
 			Title:       title,
 			Description: description,
 			Credentials: credentials,
