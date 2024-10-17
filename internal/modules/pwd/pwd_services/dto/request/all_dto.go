@@ -8,11 +8,11 @@ import (
 )
 
 type AllPwdDTO struct {
-	ID          string `json:"id"`
-	UserID      string `json:"user_id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Credentials string `json:"credentials"`
+	ID          string      `json:"pwd_id"`
+	UserID      string      `json:"user_id"`
+	Title       string      `json:"title"`
+	Description string      `json:"description"`
+	Credentials Credentials `json:"credentials"`
 }
 
 func AllPwdDTOFromHTTP(r *http.Request) (AllPwdDTO, error) {

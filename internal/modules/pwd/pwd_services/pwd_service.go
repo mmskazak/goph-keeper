@@ -25,12 +25,19 @@ func NewPwdService(pool *pgxpool.Pool, enKey [32]byte) *PwdService {
 }
 
 func (pwd *PwdService) SavePassword(ctx context.Context, dto request.SavePwdDTO) error {
-	sql := `INSERT INTO passwords (user_id, title, description, credentials) VALUES ($1, $2, $3)`
-	//Шифруем данные
-	encryptedCredentials, err := crypto.Encrypt(pwd.cryptoKey, []byte(dto.Credentials))
+	sql := `INSERT INTO passwords (user_id, title, description, credentials) VALUES ($1, $2, $3, $4)`
+
+	marshaledCredentials, err := json.Marshal(dto.Credentials)
+	if err != nil {
+		return fmt.Errorf("error marshalling credentials: %w", err)
+	}
+
+	// Шифруем данные
+	encryptedCredentials, err := crypto.Encrypt(pwd.cryptoKey, marshaledCredentials)
 	if err != nil {
 		return fmt.Errorf("error while encrypting credentials: %w", err)
 	}
+
 	_, err = pwd.pool.Exec(ctx, sql, dto.UserID, dto.Title, dto.Description, encryptedCredentials)
 	if err != nil {
 		return fmt.Errorf("error save password from pwd service: %w", err)
