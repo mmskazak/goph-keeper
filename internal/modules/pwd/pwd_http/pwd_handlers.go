@@ -2,8 +2,8 @@ package pwd_http
 
 import (
 	"encoding/json"
-	"gophKeeper/internal/modules/pwd/pwd_dto"
 	"gophKeeper/internal/modules/pwd/pwd_services"
+	"gophKeeper/internal/modules/pwd/pwd_services/dto/request"
 	"net/http"
 )
 
@@ -18,7 +18,7 @@ func NewPwdHandlersHTTP(service pwd_services.IPwdService) PwdHandlers {
 }
 
 func (p PwdHandlers) SavePassword(w http.ResponseWriter, r *http.Request) {
-	savePwdDTO, err := pwd_dto.SavePwdDTOFromHTTP(r)
+	savePwdDTO, err := request.SavePwdDTOFromHTTP(r)
 	if err != nil {
 		http.Error(w, "", http.StatusBadRequest)
 		return
@@ -33,7 +33,7 @@ func (p PwdHandlers) SavePassword(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p PwdHandlers) GetPassword(w http.ResponseWriter, r *http.Request) {
-	getPwdDTO, err := pwd_dto.GetPwdDTOFromHTTP(r)
+	getPwdDTO, err := request.GetPwdDTOFromHTTP(r)
 	if err != nil {
 		http.Error(w, "", http.StatusBadRequest)
 		return
@@ -43,12 +43,21 @@ func (p PwdHandlers) GetPassword(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
+
+	w.Header().Set("Content-Type", "application/json")
+	jsonResponse, err := json.Marshal(password)
+	if err != nil {
+		http.Error(w, "", http.StatusInternalServerError)
+		return
+	}
+
+	// Устанавливаем статус и отправляем ответ
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(password))
+	w.Write(jsonResponse)
 }
 
 func (p PwdHandlers) DeletePassword(w http.ResponseWriter, r *http.Request) {
-	deletePwdDTO, err := pwd_dto.DeletePwdDTOFromHTTP(r)
+	deletePwdDTO, err := request.DeletePwdDTOFromHTTP(r)
 	if err != nil {
 		http.Error(w, "", http.StatusBadRequest)
 		return
@@ -63,7 +72,7 @@ func (p PwdHandlers) DeletePassword(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p PwdHandlers) GetAllPasswords(w http.ResponseWriter, r *http.Request) {
-	allPwdDTO, err := pwd_dto.AllPwdDTOFromHTTP(r)
+	allPwdDTO, err := request.AllPwdDTOFromHTTP(r)
 	if err != nil {
 		http.Error(w, "", http.StatusBadRequest)
 		return

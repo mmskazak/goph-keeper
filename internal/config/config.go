@@ -2,28 +2,32 @@ package config
 
 import (
 	"dario.cat/mergo"
+	"encoding/hex"
+	"errors"
 	"fmt"
 )
 
 // Config содержит поля конфигурации.
 type Config struct {
-	Address     string   `json:"address"`      // Адрес сервера
-	DataBaseDSN string   `json:"database_dsn"` // Строка подключения к базе данных
-	SecretKey   string   `json:"secret_key"`   // Секретный ключ JWT токена
-	LogLevel    LogLevel `json:"log_level"`    // Уровень логирования
+	Address          string   `json:"address"`            // Адрес сервера
+	DataBaseDSN      string   `json:"database_dsn"`       // Строка подключения к базе данных
+	SecretKey        string   `json:"secret_key"`         // Секретный ключ JWT токена
+	LogLevel         LogLevel `json:"log_level"`          // Уровень логирования
+	EncryptionKeyHex string   `json:"encryption_key_hex"` // 32-байтный ключ для шифрования в hex
+	EncryptionKey    []byte   `json:"-"`                  // 32-байтный ключ в байтах (не сериализуется)
 }
 
 func NewConfig() *Config {
 	return &Config{
-		Address:     ":8080",
-		LogLevel:    "info",
-		SecretKey:   "secret",
-		DataBaseDSN: "postgresql://gkuser:gkpass@localhost:5432/goph_keeper?sslmode=disable",
+		Address:          ":8080",
+		LogLevel:         "info",
+		SecretKey:        "secret",
+		DataBaseDSN:      "postgresql://gkuser:gkpass@localhost:5432/goph_keeper?sslmode=disable",
+		EncryptionKeyHex: "MySecretEncryptionKey1234567890",
 	}
 }
 
 // InitConfig инициализирует конфигурацию из флагов командной строки и переменных окружения.
-// Возвращает указатель на структуру Config и ошибку в случае её возникновения.
 func InitConfig() (*Config, error) {
 	config := NewConfig()
 	config, err := mergeFlags(config)
@@ -36,6 +40,21 @@ func InitConfig() (*Config, error) {
 		return nil, fmt.Errorf("error merge: %w", err)
 	}
 
+	// Проверка и преобразование ключа из hex-строки в байты
+	if config.EncryptionKeyHex == "" {
+		return nil, errors.New("encryption key not provided")
+	}
+
+	encryptionKey, err := hex.DecodeString(config.EncryptionKeyHex)
+	if err != nil {
+		return nil, fmt.Errorf("invalid encryption key: %w", err)
+	}
+
+	if len(encryptionKey) != 32 {
+		return nil, fmt.Errorf("encryption key must be 32 bytes long, got %d bytes", len(encryptionKey))
+	}
+
+	config.EncryptionKey = encryptionKey
 	return config, nil
 }
 

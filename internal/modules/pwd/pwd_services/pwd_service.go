@@ -2,24 +2,33 @@ package pwd_services
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"gophKeeper/internal/modules/pwd/pwd_dto"
+	"gophKeeper/internal/modules/pwd/pwd_services/dto/request"
+	"gophKeeper/internal/modules/pwd/pwd_services/dto/response"
+	"gophKeeper/pkg/crypto"
 )
 
 type PwdService struct {
-	pool *pgxpool.Pool
+	pool      *pgxpool.Pool
+	cryptoKey [32]byte
 }
 
 func NewPwdService(pool *pgxpool.Pool) *PwdService {
 	return &PwdService{pool: pool}
 }
 
-func (pwd *PwdService) SavePassword(ctx context.Context, dto pwd_dto.SavePwdDTO) error {
-	sql := `INSERT INTO passwords (user_id, resource, login, password) VALUES ($1, $2, $3, $4)`
-	_, err := pwd.pool.Exec(ctx, sql, dto.UserID)
+func (pwd *PwdService) SavePassword(ctx context.Context, dto request.SavePwdDTO) error {
+	sql := `INSERT INTO passwords (user_id, title, description, credentials) VALUES ($1, $2, $3)`
+	key := [32]byte{}
+	encryptedCredentials, err := crypto.Encrypt(key, []byte(dto.Credentials))
+	if err != nil {
+		return fmt.Errorf("error while encrypting credentials: %w", err)
+	}
+	_, err = pwd.pool.Exec(ctx, sql, dto.UserID, dto.Title, dto.Description, encryptedCredentials)
 	if err != nil {
 		return fmt.Errorf("error save password from pwd service: %w", err)
 	}
@@ -27,7 +36,7 @@ func (pwd *PwdService) SavePassword(ctx context.Context, dto pwd_dto.SavePwdDTO)
 	return nil
 }
 
-func (pwd *PwdService) DeletePassword(ctx context.Context, dto pwd_dto.DeletePwdDTO) error {
+func (pwd *PwdService) DeletePassword(ctx context.Context, dto request.DeletePwdDTO) error {
 	sql := `DELETE FROM passwords WHERE user_id = $1 AND resource = $2;`
 	_, err := pwd.pool.Exec(ctx, sql, dto.UserID)
 	if err != nil {
@@ -36,17 +45,17 @@ func (pwd *PwdService) DeletePassword(ctx context.Context, dto pwd_dto.DeletePwd
 	return nil
 }
 
-func (pwd *PwdService) GetPassword(ctx context.Context, dto pwd_dto.GetPwdDTO) (string, error) {
-	sql := `SELECT password FROM passwords WHERE user_id = $1 AND id = $2;`
+func (pwd *PwdService) GetPassword(ctx context.Context, dto request.GetPwdDTO) (response.PwdDTO, error) {
+	sql := `SELECT credentials FROM passwords WHERE user_id = $1 AND id = $2;`
 	row := pwd.pool.QueryRow(ctx, sql, dto.UserID, dto.PwdID)
 
-	var password string
-	err := row.Scan(&password)
+	var credentialsData []byte
+	err := row.Scan(&credentialsData)
 
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			// Обработка случая, когда запись не найдена
-			return "", fmt.Errorf(
+			return response.PwdDTO{}, fmt.Errorf(
 				"password not found for user_id %v and pwd_id %v: %w",
 				dto.UserID,
 				dto.PwdID,
@@ -54,13 +63,18 @@ func (pwd *PwdService) GetPassword(ctx context.Context, dto pwd_dto.GetPwdDTO) (
 			)
 		}
 		// Обработка других ошибок
-		return "", fmt.Errorf("error scanning password from pwd service: %w", err)
+		return response.PwdDTO{}, fmt.Errorf("error scanning password from pwd service: %w", err)
 	}
 
-	return password, nil
+	var pwdDTO response.PwdDTO
+	if err := json.Unmarshal(credentialsData, &pwdDTO); err != nil {
+		return response.PwdDTO{}, fmt.Errorf("error unmarshalling credentials: %w", err)
+	}
+
+	return pwdDTO, nil
 }
 
-func (pwd *PwdService) GetAllPasswords(ctx context.Context, dto pwd_dto.AllPwdDTO) ([]InfoByPassword, error) {
+func (pwd *PwdService) GetAllPasswords(ctx context.Context, dto request.AllPwdDTO) ([]InfoByPassword, error) {
 	sql := `SELECT resource, login, password FROM passwords WHERE user_id = $1`
 	rows, err := pwd.pool.Query(ctx, sql, dto.UserID)
 	if err != nil {

@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"gophKeeper/internal/modules/pwd/pwd_dto"
+	"gophKeeper/internal/modules/pwd/pwd_services/dto/request"
 )
 
 type TextService struct {
@@ -15,7 +15,7 @@ func NewPwdService(pool *pgxpool.Pool) *TextService {
 	return &TextService{pool: pool}
 }
 
-func (pwd *TextService) SavePassword(ctx context.Context, dto pwd_dto.SavePwdDTO) error {
+func (pwd *TextService) SavePassword(ctx context.Context, dto request.SavePwdDTO) error {
 	sql := `INSERT INTO passwords (user_id, resource, login, password) VALUES ($1, $2, $3, $4)`
 	_, err := pwd.pool.Exec(ctx, sql,
 		dto.UserID,
@@ -29,7 +29,7 @@ func (pwd *TextService) SavePassword(ctx context.Context, dto pwd_dto.SavePwdDTO
 	return nil
 }
 
-func (pwd *TextService) DeletePassword(ctx context.Context, dto pwd_dto.DeletePwdDTO) error {
+func (pwd *TextService) DeletePassword(ctx context.Context, dto request.DeletePwdDTO) error {
 	sql := `DELETE FROM passwords WHERE user_id = $1 AND resource = $2;`
 	_, err := pwd.pool.Exec(ctx, sql, dto.UserID, dto.Resource)
 	if err != nil {
@@ -38,7 +38,7 @@ func (pwd *TextService) DeletePassword(ctx context.Context, dto pwd_dto.DeletePw
 	return nil
 }
 
-func (pwd *TextService) GetPassword(ctx context.Context, dto pwd_dto.GetPwdDTO) (string, error) {
+func (pwd *TextService) GetPassword(ctx context.Context, dto request.GetPwdDTO) (string, error) {
 	sql := `SELECT password FROM passwords WHERE user_id = $1 AND login = $2;`
 	row := pwd.pool.QueryRow(ctx, sql, dto.UserID, dto.Login)
 	var password string
@@ -49,7 +49,7 @@ func (pwd *TextService) GetPassword(ctx context.Context, dto pwd_dto.GetPwdDTO) 
 	return password, nil
 }
 
-func (pwd *TextService) GetAllPasswords(ctx context.Context, dto pwd_dto.AllPwdDTO) ([]InfoByText, error) {
+func (pwd *TextService) GetAllPasswords(ctx context.Context, dto request.AllPwdDTO) ([]InfoByText, error) {
 	sql := `SELECT resource, login, password FROM passwords WHERE user_id = $1`
 	rows, err := pwd.pool.Query(ctx, sql, dto.UserID)
 	if err != nil {

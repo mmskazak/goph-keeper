@@ -1,4 +1,4 @@
-package pwd_dto
+package request
 
 import (
 	"encoding/json"
@@ -8,7 +8,6 @@ import (
 )
 
 type SavePwdDTO struct {
-	ID          string `json:"id"`
 	UserID      string `json:"user_id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`

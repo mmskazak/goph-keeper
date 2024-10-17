@@ -1,4 +1,4 @@
-package pwd_dto
+package request
 
 import (
 	"encoding/json"
