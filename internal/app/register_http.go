@@ -8,8 +8,7 @@ import (
 	"gophKeeper/internal/modules/auth/auth_http"
 	"gophKeeper/internal/modules/auth/auth_middleware"
 	"gophKeeper/internal/modules/auth/auth_services/auth_service"
-	"gophKeeper/internal/modules/pwd/pwd_services"
-	"gophKeeper/internal/modules/text/pwd_http"
+	"gophKeeper/internal/modules/pwd/routes"
 	"net/http"
 )
 
@@ -37,20 +36,7 @@ func registrationHandlersHTTP(
 			getAuthHandlers(pool, cfg.SecretKey).Logout(w, r)
 		})
 
-		//Пароли
-		r.Post("/pwd/save", func(w http.ResponseWriter, req *http.Request) {
-			getPwdHandlers(pool).SavePassword(w, req)
-		})
-		r.Post("/pwd/all", func(w http.ResponseWriter, req *http.Request) {
-			getPwdHandlers(pool).GetAllPasswords(w, req)
-		})
-		r.Delete("/pwd/delete", func(w http.ResponseWriter, req *http.Request) {
-			getPwdHandlers(pool).DeletePassword(w, req)
-		})
-		r.Post("/pwd/get", func(w http.ResponseWriter, req *http.Request) {
-			getPwdHandlers(pool).GetPassword(w, req)
-		})
-
+		r = routes.RegistrationRoutesPwd(r, pool)
 	})
 
 	return r
@@ -60,10 +46,4 @@ func getAuthHandlers(pool *pgxpool.Pool, secretKey string) *auth_http.AuthHandle
 	authService := auth_service.NewAuthService(pool)
 	authHandlers := auth_http.NewAuthHandlersHTTP(authService, secretKey)
 	return &authHandlers
-}
-
-func getPwdHandlers(pool *pgxpool.Pool) *pwd_http.PwdHandlers {
-	pwdService := pwd_services.NewPwdService(pool)
-	pwdHandlers := pwd_http.NewPwdHandlersHTTP(pwdService)
-	return &pwdHandlers
 }
