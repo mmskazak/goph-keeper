@@ -66,19 +66,20 @@ func (pwd *PwdService) GetPassword(ctx context.Context, dto request.GetPwdDTO) (
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			// Обработка случая, когда запись не найдена
-			return response.CredentialsDTO{}, fmt.Errorf(
-				"password not found for user_id %v and pwd_id %v: %w",
-				dto.UserID,
-				dto.PwdID,
-				err,
-			)
+			return response.CredentialsDTO{}, fmt.Errorf("password not found for user: %w", err)
 		}
 		// Обработка других ошибок
 		return response.CredentialsDTO{}, fmt.Errorf("error scanning password from pwd service: %w", err)
 	}
 
+	//Расшифровываем данные
+	decryptedCredentials, err := crypto.Decrypt(pwd.cryptoKey, string(credentialsData))
+	if err != nil {
+		return response.CredentialsDTO{}, err
+	}
+
 	var credentials response.CredentialsDTO
-	if err := json.Unmarshal(credentialsData, &credentials); err != nil {
+	if err := json.Unmarshal(decryptedCredentials, &credentials); err != nil {
 		return response.CredentialsDTO{}, fmt.Errorf("error unmarshalling credentials: %w", err)
 	}
 
@@ -98,10 +99,21 @@ func (pwd *PwdService) GetAllPasswords(ctx context.Context, dto request.AllPwdDT
 		var id string
 		var title string
 		var description string
-		var credentials value_obj.Credentials
-		err := rows.Scan(&id, &title, &description, &credentials)
+		var credentialsData []byte
+		err := rows.Scan(&id, &title, &description, &credentialsData)
 		if err != nil {
 			return []response.PwdDTO{}, fmt.Errorf("error scan get all passwords from pwd service: %w", err)
+		}
+
+		//Расшифровываем данные
+		decryptedCredentials, err := crypto.Decrypt(pwd.cryptoKey, string(credentialsData))
+		if err != nil {
+			return []response.PwdDTO{}, err
+		}
+
+		var credentials value_obj.Credentials
+		if err := json.Unmarshal(decryptedCredentials, &credentials); err != nil {
+			return []response.PwdDTO{}, fmt.Errorf("error unmarshalling credentials: %w", err)
 		}
 
 		listPasswords = append(listPasswords, response.PwdDTO{
@@ -113,4 +125,21 @@ func (pwd *PwdService) GetAllPasswords(ctx context.Context, dto request.AllPwdDT
 	}
 
 	return listPasswords, nil
+}
+
+func (pwd *PwdService) UpdatePassword(ctx context.Context, dto request.UpdatePwdDTO) error {
+	marshaledCredentials, err := json.Marshal(dto.Credentials)
+	if err != nil {
+		return fmt.Errorf("error marshalling credentials: %w", err)
+	}
+
+	// Шифруем данные
+	encryptedCredentials, err := crypto.Encrypt(pwd.cryptoKey, marshaledCredentials)
+
+	sql := `UPDATE passwords SET title = $2, descriotion = $3, credentials = $4 WHERE id = $5 AND user_id = $6`
+	_, err = pwd.pool.Exec(ctx, sql, dto.Title, dto.Description, encryptedCredentials, dto.ID, dto.UserID)
+	if err != nil {
+		return fmt.Errorf("error updating password: %w", err)
+	}
+	return nil
 }
