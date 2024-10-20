@@ -2,23 +2,23 @@ package pwd_http
 
 import (
 	"encoding/json"
-	"gophKeeper/internal/modules/text/text_dto"
-	"gophKeeper/internal/modules/text/text_services"
+	"gophKeeper/internal/modules/file/file_services"
+
 	"net/http"
 )
 
 type TextHandlers struct {
-	textService text_services.ITextService
+	textService file_services.IFileService
 }
 
-func NewTextHandlersHTTP(service text_services.ITextService) TextHandlers {
+func NewTextHandlersHTTP(service file_services.IFileService) TextHandlers {
 	return TextHandlers{
 		textService: service,
 	}
 }
 
 func (p TextHandlers) SaveText(w http.ResponseWriter, r *http.Request) {
-	savePwdDTO, err := text_dto.SaveTextDTOFromHTTP(r)
+	savePwdDTO, err := request.SaveFileDTOFromHTTP(r)
 	if err != nil {
 		http.Error(w, "", http.StatusBadRequest)
 		return
