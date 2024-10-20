@@ -1,4 +1,4 @@
-package request
+package helpers
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 )
 
 // GetUserIDFromContext Функция для извлечения userID из контекста
-func getUserIDFromContext(ctx context.Context) (int, error) {
+func GetUserIDFromContext(ctx context.Context) (int, error) {
 	if userID, ok := ctx.Value(auth_middleware.UserIDKey).(int); ok {
 		return userID, nil // Возвращаем userID
 	}

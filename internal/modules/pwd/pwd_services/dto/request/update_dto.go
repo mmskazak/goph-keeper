@@ -3,6 +3,7 @@ package request
 import (
 	"encoding/json"
 	"fmt"
+	"gophKeeper/internal/helpers"
 	"gophKeeper/internal/modules/pwd/pwd_services/value_obj"
 	"io"
 	"net/http"
@@ -28,7 +29,7 @@ func UpdatePwdDTOFromHTTP(r *http.Request) (UpdatePwdDTO, error) {
 	}
 
 	// Извлекаем userID из контекста
-	userID, err := getUserIDFromContext(r.Context())
+	userID, err := helpers.getUserIDFromContext(r.Context())
 	if err != nil {
 		return UpdatePwdDTO{}, fmt.Errorf("error getUserIDFromContext: %w", err)
 	}

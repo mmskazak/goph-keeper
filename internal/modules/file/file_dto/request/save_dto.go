@@ -3,16 +3,15 @@ package request
 import (
 	"encoding/json"
 	"fmt"
-	"gophKeeper/internal/modules/pwd/pwd_services/value_obj"
+	"gophKeeper/internal/helpers"
 	"io"
 	"net/http"
 )
 
 type SaveFileDTO struct {
-	UserID      int                   `json:"user_id"`
-	Title       string                `json:"title"`
-	Description string                `json:"description"`
-	Credentials value_obj.Credentials `json:"credentials"`
+	FileName string `json:"file_name"`
+	FilePath string `json:"file_path"`
+	UserID   int    `json:"user_id"`
 }
 
 func SaveFileDTOFromHTTP(r *http.Request) (SaveFileDTO, error) {
@@ -27,7 +26,7 @@ func SaveFileDTOFromHTTP(r *http.Request) (SaveFileDTO, error) {
 	}
 
 	// Извлекаем userID из контекста
-	userID, err := getUserIDFromContext(r.Context())
+	userID, err := helpers.getUserIDFromContext(r.Context())
 	if err != nil {
 		return SaveFileDTO{}, fmt.Errorf("error getUserIDFromContext: %w", err)
 	}

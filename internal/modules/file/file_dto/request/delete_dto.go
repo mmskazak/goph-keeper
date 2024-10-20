@@ -3,6 +3,7 @@ package request
 import (
 	"encoding/json"
 	"fmt"
+	"gophKeeper/internal/helpers"
 	"io"
 	"net/http"
 )
@@ -24,7 +25,7 @@ func DeleteFileDTOFromHTTP(r *http.Request) (DeleteFileDTO, error) {
 	}
 
 	// Извлекаем userID из контекста
-	userID, err := getUserIDFromContext(r.Context())
+	userID, err := helpers.getUserIDFromContext(r.Context())
 	if err != nil {
 		return DeleteFileDTO{}, fmt.Errorf("error getUserIDFromContext: %w", err)
 	}

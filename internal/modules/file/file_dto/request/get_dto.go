@@ -3,12 +3,13 @@ package request
 import (
 	"encoding/json"
 	"fmt"
+	"gophKeeper/internal/helpers"
 	"io"
 	"net/http"
 )
 
 type GetFileDTO struct {
-	PwdID  string `json:"pwd_id"`  // ID пароля в базе данных
+	FileID string `json:"file_id"` // ID пароля в базе данных
 	UserID int    `json:"user_id"` // Идентификатор пользователя
 }
 
@@ -28,7 +29,7 @@ func GetFileDTOFromHTTP(r *http.Request) (GetFileDTO, error) {
 	}
 
 	// Извлекаем userID из контекста
-	userID, err := getUserIDFromContext(r.Context())
+	userID, err := helpers.GetUserIDFromContext(r.Context())
 	if err != nil {
 		return GetFileDTO{}, fmt.Errorf("error getUserIDFromContext: %w", err)
 	}

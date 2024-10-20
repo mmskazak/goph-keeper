@@ -3,6 +3,7 @@ package request
 import (
 	"encoding/json"
 	"fmt"
+	"gophKeeper/internal/helpers"
 	"io"
 	"net/http"
 )
@@ -28,7 +29,7 @@ func GetPwdDTOFromHTTP(r *http.Request) (GetPwdDTO, error) {
 	}
 
 	// Извлекаем userID из контекста
-	userID, err := getUserIDFromContext(r.Context())
+	userID, err := helpers.getUserIDFromContext(r.Context())
 	if err != nil {
 		return GetPwdDTO{}, fmt.Errorf("error getUserIDFromContext: %w", err)
 	}

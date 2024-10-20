@@ -2,6 +2,7 @@ package request
 
 import (
 	"fmt"
+	"gophKeeper/internal/helpers"
 	"net/http"
 )
 
@@ -11,7 +12,7 @@ type AllPwdDTO struct {
 
 func AllPwdDTOFromHTTP(r *http.Request) (AllPwdDTO, error) {
 	// Извлекаем userID из контекста
-	userID, err := getUserIDFromContext(r.Context())
+	userID, err := helpers.getUserIDFromContext(r.Context())
 	if err != nil {
 		return AllPwdDTO{}, fmt.Errorf("error getUserIDFromContext: %w", err)
 	}

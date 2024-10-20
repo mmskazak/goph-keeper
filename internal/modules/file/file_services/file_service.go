@@ -4,28 +4,102 @@ import (
 	"context"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gophKeeper/internal/modules/file/file_dto/request"
+	"io"
+	"os"
+	"path/filepath"
 )
 
 type FileService struct {
-	pool *pgxpool.Pool
+	pool     *pgxpool.Pool
+	basePath string // Путь к директории для хранения файлов
 }
 
-func NewFileService(pool *pgxpool.Pool) *FileService {
-	return &FileService{pool: pool}
+func NewFileService(pool *pgxpool.Pool, basePath string) *FileService {
+	return &FileService{
+		pool:     pool,
+		basePath: basePath,
+	}
 }
 
-func (pwd *FileService) SaveFile(ctx context.Context, dto request.SaveFileDTO) error {
-	return nil
+// SaveFile сохраняет файл на сервере и сохраняет метаданные в базу данных
+func (fs *FileService) SaveFile(ctx context.Context, dto request.SaveFileDTO) error {
+	destPath := filepath.Join(fs.basePath, dto.FileName)
+
+	// Открываем исходный файл
+	srcFile, err := os.Open(dto.FilePath)
+	if err != nil {
+		return err
+	}
+	defer srcFile.Close()
+
+	// Создаем файл в целевой директории
+	destFile, err := os.Create(destPath)
+	if err != nil {
+		return err
+	}
+	defer destFile.Close()
+
+	// Копируем содержимое файла
+	if _, err := io.Copy(destFile, srcFile); err != nil {
+		return err
+	}
+
+	// Сохраняем информацию о файле в базе данных
+	_, err = fs.pool.Exec(ctx, "INSERT INTO files (user_id, file_name, file_path) VALUES ($1, $2, $3)",
+		dto.UserID, dto.FileName, destPath)
+
+	return err
 }
 
-func (pwd *FileService) DeleteFile(ctx context.Context, dto request.DeleteFileDTO) error {
-	return nil
+// DeleteFile удаляет файл с сервера и удаляет метаданные из базы данных
+func (fs *FileService) DeleteFile(ctx context.Context, dto request.DeleteFileDTO) error {
+	var filePath string
+
+	// Получаем путь к файлу и проверяем, что файл принадлежит пользователю
+	err := fs.pool.QueryRow(ctx, "SELECT file_path FROM files WHERE file_name = $1 AND user_id = $2", dto.FileName, dto.UserID).Scan(&filePath)
+	if err != nil {
+		return err
+	}
+
+	// Удаляем файл с диска
+	if err := os.Remove(filePath); err != nil {
+		return err
+	}
+
+	// Удаляем информацию о файле из базы данных
+	_, err = fs.pool.Exec(ctx, "DELETE FROM files WHERE file_name = $1 AND user_id = $2", dto.FileName, dto.UserID)
+	return err
 }
 
-func (pwd *FileService) GetPassword(ctx context.Context, dto request.GetFileDTO) (string, error) {
-	return "", nil
+// GetFile возвращает путь к файлу на сервере
+func (fs *FileService) GetFile(ctx context.Context, dto request.GetFileDTO) (string, error) {
+	var filePath string
+
+	// Получаем путь к файлу и проверяем, что файл принадлежит пользователю
+	err := fs.pool.QueryRow(ctx, "SELECT file_path FROM files WHERE file_name = $1 AND user_id = $2", dto.FileName, dto.UserID).Scan(&filePath)
+	if err != nil {
+		return "", err
+	}
+
+	return filePath, nil
 }
 
-func (pwd *FileService) GetAllPasswords(ctx context.Context, dto request.AllFilesDTO) ([]InfoByFiles, error) {
-	return []InfoByFiles{}, nil
+// GetAllFiles возвращает список всех файлов пользователя с их информацией
+func (fs *FileService) GetAllFiles(ctx context.Context, dto request.AllFilesDTO) ([]response.FileInfo, error) {
+	rows, err := fs.pool.Query(ctx, "SELECT file_name, file_path, created_at FROM files WHERE user_id = $1", dto.UserID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var files []response.FileInfo
+	for rows.Next() {
+		var fileInfo response.FileInfo
+		if err := rows.Scan(&fileInfo.FileName, &fileInfo.FilePath, &fileInfo.CreatedAt); err != nil {
+			return nil, err
+		}
+		files = append(files, fileInfo)
+	}
+
+	return files, nil
 }
