@@ -4,7 +4,6 @@ import (
 	"context"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gophKeeper/internal/modules/file/file_dto/request"
-	"io"
 	"os"
 	"path/filepath"
 )
@@ -25,13 +24,6 @@ func NewFileService(pool *pgxpool.Pool, dirSavedFiles string) *FileService {
 func (fs *FileService) SaveFile(ctx context.Context, dto request.SaveFileDTO) error {
 	destPath := filepath.Join(fs.dirSavedFiles, dto.FileName)
 
-	// Открываем исходный файл
-	srcFile, err := os.Open(dto.FilePath)
-	if err != nil {
-		return err
-	}
-	defer srcFile.Close()
-
 	// Создаем файл в целевой директории
 	destFile, err := os.Create(destPath)
 	if err != nil {
@@ -39,8 +31,8 @@ func (fs *FileService) SaveFile(ctx context.Context, dto request.SaveFileDTO) er
 	}
 	defer destFile.Close()
 
-	// Копируем содержимое файла
-	if _, err := io.Copy(destFile, srcFile); err != nil {
+	// Пишем содержимое файла в созданный файл
+	if _, err := destFile.Write(dto.FileData); err != nil {
 		return err
 	}
 

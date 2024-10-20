@@ -1,7 +1,6 @@
 package request
 
 import (
-	"encoding/json"
 	"fmt"
 	"gophKeeper/internal/helpers"
 	"io"
@@ -10,19 +9,28 @@ import (
 
 type SaveFileDTO struct {
 	FileName string `json:"file_name"`
-	FilePath string `json:"file_path"`
+	FileData []byte `json:"file_data"` // Содержимое файла в байтовом формате
 	UserID   int    `json:"user_id"`
 }
 
 func SaveFileDTOFromHTTP(r *http.Request) (SaveFileDTO, error) {
-	data, err := io.ReadAll(r.Body)
+	// Ограничиваем размер загружаемого файла
+	err := r.ParseMultipartForm(10 << 20) // 10MB
 	if err != nil {
-		return SaveFileDTO{}, fmt.Errorf("reading body registration: %w", err)
+		return SaveFileDTO{}, fmt.Errorf("error parsing multipart form: %w", err)
 	}
-	var savePwdDTO SaveFileDTO
-	err = json.Unmarshal(data, &savePwdDTO)
+
+	// Получаем файл из формы
+	file, handler, err := r.FormFile("file")
 	if err != nil {
-		return SaveFileDTO{}, fmt.Errorf("unmarshalling body registration: %w", err)
+		return SaveFileDTO{}, fmt.Errorf("error retrieving file from form-data: %w", err)
+	}
+	defer file.Close()
+
+	// Читаем содержимое файла в память
+	fileData, err := io.ReadAll(file)
+	if err != nil {
+		return SaveFileDTO{}, fmt.Errorf("error reading file: %w", err)
 	}
 
 	// Извлекаем userID из контекста
@@ -31,7 +39,12 @@ func SaveFileDTOFromHTTP(r *http.Request) (SaveFileDTO, error) {
 		return SaveFileDTO{}, fmt.Errorf("error GetUserIDFromContext: %w", err)
 	}
 
-	savePwdDTO.UserID = userID
+	// Формируем DTO с содержимым файла
+	saveFileDTO := SaveFileDTO{
+		FileName: handler.Filename,
+		FileData: fileData,
+		UserID:   userID,
+	}
 
-	return savePwdDTO, nil
+	return saveFileDTO, nil
 }
