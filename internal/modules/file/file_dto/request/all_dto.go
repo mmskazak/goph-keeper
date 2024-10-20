@@ -12,9 +12,9 @@ type AllFilesDTO struct {
 
 func AllFileDTOFromHTTP(r *http.Request) (AllFilesDTO, error) {
 	// Извлекаем userID из контекста
-	userID, err := helpers.getUserIDFromContext(r.Context())
+	userID, err := helpers.GetUserIDFromContext(r.Context())
 	if err != nil {
-		return AllFilesDTO{}, fmt.Errorf("error getUserIDFromContext: %w", err)
+		return AllFilesDTO{}, fmt.Errorf("error GetUserIDFromContext: %w", err)
 	}
 	return AllFilesDTO{
 		UserID: userID,

@@ -29,9 +29,9 @@ func GetPwdDTOFromHTTP(r *http.Request) (GetPwdDTO, error) {
 	}
 
 	// Извлекаем userID из контекста
-	userID, err := helpers.getUserIDFromContext(r.Context())
+	userID, err := helpers.GetUserIDFromContext(r.Context())
 	if err != nil {
-		return GetPwdDTO{}, fmt.Errorf("error getUserIDFromContext: %w", err)
+		return GetPwdDTO{}, fmt.Errorf("error GetUserIDFromContext: %w", err)
 	}
 
 	getPwdDTO.UserID = userID // Устанавливаем userID в структуру

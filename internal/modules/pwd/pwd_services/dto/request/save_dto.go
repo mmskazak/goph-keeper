@@ -28,9 +28,9 @@ func SavePwdDTOFromHTTP(r *http.Request) (SavePwdDTO, error) {
 	}
 
 	// Извлекаем userID из контекста
-	userID, err := helpers.getUserIDFromContext(r.Context())
+	userID, err := helpers.GetUserIDFromContext(r.Context())
 	if err != nil {
-		return SavePwdDTO{}, fmt.Errorf("error getUserIDFromContext: %w", err)
+		return SavePwdDTO{}, fmt.Errorf("error GetUserIDFromContext: %w", err)
 	}
 
 	savePwdDTO.UserID = userID

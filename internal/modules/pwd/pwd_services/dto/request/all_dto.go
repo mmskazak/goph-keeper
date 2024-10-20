@@ -12,9 +12,9 @@ type AllPwdDTO struct {
 
 func AllPwdDTOFromHTTP(r *http.Request) (AllPwdDTO, error) {
 	// Извлекаем userID из контекста
-	userID, err := helpers.getUserIDFromContext(r.Context())
+	userID, err := helpers.GetUserIDFromContext(r.Context())
 	if err != nil {
-		return AllPwdDTO{}, fmt.Errorf("error getUserIDFromContext: %w", err)
+		return AllPwdDTO{}, fmt.Errorf("error GetUserIDFromContext: %w", err)
 	}
 	return AllPwdDTO{
 		UserID: userID,
