@@ -56,7 +56,7 @@ func (fs *FileService) DeleteFile(ctx context.Context, dto request.DeleteFileDTO
 	var filePath string
 
 	// Получаем путь к файлу и проверяем, что файл принадлежит пользователю
-	err := fs.pool.QueryRow(ctx, "SELECT file_path FROM files WHERE file_name = $1 AND user_id = $2", dto.FileName, dto.UserID).Scan(&filePath)
+	err := fs.pool.QueryRow(ctx, "SELECT file_path FROM files WHERE id = $1 AND user_id = $2", dto.FileID, dto.UserID).Scan(&filePath)
 	if err != nil {
 		return err
 	}
@@ -67,7 +67,7 @@ func (fs *FileService) DeleteFile(ctx context.Context, dto request.DeleteFileDTO
 	}
 
 	// Удаляем информацию о файле из базы данных
-	_, err = fs.pool.Exec(ctx, "DELETE FROM files WHERE file_name = $1 AND user_id = $2", dto.FileName, dto.UserID)
+	_, err = fs.pool.Exec(ctx, "DELETE FROM files WHERE id = $1 AND user_id = $2", dto.FileID, dto.UserID)
 	return err
 }
 
@@ -76,7 +76,7 @@ func (fs *FileService) GetFile(ctx context.Context, dto request.GetFileDTO) (str
 	var filePath string
 
 	// Получаем путь к файлу и проверяем, что файл принадлежит пользователю
-	err := fs.pool.QueryRow(ctx, "SELECT file_path FROM files WHERE file_name = $1 AND user_id = $2", dto.FileName, dto.UserID).Scan(&filePath)
+	err := fs.pool.QueryRow(ctx, "SELECT file_path FROM files WHERE id = $1 AND user_id = $2", dto.FileID, dto.UserID).Scan(&filePath)
 	if err != nil {
 		return "", err
 	}
@@ -85,17 +85,17 @@ func (fs *FileService) GetFile(ctx context.Context, dto request.GetFileDTO) (str
 }
 
 // GetAllFiles возвращает список всех файлов пользователя с их информацией
-func (fs *FileService) GetAllFiles(ctx context.Context, dto request.AllFilesDTO) ([]response.FileInfo, error) {
-	rows, err := fs.pool.Query(ctx, "SELECT file_name, file_path, created_at FROM files WHERE user_id = $1", dto.UserID)
+func (fs *FileService) GetAllFiles(ctx context.Context, dto request.AllFilesDTO) ([]FileInfo, error) {
+	rows, err := fs.pool.Query(ctx, "SELECT file_name, file_path FROM files WHERE user_id = $1", dto.UserID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
-	var files []response.FileInfo
+	var files []FileInfo
 	for rows.Next() {
-		var fileInfo response.FileInfo
-		if err := rows.Scan(&fileInfo.FileName, &fileInfo.FilePath, &fileInfo.CreatedAt); err != nil {
+		var fileInfo FileInfo
+		if err := rows.Scan(&fileInfo.Name, &fileInfo.PathToFile); err != nil {
 			return nil, err
 		}
 		files = append(files, fileInfo)
