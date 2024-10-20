@@ -15,6 +15,7 @@ type Config struct {
 	LogLevel         LogLevel `json:"log_level"`          // Уровень логирования
 	EncryptionKeyHex string   `json:"encryption_key_hex"` // 32-байтный ключ для шифрования в hex
 	EncryptionKey    []byte   `json:"-"`                  // 32-байтный ключ в байтах (не сериализуется)
+	DirSavedFiles    string   `json:"dir_saved_files"`    // Папка для сохранных файлов
 }
 
 func NewConfig() *Config {
@@ -24,6 +25,7 @@ func NewConfig() *Config {
 		SecretKey:        "secret",
 		DataBaseDSN:      "postgresql://gkuser:gkpass@localhost:5432/goph_keeper?sslmode=disable",
 		EncryptionKeyHex: "MySecretEncryptionKey1234567890",
+		DirSavedFiles:    "/saved_files",
 	}
 }
 
