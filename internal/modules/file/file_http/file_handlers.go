@@ -2,28 +2,30 @@ package pwd_http
 
 import (
 	"encoding/json"
+	"gophKeeper/internal/modules/file/file_dto/request"
 	"gophKeeper/internal/modules/file/file_services"
 
 	"net/http"
 )
 
 type TextHandlers struct {
-	textService file_services.IFileService
+	fileService file_services.IFileService
 }
 
-func NewTextHandlersHTTP(service file_services.IFileService) TextHandlers {
+func NewFileHandlersHTTP(service file_services.IFileService) TextHandlers {
 	return TextHandlers{
-		textService: service,
+		fileService: service,
 	}
 }
 
-func (p TextHandlers) SaveText(w http.ResponseWriter, r *http.Request) {
-	savePwdDTO, err := request.SaveFileDTOFromHTTP(r)
+func (p TextHandlers) SaveFile(w http.ResponseWriter, r *http.Request) {
+	saveFileDTO, err := request.SaveFileDTOFromHTTP(r)
 	if err != nil {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	err = p.textService.SaveText(r.Context(), savePwdDTO)
+
+	err = p.fileService.SaveFile(r.Context(), saveFileDTO)
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
 		return
@@ -32,13 +34,13 @@ func (p TextHandlers) SaveText(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("OK"))
 }
 
-func (p TextHandlers) GetPassword(w http.ResponseWriter, r *http.Request) {
-	getTextDTO, err := text_dto.GetTextDTOFromHTTP(r)
+func (p TextHandlers) GetFile(w http.ResponseWriter, r *http.Request) {
+	getFileDTO, err := request.GetFileDTOFromHTTP(r)
 	if err != nil {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	password, err := p.textService.GetText(r.Context(), getTextDTO)
+	password, err := p.fileService.GetFile(r.Context(), getFileDTO)
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
 		return
@@ -47,13 +49,13 @@ func (p TextHandlers) GetPassword(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(password))
 }
 
-func (p TextHandlers) DeletePassword(w http.ResponseWriter, r *http.Request) {
-	deletePwdDTO, err := text_dto.DeletePwdDTOFromHTTP(r)
+func (p TextHandlers) DeleteFile(w http.ResponseWriter, r *http.Request) {
+	deletePwdDTO, err := request.DeleteFileDTOFromHTTP(r)
 	if err != nil {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	err = p.pwdService.DeletePassword(r.Context(), deletePwdDTO)
+	err = p.fileService.DeleteFile(r.Context(), deletePwdDTO)
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
 		return
@@ -62,13 +64,13 @@ func (p TextHandlers) DeletePassword(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("OK"))
 }
 
-func (p TextHandlers) GetAllPasswords(w http.ResponseWriter, r *http.Request) {
-	allPwdDTO, err := text_dto.AllTextsDTOFromHTTP(r)
+func (p TextHandlers) GetAllFiles(w http.ResponseWriter, r *http.Request) {
+	allPwdDTO, err := request.AllFileDTOFromHTTP(r)
 	if err != nil {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	allPasswords, err := p.textService.GetAllTexts(r.Context(), allPwdDTO)
+	allPasswords, err := p.fileService.GetAllFiles(r.Context(), allPwdDTO)
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
 		return

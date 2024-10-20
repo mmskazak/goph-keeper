@@ -5,15 +5,14 @@ import (
 	"gophKeeper/internal/modules/file/file_dto/request"
 )
 
-type InfoByText struct {
-	Resource string `json:"resource"`
-	Login    string `json:"login"`
-	Password string `json:"password"`
+type InfoByFiles struct {
+	Name       string `json:"name"`
+	PathToFile string `json:"path_to_file"`
 }
 
 type IFileService interface {
-	SaveText(ctx context.Context, dto request.SaveFileDTO) error
-	DeleteText(ctx context.Context, dto request.DeleteFileDTO) error
-	GetText(ctx context.Context, dto request.GetFileDTO) (string, error)
-	GetAllTexts(ctx context.Context, dto request.AllFilesDTO) ([]InfoByText, error)
+	SaveFile(ctx context.Context, dto request.SaveFileDTO) error
+	DeleteFile(ctx context.Context, dto request.DeleteFileDTO) error
+	GetFile(ctx context.Context, dto request.GetFileDTO) (string, error)
+	GetAllFiles(ctx context.Context, dto request.AllFilesDTO) ([]InfoByFiles, error)
 }
