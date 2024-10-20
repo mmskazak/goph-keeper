@@ -137,9 +137,12 @@ func (pwd *PwdService) UpdatePassword(ctx context.Context, dto request.UpdatePwd
 	encryptedCredentials, err := crypto.Encrypt(pwd.cryptoKey, marshaledCredentials)
 
 	sql := `UPDATE passwords SET title = $2, descriotion = $3, credentials = $4 WHERE id = $5 AND user_id = $6`
-	_, err = pwd.pool.Exec(ctx, sql, dto.Title, dto.Description, encryptedCredentials, dto.ID, dto.UserID)
+	result, err := pwd.pool.Exec(ctx, sql, dto.Title, dto.Description, encryptedCredentials, dto.ID, dto.UserID)
 	if err != nil {
 		return fmt.Errorf("error updating password: %w", err)
+	}
+	if result.RowsAffected() == 0 {
+		return errors.New("updated record not found") // Возвращаем ошибку, если ни одна строка не была обновлена
 	}
 	return nil
 }

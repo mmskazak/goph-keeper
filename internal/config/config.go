@@ -14,7 +14,7 @@ type Config struct {
 	SecretKey        string   `json:"secret_key"`         // Секретный ключ JWT токена
 	LogLevel         LogLevel `json:"log_level"`          // Уровень логирования
 	EncryptionKeyHex string   `json:"encryption_key_hex"` // 32-байтный ключ для шифрования в hex
-	EncryptionKey    []byte   `json:"-"`                  // 32-байтный ключ в байтах (не сериализуется)
+	EncryptionKey    [32]byte `json:"-"`                  // 32-байтный ключ в байтах (не сериализуется)
 	DirSavedFiles    string   `json:"dir_saved_files"`    // Папка для сохранных файлов
 }
 

@@ -1,4 +1,4 @@
-package pwd_http
+package file_http
 
 import (
 	"encoding/json"
@@ -8,17 +8,17 @@ import (
 	"net/http"
 )
 
-type TextHandlers struct {
+type FileHandlers struct {
 	fileService file_services.IFileService
 }
 
-func NewFileHandlersHTTP(service file_services.IFileService) TextHandlers {
-	return TextHandlers{
+func NewFileHandlersHTTP(service file_services.IFileService) FileHandlers {
+	return FileHandlers{
 		fileService: service,
 	}
 }
 
-func (p TextHandlers) SaveFile(w http.ResponseWriter, r *http.Request) {
+func (p FileHandlers) SaveFile(w http.ResponseWriter, r *http.Request) {
 	saveFileDTO, err := request.SaveFileDTOFromHTTP(r)
 	if err != nil {
 		http.Error(w, "", http.StatusBadRequest)
@@ -34,7 +34,7 @@ func (p TextHandlers) SaveFile(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("OK"))
 }
 
-func (p TextHandlers) GetFile(w http.ResponseWriter, r *http.Request) {
+func (p FileHandlers) GetFile(w http.ResponseWriter, r *http.Request) {
 	getFileDTO, err := request.GetFileDTOFromHTTP(r)
 	if err != nil {
 		http.Error(w, "", http.StatusBadRequest)
@@ -49,7 +49,7 @@ func (p TextHandlers) GetFile(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(password))
 }
 
-func (p TextHandlers) DeleteFile(w http.ResponseWriter, r *http.Request) {
+func (p FileHandlers) DeleteFile(w http.ResponseWriter, r *http.Request) {
 	deletePwdDTO, err := request.DeleteFileDTOFromHTTP(r)
 	if err != nil {
 		http.Error(w, "", http.StatusBadRequest)
@@ -64,7 +64,7 @@ func (p TextHandlers) DeleteFile(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("OK"))
 }
 
-func (p TextHandlers) GetAllFiles(w http.ResponseWriter, r *http.Request) {
+func (p FileHandlers) GetAllFiles(w http.ResponseWriter, r *http.Request) {
 	allPwdDTO, err := request.AllFileDTOFromHTTP(r)
 	if err != nil {
 		http.Error(w, "", http.StatusBadRequest)

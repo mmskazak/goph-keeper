@@ -1,4 +1,4 @@
-package routes
+package routes_pwd
 
 import (
 	"github.com/go-chi/chi/v5"
@@ -29,6 +29,11 @@ func RegistrationRoutesPwd(
 	//Получить конкретный пароль
 	r.Post("/pwd/get", func(w http.ResponseWriter, req *http.Request) {
 		getPwdHandlers(pool, cfg.EncryptionKey).GetPassword(w, req)
+	})
+
+	//Получить конкретный пароль
+	r.Post("/pwd/update", func(w http.ResponseWriter, req *http.Request) {
+		getPwdHandlers(pool, cfg.EncryptionKey).UpdatePassword(w, req)
 	})
 
 	return r

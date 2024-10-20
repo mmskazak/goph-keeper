@@ -11,4 +11,5 @@ type IPwdService interface {
 	DeletePassword(ctx context.Context, dto request.DeletePwdDTO) error
 	GetAllPasswords(ctx context.Context, dto request.AllPwdDTO) ([]response.PwdDTO, error)
 	GetPassword(ctx context.Context, dto request.GetPwdDTO) (response.CredentialsDTO, error)
+	UpdatePassword(ctx context.Context, dto request.UpdatePwdDTO) error
 }

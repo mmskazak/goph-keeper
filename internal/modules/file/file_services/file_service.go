@@ -11,19 +11,19 @@ import (
 
 type FileService struct {
 	pool          *pgxpool.Pool
-	DirSavedFiles string // Путь к директории для хранения файлов
+	dirSavedFiles string // Путь к директории для хранения файлов
 }
 
-func NewFileService(pool *pgxpool.Pool, DirSavedFiles string) *FileService {
+func NewFileService(pool *pgxpool.Pool, dirSavedFiles string) *FileService {
 	return &FileService{
 		pool:          pool,
-		DirSavedFiles: DirSavedFiles,
+		dirSavedFiles: dirSavedFiles,
 	}
 }
 
 // SaveFile сохраняет файл на сервере и сохраняет метаданные в базу данных
 func (fs *FileService) SaveFile(ctx context.Context, dto request.SaveFileDTO) error {
-	destPath := filepath.Join(fs.DirSavedFiles, dto.FileName)
+	destPath := filepath.Join(fs.dirSavedFiles, dto.FileName)
 
 	// Открываем исходный файл
 	srcFile, err := os.Open(dto.FilePath)

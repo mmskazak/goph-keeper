@@ -2,10 +2,13 @@ package pwd_http
 
 import (
 	"encoding/json"
+	"errors"
 	"gophKeeper/internal/modules/pwd/pwd_services"
 	"gophKeeper/internal/modules/pwd/pwd_services/dto/request"
 	"net/http"
 )
+
+var someSpecificError = errors.New("updated record not found")
 
 type PwdHandlers struct {
 	pwdService pwd_services.IPwdService
@@ -89,4 +92,25 @@ func (p PwdHandlers) GetAllPasswords(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusOK)
 	w.Write(marshaledAllPasswords)
+}
+
+func (p PwdHandlers) UpdatePassword(w http.ResponseWriter, r *http.Request) {
+	updatePwdDTO, err := request.UpdatePwdDTOFromHTTP(r)
+	if err != nil {
+		http.Error(w, "", http.StatusBadRequest)
+		return
+	}
+
+	err = p.pwdService.UpdatePassword(r.Context(), updatePwdDTO)
+	if err != nil {
+		if errors.Is(err, someSpecificError) {
+			http.Error(w, "", http.StatusNotFound) // Запись для обновления не найдена
+		} else {
+			http.Error(w, "", http.StatusInternalServerError)
+		}
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("OK"))
 }
