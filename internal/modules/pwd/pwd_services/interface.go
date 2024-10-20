@@ -2,14 +2,14 @@ package pwd_services
 
 import (
 	"context"
-	"gophKeeper/internal/modules/pwd/pwd_services/dto/request"
-	"gophKeeper/internal/modules/pwd/pwd_services/dto/response"
+	request2 "gophKeeper/internal/modules/pwd/pwd_dto/request"
+	response2 "gophKeeper/internal/modules/pwd/pwd_dto/response"
 )
 
 type IPwdService interface {
-	SavePassword(ctx context.Context, dto request.SavePwdDTO) error
-	DeletePassword(ctx context.Context, dto request.DeletePwdDTO) error
-	GetAllPasswords(ctx context.Context, dto request.AllPwdDTO) ([]response.PwdDTO, error)
-	GetPassword(ctx context.Context, dto request.GetPwdDTO) (response.CredentialsDTO, error)
-	UpdatePassword(ctx context.Context, dto request.UpdatePwdDTO) error
+	SavePassword(ctx context.Context, dto request2.SavePwdDTO) error
+	DeletePassword(ctx context.Context, dto request2.DeletePwdDTO) error
+	GetAllPasswords(ctx context.Context, dto request2.AllPwdDTO) ([]response2.PwdDTO, error)
+	GetPassword(ctx context.Context, dto request2.GetPwdDTO) (response2.CredentialsDTO, error)
+	UpdatePassword(ctx context.Context, dto request2.UpdatePwdDTO) error
 }

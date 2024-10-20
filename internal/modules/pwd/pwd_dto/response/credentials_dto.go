@@ -1,7 +1,7 @@
 package response
 
 import (
-	"gophKeeper/internal/modules/pwd/pwd_services/value_obj"
+	"gophKeeper/internal/modules/pwd/value_obj"
 )
 
 type CredentialsDTO struct {

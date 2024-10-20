@@ -3,8 +3,8 @@ package pwd_http
 import (
 	"encoding/json"
 	"errors"
+	request2 "gophKeeper/internal/modules/pwd/pwd_dto/request"
 	"gophKeeper/internal/modules/pwd/pwd_services"
-	"gophKeeper/internal/modules/pwd/pwd_services/dto/request"
 	"net/http"
 )
 
@@ -21,7 +21,7 @@ func NewPwdHandlersHTTP(service pwd_services.IPwdService) PwdHandlers {
 }
 
 func (p PwdHandlers) SavePassword(w http.ResponseWriter, r *http.Request) {
-	savePwdDTO, err := request.SavePwdDTOFromHTTP(r)
+	savePwdDTO, err := request2.SavePwdDTOFromHTTP(r)
 	if err != nil {
 		http.Error(w, "", http.StatusBadRequest)
 		return
@@ -36,7 +36,7 @@ func (p PwdHandlers) SavePassword(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p PwdHandlers) GetPassword(w http.ResponseWriter, r *http.Request) {
-	getPwdDTO, err := request.GetPwdDTOFromHTTP(r)
+	getPwdDTO, err := request2.GetPwdDTOFromHTTP(r)
 	if err != nil {
 		http.Error(w, "", http.StatusBadRequest)
 		return
@@ -60,7 +60,7 @@ func (p PwdHandlers) GetPassword(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p PwdHandlers) DeletePassword(w http.ResponseWriter, r *http.Request) {
-	deletePwdDTO, err := request.DeletePwdDTOFromHTTP(r)
+	deletePwdDTO, err := request2.DeletePwdDTOFromHTTP(r)
 	if err != nil {
 		http.Error(w, "", http.StatusBadRequest)
 		return
@@ -75,7 +75,7 @@ func (p PwdHandlers) DeletePassword(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p PwdHandlers) GetAllPasswords(w http.ResponseWriter, r *http.Request) {
-	allPwdDTO, err := request.AllPwdDTOFromHTTP(r)
+	allPwdDTO, err := request2.AllPwdDTOFromHTTP(r)
 	if err != nil {
 		http.Error(w, "", http.StatusBadRequest)
 		return
@@ -95,7 +95,7 @@ func (p PwdHandlers) GetAllPasswords(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p PwdHandlers) UpdatePassword(w http.ResponseWriter, r *http.Request) {
-	updatePwdDTO, err := request.UpdatePwdDTOFromHTTP(r)
+	updatePwdDTO, err := request2.UpdatePwdDTOFromHTTP(r)
 	if err != nil {
 		http.Error(w, "", http.StatusBadRequest)
 		return

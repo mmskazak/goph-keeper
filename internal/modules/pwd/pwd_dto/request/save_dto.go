@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"gophKeeper/internal/helpers"
-	"gophKeeper/internal/modules/pwd/pwd_services/value_obj"
+	"gophKeeper/internal/modules/pwd/value_obj"
 	"io"
 	"net/http"
 )

@@ -7,9 +7,9 @@ import (
 	"fmt"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"gophKeeper/internal/modules/pwd/pwd_services/dto/request"
-	"gophKeeper/internal/modules/pwd/pwd_services/dto/response"
-	"gophKeeper/internal/modules/pwd/pwd_services/value_obj"
+	request2 "gophKeeper/internal/modules/pwd/pwd_dto/request"
+	response2 "gophKeeper/internal/modules/pwd/pwd_dto/response"
+	"gophKeeper/internal/modules/pwd/value_obj"
 	"gophKeeper/pkg/crypto"
 )
 
@@ -25,7 +25,7 @@ func NewPwdService(pool *pgxpool.Pool, enKey [32]byte) *PwdService {
 	}
 }
 
-func (pwd *PwdService) SavePassword(ctx context.Context, dto request.SavePwdDTO) error {
+func (pwd *PwdService) SavePassword(ctx context.Context, dto request2.SavePwdDTO) error {
 	sql := `INSERT INTO passwords (user_id, title, description, credentials) VALUES ($1, $2, $3, $4)`
 
 	marshaledCredentials, err := json.Marshal(dto.Credentials)
@@ -47,7 +47,7 @@ func (pwd *PwdService) SavePassword(ctx context.Context, dto request.SavePwdDTO)
 	return nil
 }
 
-func (pwd *PwdService) DeletePassword(ctx context.Context, dto request.DeletePwdDTO) error {
+func (pwd *PwdService) DeletePassword(ctx context.Context, dto request2.DeletePwdDTO) error {
 	sql := `DELETE FROM passwords WHERE user_id = $1 AND id = $2;`
 	_, err := pwd.pool.Exec(ctx, sql, dto.UserID, dto.PwdID)
 	if err != nil {
@@ -56,7 +56,7 @@ func (pwd *PwdService) DeletePassword(ctx context.Context, dto request.DeletePwd
 	return nil
 }
 
-func (pwd *PwdService) GetPassword(ctx context.Context, dto request.GetPwdDTO) (response.CredentialsDTO, error) {
+func (pwd *PwdService) GetPassword(ctx context.Context, dto request2.GetPwdDTO) (response2.CredentialsDTO, error) {
 	sql := `SELECT credentials FROM passwords WHERE user_id = $1 AND id = $2;`
 	row := pwd.pool.QueryRow(ctx, sql, dto.UserID, dto.PwdID)
 
@@ -66,34 +66,34 @@ func (pwd *PwdService) GetPassword(ctx context.Context, dto request.GetPwdDTO) (
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			// Обработка случая, когда запись не найдена
-			return response.CredentialsDTO{}, fmt.Errorf("password not found for user: %w", err)
+			return response2.CredentialsDTO{}, fmt.Errorf("password not found for user: %w", err)
 		}
 		// Обработка других ошибок
-		return response.CredentialsDTO{}, fmt.Errorf("error scanning password from pwd service: %w", err)
+		return response2.CredentialsDTO{}, fmt.Errorf("error scanning password from pwd service: %w", err)
 	}
 
 	//Расшифровываем данные
 	decryptedCredentials, err := crypto.Decrypt(pwd.cryptoKey, string(credentialsData))
 	if err != nil {
-		return response.CredentialsDTO{}, err
+		return response2.CredentialsDTO{}, err
 	}
 
-	var credentials response.CredentialsDTO
+	var credentials response2.CredentialsDTO
 	if err := json.Unmarshal(decryptedCredentials, &credentials); err != nil {
-		return response.CredentialsDTO{}, fmt.Errorf("error unmarshalling credentials: %w", err)
+		return response2.CredentialsDTO{}, fmt.Errorf("error unmarshalling credentials: %w", err)
 	}
 
 	return credentials, nil
 }
 
-func (pwd *PwdService) GetAllPasswords(ctx context.Context, dto request.AllPwdDTO) ([]response.PwdDTO, error) {
+func (pwd *PwdService) GetAllPasswords(ctx context.Context, dto request2.AllPwdDTO) ([]response2.PwdDTO, error) {
 	sql := `SELECT id,resource, login, password FROM passwords WHERE user_id = $1`
 	rows, err := pwd.pool.Query(ctx, sql, dto.UserID)
 	if err != nil {
-		return []response.PwdDTO{}, fmt.Errorf("error query get all passwords: %w", err)
+		return []response2.PwdDTO{}, fmt.Errorf("error query get all passwords: %w", err)
 	}
 
-	var listPasswords []response.PwdDTO
+	var listPasswords []response2.PwdDTO
 
 	for rows.Next() {
 		var id string
@@ -102,21 +102,21 @@ func (pwd *PwdService) GetAllPasswords(ctx context.Context, dto request.AllPwdDT
 		var credentialsData []byte
 		err := rows.Scan(&id, &title, &description, &credentialsData)
 		if err != nil {
-			return []response.PwdDTO{}, fmt.Errorf("error scan get all passwords from pwd service: %w", err)
+			return []response2.PwdDTO{}, fmt.Errorf("error scan get all passwords from pwd service: %w", err)
 		}
 
 		//Расшифровываем данные
 		decryptedCredentials, err := crypto.Decrypt(pwd.cryptoKey, string(credentialsData))
 		if err != nil {
-			return []response.PwdDTO{}, err
+			return []response2.PwdDTO{}, err
 		}
 
 		var credentials value_obj.Credentials
 		if err := json.Unmarshal(decryptedCredentials, &credentials); err != nil {
-			return []response.PwdDTO{}, fmt.Errorf("error unmarshalling credentials: %w", err)
+			return []response2.PwdDTO{}, fmt.Errorf("error unmarshalling credentials: %w", err)
 		}
 
-		listPasswords = append(listPasswords, response.PwdDTO{
+		listPasswords = append(listPasswords, response2.PwdDTO{
 			ID:          id,
 			Title:       title,
 			Description: description,
@@ -127,7 +127,7 @@ func (pwd *PwdService) GetAllPasswords(ctx context.Context, dto request.AllPwdDT
 	return listPasswords, nil
 }
 
-func (pwd *PwdService) UpdatePassword(ctx context.Context, dto request.UpdatePwdDTO) error {
+func (pwd *PwdService) UpdatePassword(ctx context.Context, dto request2.UpdatePwdDTO) error {
 	marshaledCredentials, err := json.Marshal(dto.Credentials)
 	if err != nil {
 		return fmt.Errorf("error marshalling credentials: %w", err)
