@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS files (
                                      id SERIAL PRIMARY KEY,
                                      user_id BIGINT,
                                      title VARCHAR(255) NOT NULL,
-                                     description BIGINT,
+                                     description  VARCHAR(255),
                                      path_to_file VARCHAR(255) NOT NULL
 );
 

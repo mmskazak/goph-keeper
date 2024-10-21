@@ -46,8 +46,8 @@ func (fs *FileService) SaveFile(ctx context.Context, dto request.SaveFileDTO) er
 	}
 
 	// Сохраняем информацию о файле в базе данных
-	//_, err = fs.pool.Exec(ctx, "INSERT INTO files (user_id, title, description) VALUES ($1, $2, $3)",
-	//	dto.UserID, randomFileName, destPath)
+	_, err = fs.pool.Exec(ctx, "INSERT INTO files (user_id, title, description, path_to_file) VALUES ($1, $2, $3, $4)",
+		dto.UserID, dto.Title, dto.Description, destPath)
 
 	return err
 }
@@ -57,7 +57,7 @@ func (fs *FileService) DeleteFile(ctx context.Context, dto request.DeleteFileDTO
 	var filePath string
 
 	// Получаем путь к файлу и проверяем, что файл принадлежит пользователю
-	err := fs.pool.QueryRow(ctx, "SELECT file_path FROM files WHERE id = $1 AND user_id = $2", dto.FileID, dto.UserID).Scan(&filePath)
+	err := fs.pool.QueryRow(ctx, "SELECT path_to_file FROM files WHERE id = $1 AND user_id = $2", dto.FileID, dto.UserID).Scan(&filePath)
 	if err != nil {
 		return err
 	}
