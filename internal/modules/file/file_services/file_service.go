@@ -2,6 +2,8 @@ package file_services
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/hex"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gophKeeper/internal/logger"
 	"gophKeeper/internal/modules/file/file_dto/request"
@@ -23,7 +25,12 @@ func NewFileService(pool *pgxpool.Pool, dirSavedFiles string) *FileService {
 
 // SaveFile сохраняет файл на сервере и сохраняет метаданные в базу данных
 func (fs *FileService) SaveFile(ctx context.Context, dto request.SaveFileDTO) error {
-	destPath := filepath.Join(fs.dirSavedFiles, dto.FileName)
+	randomFileName, err := generateRandomFileName()
+	if err != nil {
+		return err
+	}
+
+	destPath := filepath.Join(fs.dirSavedFiles, randomFileName)
 	logger.Log.Infoln(destPath)
 
 	// Создаем файл в целевой директории
@@ -40,7 +47,7 @@ func (fs *FileService) SaveFile(ctx context.Context, dto request.SaveFileDTO) er
 
 	// Сохраняем информацию о файле в базе данных
 	//_, err = fs.pool.Exec(ctx, "INSERT INTO files (user_id, title, description) VALUES ($1, $2, $3)",
-	//	dto.UserID, dto.FileName, destPath)
+	//	dto.UserID, randomFileName, destPath)
 
 	return err
 }
@@ -96,4 +103,12 @@ func (fs *FileService) GetAllFiles(ctx context.Context, dto request.AllFilesDTO)
 	}
 
 	return files, nil
+}
+
+func generateRandomFileName() (string, error) {
+	b := make([]byte, 16) // 16 байт = 128 бит случайных данных
+	if _, err := rand.Read(b); err != nil {
+		return "", err
+	}
+	return hex.EncodeToString(b), nil
 }
