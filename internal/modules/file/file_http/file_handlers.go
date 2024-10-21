@@ -61,7 +61,7 @@ func (p FileHandlers) GetFile(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Length", fmt.Sprintf("%d", len(tempFilePath)))
 
 	// Отправляем временный файл в ответ
-	http.ServeFile(w, r, string(tempFilePath))
+	http.ServeFile(w, r, tempFilePath)
 }
 
 func (p FileHandlers) DeleteFile(w http.ResponseWriter, r *http.Request) {

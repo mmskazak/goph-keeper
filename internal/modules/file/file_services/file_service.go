@@ -11,6 +11,7 @@ import (
 	"gophKeeper/pkg/crypto"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 type FileService struct {
@@ -112,7 +113,13 @@ func (fs *FileService) GetFile(ctx context.Context, dto request.GetFileDTO) (str
 	if err != nil {
 		return "", fmt.Errorf("error creating temp file: %w", err)
 	}
-	defer os.Remove(tempFile.Name()) // Удаляем файл после завершения работы, если не потребуется сохранять его
+	defer func() {
+		time.AfterFunc(5*time.Second, func() {
+			if err := os.Remove(tempFile.Name()); err != nil {
+				logger.Log.Errorf("failed to remove temp file: %v", err)
+			}
+		})
+	}()
 
 	// Записываем расшифрованные данные во временный файл
 	if _, err := tempFile.Write(decryptedData); err != nil {
