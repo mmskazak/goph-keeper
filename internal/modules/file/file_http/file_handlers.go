@@ -2,9 +2,11 @@ package file_http
 
 import (
 	"encoding/json"
+	"fmt"
 	"gophKeeper/internal/logger"
 	"gophKeeper/internal/modules/file/file_dto/request"
 	"gophKeeper/internal/modules/file/file_services"
+	"path/filepath"
 
 	"net/http"
 )
@@ -43,13 +45,23 @@ func (p FileHandlers) GetFile(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	password, err := p.fileService.GetFile(r.Context(), getFileDTO)
+
+	tempFilePath, err := p.fileService.GetFile(r.Context(), getFileDTO)
 	if err != nil {
+		logger.Log.Errorf("error getting file: %v", err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(password))
+
+	// Устанавливаем заголовки для скачивания файла
+	w.Header().Set("Content-Type", "application/octet-stream")
+	w.Header().Set("Content-Disposition",
+		fmt.Sprintf("attachment; filename=\"%s\"",
+			filepath.Base(string(tempFilePath))))
+	w.Header().Set("Content-Length", fmt.Sprintf("%d", len(tempFilePath)))
+
+	// Отправляем временный файл в ответ
+	http.ServeFile(w, r, string(tempFilePath))
 }
 
 func (p FileHandlers) DeleteFile(w http.ResponseWriter, r *http.Request) {

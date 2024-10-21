@@ -1,10 +1,9 @@
 package request
 
 import (
-	"encoding/json"
 	"fmt"
+	"github.com/go-chi/chi/v5"
 	"gophKeeper/internal/helpers"
-	"io"
 	"net/http"
 )
 
@@ -14,18 +13,10 @@ type GetFileDTO struct {
 }
 
 func GetFileDTOFromHTTP(r *http.Request) (GetFileDTO, error) {
-	// Читаем тело запроса
-	data, err := io.ReadAll(r.Body)
-	if err != nil {
-		return GetFileDTO{}, fmt.Errorf("reading body registration: %w", err)
-	}
-	defer r.Body.Close() // Закрываем тело запроса после чтения
-
-	var getPwdDTO GetFileDTO
-	// Декодируем JSON в структуру
-	err = json.Unmarshal(data, &getPwdDTO)
-	if err != nil {
-		return GetFileDTO{}, fmt.Errorf("unmarshalling body registration: %w", err)
+	// Извлекаем file_id из пути запроса
+	fileID := chi.URLParam(r, "file_id")
+	if fileID == "" {
+		return GetFileDTO{}, fmt.Errorf("file_id not found in the request path")
 	}
 
 	// Извлекаем userID из контекста
@@ -34,6 +25,11 @@ func GetFileDTOFromHTTP(r *http.Request) (GetFileDTO, error) {
 		return GetFileDTO{}, fmt.Errorf("error GetUserIDFromContext: %w", err)
 	}
 
-	getPwdDTO.UserID = userID // Устанавливаем userID в структуру
-	return getPwdDTO, nil     // Возвращаем структуру и nil (без ошибки)
+	// Формируем DTO
+	getFileDTO := GetFileDTO{
+		FileID: fileID,
+		UserID: userID,
+	}
+
+	return getFileDTO, nil // Возвращаем DTO и nil (если нет ошибки)
 }

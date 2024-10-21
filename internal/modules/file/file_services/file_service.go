@@ -4,9 +4,11 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/hex"
+	"fmt"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"gophKeeper/internal/logger"
 	"gophKeeper/internal/modules/file/file_dto/request"
+	"gophKeeper/pkg/crypto"
 	"os"
 	"path/filepath"
 )
@@ -14,11 +16,13 @@ import (
 type FileService struct {
 	pool          *pgxpool.Pool
 	dirSavedFiles string // Путь к директории для хранения файлов
+	cryptoKey     [32]byte
 }
 
-func NewFileService(pool *pgxpool.Pool, dirSavedFiles string) *FileService {
+func NewFileService(pool *pgxpool.Pool, enKey [32]byte, dirSavedFiles string) *FileService {
 	return &FileService{
 		pool:          pool,
+		cryptoKey:     enKey,
 		dirSavedFiles: dirSavedFiles,
 	}
 }
@@ -40,8 +44,11 @@ func (fs *FileService) SaveFile(ctx context.Context, dto request.SaveFileDTO) er
 	}
 	defer destFile.Close()
 
+	// Шифруем данные
+	encryptedFile, err := crypto.Encrypt(fs.cryptoKey, dto.FileData)
+
 	// Пишем содержимое файла в созданный файл
-	if _, err := destFile.Write(dto.FileData); err != nil {
+	if _, err := destFile.Write([]byte(encryptedFile)); err != nil {
 		return err
 	}
 
@@ -72,17 +79,53 @@ func (fs *FileService) DeleteFile(ctx context.Context, dto request.DeleteFileDTO
 	return err
 }
 
-// GetFile возвращает путь к файлу на сервере
+// GetFile возвращает путь к временно созданному расшифрованному файлу
 func (fs *FileService) GetFile(ctx context.Context, dto request.GetFileDTO) (string, error) {
 	var filePath string
 
 	// Получаем путь к файлу и проверяем, что файл принадлежит пользователю
-	err := fs.pool.QueryRow(ctx, "SELECT file_path FROM files WHERE id = $1 AND user_id = $2", dto.FileID, dto.UserID).Scan(&filePath)
+	err := fs.pool.QueryRow(ctx, "SELECT path_to_file FROM files WHERE id = $1 AND user_id = $2", dto.FileID, dto.UserID).Scan(&filePath)
 	if err != nil {
-		return "", err
+		logger.Log.Errorf("get file %s error: %v", dto.FileID, err)
+		return "", fmt.Errorf("error retrieving file path: %w", err)
 	}
 
-	return filePath, nil
+	// Читаем зашифрованный файл с диска
+	encryptedData, err := os.ReadFile(filePath)
+	if err != nil {
+		logger.Log.Errorf("get file %s error: %v", dto.FileID, err)
+		return "", fmt.Errorf("error reading file: %w", err)
+	}
+
+	// Преобразуем зашифрованные данные в строку
+	encryptedString := string(encryptedData)
+
+	// Расшифровываем данные
+	decryptedData, err := crypto.Decrypt(fs.cryptoKey, encryptedString) // Передаем строку
+	if err != nil {
+		logger.Log.Errorf("decrypt file %s error: %v", dto.FileID, err)
+		return "", fmt.Errorf("error decrypting file: %w", err)
+	}
+
+	// Создаем временный файл для расшифрованных данных
+	tempFile, err := os.CreateTemp("", "decrypted_*.tmp")
+	if err != nil {
+		return "", fmt.Errorf("error creating temp file: %w", err)
+	}
+	defer os.Remove(tempFile.Name()) // Удаляем файл после завершения работы, если не потребуется сохранять его
+
+	// Записываем расшифрованные данные во временный файл
+	if _, err := tempFile.Write(decryptedData); err != nil {
+		return "", fmt.Errorf("error writing to temp file: %w", err)
+	}
+
+	// Закрываем файл
+	if err := tempFile.Close(); err != nil {
+		return "", fmt.Errorf("error closing temp file: %w", err)
+	}
+
+	// Возвращаем путь к временному файлу
+	return tempFile.Name(), nil
 }
 
 // GetAllFiles возвращает список всех файлов пользователя с их информацией
