@@ -2,30 +2,29 @@ package config
 
 import (
 	"dario.cat/mergo"
-	"encoding/hex"
 	"errors"
 	"fmt"
 )
 
 // Config содержит поля конфигурации.
 type Config struct {
-	Address          string   `json:"address"`            // Адрес сервера
-	DataBaseDSN      string   `json:"database_dsn"`       // Строка подключения к базе данных
-	SecretKey        string   `json:"secret_key"`         // Секретный ключ JWT токена
-	LogLevel         LogLevel `json:"log_level"`          // Уровень логирования
-	EncryptionKeyHex string   `json:"encryption_key_hex"` // 32-байтный ключ для шифрования в hex
-	EncryptionKey    [32]byte `json:"-"`                  // 32-байтный ключ в байтах (не сериализуется)
-	DirSavedFiles    string   `json:"dir_saved_files"`    // Папка для сохранных файлов
+	Address             string   `json:"address"`            // Адрес сервера
+	DataBaseDSN         string   `json:"database_dsn"`       // Строка подключения к базе данных
+	SecretKey           string   `json:"secret_key"`         // Секретный ключ JWT токена
+	LogLevel            LogLevel `json:"log_level"`          // Уровень логирования
+	EncryptionKeyString string   `json:"encryption_key_hex"` // 32-байтный ключ для шифрования в hex
+	EncryptionKey       [32]byte `json:"-"`                  // 32-байтный ключ в байтах (не сериализуется)
+	DirSavedFiles       string   `json:"dir_saved_files"`    // Папка для сохранных файлов
 }
 
 func NewConfig() *Config {
 	return &Config{
-		Address:          ":8080",
-		LogLevel:         "info",
-		SecretKey:        "secret",
-		DataBaseDSN:      "postgresql://gkuser:gkpass@localhost:5432/goph_keeper?sslmode=disable",
-		EncryptionKeyHex: "MySecretEncryptionKey1234567890",
-		DirSavedFiles:    "/saved_files",
+		Address:             ":8080",
+		LogLevel:            "info",
+		SecretKey:           "secret",
+		DataBaseDSN:         "postgresql://gkuser:gkpass@localhost:5432/goph_keeper?sslmode=disable",
+		EncryptionKeyString: "MySecretEncryptionKey1234567890a",
+		DirSavedFiles:       "/saved_files",
 	}
 }
 
@@ -42,21 +41,21 @@ func InitConfig() (*Config, error) {
 		return nil, fmt.Errorf("error merge: %w", err)
 	}
 
-	// Проверка и преобразование ключа из hex-строки в байты
-	if config.EncryptionKeyHex == "" {
+	// Проверка и преобразование ключа из строки в байты
+	if config.EncryptionKeyString == "" {
 		return nil, errors.New("encryption key not provided")
 	}
 
-	encryptionKey, err := hex.DecodeString(config.EncryptionKeyHex)
-	if err != nil {
-		return nil, fmt.Errorf("invalid encryption key: %w", err)
-	}
+	encryptionKey := []byte(config.EncryptionKeyString)
 
 	if len(encryptionKey) != 32 {
 		return nil, fmt.Errorf("encryption key must be 32 bytes long, got %d bytes", len(encryptionKey))
 	}
 
-	config.EncryptionKey = encryptionKey
+	var keyArray [32]byte
+	copy(keyArray[:], encryptionKey)
+
+	config.EncryptionKey = keyArray
 	return config, nil
 }
 

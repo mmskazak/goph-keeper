@@ -23,7 +23,7 @@ func parseEnv() *Config {
 
 	// Добавление поддержки 32-байтного ключа для шифрования
 	if encryptionKeyHex, ok := os.LookupEnv("ENCRYPTION_KEY"); ok {
-		config.EncryptionKeyHex = encryptionKeyHex
+		config.EncryptionKeyString = encryptionKeyHex
 	}
 
 	return config

@@ -1,10 +1,10 @@
 BEGIN TRANSACTION;
 
 -- Удаление внешнего ключа
-ALTER TABLE passwords
+ALTER TABLE files
     DROP CONSTRAINT IF EXISTS fk_user;
 
 -- Удаление таблицы
-DROP TABLE IF EXISTS passwords;
+DROP TABLE IF EXISTS files;
 
 COMMIT;
