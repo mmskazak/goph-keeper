@@ -3,6 +3,7 @@ package file_services
 import (
 	"context"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"gophKeeper/internal/logger"
 	"gophKeeper/internal/modules/file/file_dto/request"
 	"os"
 	"path/filepath"
@@ -23,6 +24,7 @@ func NewFileService(pool *pgxpool.Pool, dirSavedFiles string) *FileService {
 // SaveFile сохраняет файл на сервере и сохраняет метаданные в базу данных
 func (fs *FileService) SaveFile(ctx context.Context, dto request.SaveFileDTO) error {
 	destPath := filepath.Join(fs.dirSavedFiles, dto.FileName)
+	logger.Log.Infoln(destPath)
 
 	// Создаем файл в целевой директории
 	destFile, err := os.Create(destPath)
@@ -37,8 +39,8 @@ func (fs *FileService) SaveFile(ctx context.Context, dto request.SaveFileDTO) er
 	}
 
 	// Сохраняем информацию о файле в базе данных
-	_, err = fs.pool.Exec(ctx, "INSERT INTO files (user_id, file_name, file_path) VALUES ($1, $2, $3)",
-		dto.UserID, dto.FileName, destPath)
+	//_, err = fs.pool.Exec(ctx, "INSERT INTO files (user_id, title, description) VALUES ($1, $2, $3)",
+	//	dto.UserID, dto.FileName, destPath)
 
 	return err
 }

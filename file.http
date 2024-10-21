@@ -1,0 +1,10 @@
+POST http://localhost:8080/file/save
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjF9.X2KuV_6nTWk5ysPSjZ3DQe-eSn8QLiYv5qmyx93S2iE
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="test.txt"
+Content-Type: text/plain
+
+< E:/test.txt
+------WebKitFormBoundary7MA4YWxkTrZu0gW--

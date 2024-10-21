@@ -2,6 +2,7 @@ package file_http
 
 import (
 	"encoding/json"
+	"gophKeeper/internal/logger"
 	"gophKeeper/internal/modules/file/file_dto/request"
 	"gophKeeper/internal/modules/file/file_services"
 
@@ -21,12 +22,14 @@ func NewFileHandlersHTTP(service file_services.IFileService) FileHandlers {
 func (p FileHandlers) SaveFile(w http.ResponseWriter, r *http.Request) {
 	saveFileDTO, err := request.SaveFileDTOFromHTTP(r)
 	if err != nil {
+		logger.Log.Errorf("error build DTO for save file: %v", err)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
 
 	err = p.fileService.SaveFile(r.Context(), saveFileDTO)
 	if err != nil {
+		logger.Log.Errorf("error saving file: %v", err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
