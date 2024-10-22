@@ -6,8 +6,9 @@ import (
 )
 
 type FileInfo struct {
-	Name       string `json:"name"`
-	PathToFile string `json:"path_to_file"`
+	ID          string `json:"id"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
 }
 
 type IFileService interface {

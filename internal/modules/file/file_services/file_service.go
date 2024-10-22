@@ -137,8 +137,9 @@ func (fs *FileService) GetFile(ctx context.Context, dto request.GetFileDTO) (str
 
 // GetAllFiles возвращает список всех файлов пользователя с их информацией
 func (fs *FileService) GetAllFiles(ctx context.Context, dto request.AllFilesDTO) ([]FileInfo, error) {
-	rows, err := fs.pool.Query(ctx, "SELECT file_name, file_path FROM files WHERE user_id = $1", dto.UserID)
+	rows, err := fs.pool.Query(ctx, "SELECT id, title, description FROM files WHERE user_id = $1", dto.UserID)
 	if err != nil {
+		logger.Log.Errorf("error getting all files: %v", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -146,7 +147,8 @@ func (fs *FileService) GetAllFiles(ctx context.Context, dto request.AllFilesDTO)
 	var files []FileInfo
 	for rows.Next() {
 		var fileInfo FileInfo
-		if err := rows.Scan(&fileInfo.Name, &fileInfo.PathToFile); err != nil {
+		if err := rows.Scan(&fileInfo.ID, &fileInfo.Title, &fileInfo.Description); err != nil {
+			logger.Log.Errorf("error getting all files: %v", err)
 			return nil, err
 		}
 		files = append(files, fileInfo)
