@@ -10,4 +10,5 @@ type ICardService interface {
 	DeleteCard(ctx context.Context, dto card_dto.DeleteCardDTO) error
 	GetCard(ctx context.Context, dto card_dto.GetCardDTO) (card_dto.SaveCardDTO, error)
 	GetAllCards(ctx context.Context, dto card_dto.GetAllCardsDTO) ([]card_dto.SaveCardDTO, error)
+	UpdateCard(ctx context.Context, dto card_dto.UpdateCardDTO) error
 }
