@@ -8,8 +8,10 @@ import (
 	"gophKeeper/internal/modules/auth/auth_http"
 	"gophKeeper/internal/modules/auth/auth_middleware"
 	"gophKeeper/internal/modules/auth/auth_services/auth_service"
+	"gophKeeper/internal/modules/card/routes_card"
 	"gophKeeper/internal/modules/file/routes_file"
 	"gophKeeper/internal/modules/pwd/routes_pwd"
+	"gophKeeper/internal/modules/text/routes_text"
 	"net/http"
 )
 
@@ -39,6 +41,8 @@ func registrationHandlersHTTP(
 
 		r = routes_pwd.RegistrationRoutesPwd(r, pool, cfg)
 		r = routes_file.RegistrationRoutesFile(r, pool, cfg)
+		r = routes_text.RegistrationRoutesText(r, pool, cfg)
+		r = routes_card.RegistrationRoutesCard(r, pool, cfg)
 	})
 
 	return r
