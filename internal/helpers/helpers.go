@@ -2,16 +2,18 @@ package helpers
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"gophKeeper/internal/modules/auth/authmiddleware"
+
 	"github.com/golang-jwt/jwt"
-	"gophKeeper/internal/modules/auth/auth_middleware"
 )
 
-// GetUserIDFromContext Функция для извлечения userID из контекста
+// GetUserIDFromContext Функция для извлечения userID из контекста.
 func GetUserIDFromContext(ctx context.Context) (int, error) {
-	claims, ok := ctx.Value(auth_middleware.Claims).(jwt.MapClaims)
+	claims, ok := ctx.Value(authmiddleware.Claims).(jwt.MapClaims)
 	if !ok {
-		return 0, fmt.Errorf("could not get claims from context")
+		return 0, errors.New("no claims found in context")
 	}
 
 	fmt.Println(claims)
@@ -19,7 +21,7 @@ func GetUserIDFromContext(ctx context.Context) (int, error) {
 	// Приведение значения userID к float64, а затем к int
 	userIDFloat, ok := claims["userID"].(float64)
 	if !ok {
-		return -1, fmt.Errorf("userID not found in claims or has incorrect type")
+		return -1, errors.New("no userID found in context")
 	}
 
 	// Приведение float64 к int

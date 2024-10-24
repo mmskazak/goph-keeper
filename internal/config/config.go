@@ -1,20 +1,21 @@
 package config
 
 import (
-	"dario.cat/mergo"
 	"errors"
 	"fmt"
+
+	"dario.cat/mergo"
 )
 
 // Config содержит поля конфигурации.
 type Config struct {
+	EncryptionKey       [32]byte `json:"-"`                  // 32-байтный ключ в байтах (не сериализуется)
 	Address             string   `json:"address"`            // Адрес сервера
 	DataBaseDSN         string   `json:"database_dsn"`       // Строка подключения к базе данных
 	SecretKey           string   `json:"secret_key"`         // Секретный ключ JWT токена
-	LogLevel            LogLevel `json:"log_level"`          // Уровень логирования
 	EncryptionKeyString string   `json:"encryption_key_hex"` // 32-байтный ключ для шифрования в hex
-	EncryptionKey       [32]byte `json:"-"`                  // 32-байтный ключ в байтах (не сериализуется)
 	DirSavedFiles       string   `json:"dir_saved_files"`    // Папка для сохранных файлов
+	LogLevel            LogLevel `json:"log_level"`          // Уровень логирования
 }
 
 func NewConfig() *Config {
@@ -48,7 +49,7 @@ func InitConfig() (*Config, error) {
 
 	encryptionKey := []byte(config.EncryptionKeyString)
 
-	if len(encryptionKey) != 32 {
+	if len(encryptionKey) != 32 { //nolint:gomnd //количество байтов ключа шифрования
 		return nil, fmt.Errorf("encryption key must be 32 bytes long, got %d bytes", len(encryptionKey))
 	}
 
@@ -63,7 +64,7 @@ func mergeFlags(config *Config) (*Config, error) {
 	configFromFlags := parseFlags()
 	err := mergo.Merge(config, configFromFlags, mergo.WithOverride)
 	if err != nil {
-		return nil, fmt.Errorf("mergo from flags error: %v", err)
+		return nil, fmt.Errorf("mergo from flags error: %w", err)
 	}
 	return config, nil
 }
@@ -72,7 +73,7 @@ func mergeEnv(config *Config) (*Config, error) {
 	configFromEnv := parseEnv()
 	err := mergo.Merge(config, configFromEnv, mergo.WithOverride)
 	if err != nil {
-		return nil, fmt.Errorf("mergo from env error: %v", err)
+		return nil, fmt.Errorf("mergo from env error: %w", err)
 	}
 
 	return config, nil

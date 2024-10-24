@@ -26,13 +26,13 @@ func main() {
 		log.Printf("Ошибка инициализации глобального логера: %v", err)
 	}
 
-	//Инициализируем базу данных
+	// Инициализируем базу данных
 	pool, err := psql.NewPgxPool(ctx, cfg)
 	if err != nil {
 		logger.Log.Fatalf("Ошибка инициализаци базы данных Postgres: %v", err)
 	}
 
-	//Накатываем миграции
+	// Накатываем миграции
 	err = psql.RunMigrations(cfg)
 	if err != nil {
 		logger.Log.Fatalf("Ошибка запуска миграций: %v", err)

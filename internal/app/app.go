@@ -4,13 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/go-chi/chi/v5"
-	"github.com/jackc/pgx/v5/pgxpool"
-	"golang.org/x/crypto/acme/autocert"
 	"gophKeeper/internal/config"
 	"gophKeeper/internal/logger"
 	"net/http"
 	"time"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"golang.org/x/crypto/acme/autocert"
 )
 
 const readTimeout = 5 * time.Second
@@ -18,9 +19,7 @@ const writeTimeout = 5 * time.Second
 
 // App представляет приложение с HTTP сервером и логгером.
 type App struct {
-	server       *http.Server
-	readTimeout  time.Duration
-	writeTimeout time.Duration
+	server *http.Server
 }
 
 // NewApp создает новый экземпляр приложения.

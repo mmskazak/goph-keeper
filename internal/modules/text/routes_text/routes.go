@@ -1,19 +1,20 @@
 package routes_text
 
 import (
-	"github.com/go-chi/chi/v5"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"gophKeeper/internal/config"
 	"gophKeeper/internal/modules/text/text_http"
 	"gophKeeper/internal/modules/text/text_services"
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func RegistrationRoutesText(
 	r chi.Router,
 	pool *pgxpool.Pool,
 	cfg *config.Config,
-) chi.Router {
+) {
 	// Сохранить текст
 	r.Post("/text/save", func(w http.ResponseWriter, req *http.Request) {
 		getTextHandlers(pool, cfg.EncryptionKey).SaveText(w, req)
@@ -34,8 +35,6 @@ func RegistrationRoutesText(
 	r.Post("/text/update", func(w http.ResponseWriter, req *http.Request) {
 		getTextHandlers(pool, cfg.EncryptionKey).UpdateText(w, req)
 	})
-
-	return r
 }
 
 func getTextHandlers(pool *pgxpool.Pool, enKey [32]byte) *text_http.TextHandlers {

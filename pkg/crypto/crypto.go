@@ -3,12 +3,13 @@ package crypto
 import (
 	"crypto/rand" // Для генерации случайных данных
 	"encoding/hex"
-	"fmt"                          // Пакет для форматирования строк
-	"golang.org/x/crypto/chacha20" // Пакет для работы с ChaCha20
+	"fmt" // Пакет для форматирования строк
 	"strings"
+
+	"golang.org/x/crypto/chacha20" // Пакет для работы с ChaCha20
 )
 
-// Encrypt Функция для шифрования текста
+// Encrypt Функция для шифрования текста.
 func Encrypt(key [32]byte, plaintext []byte) (string, error) {
 	// Создаём новый объект шифрования ChaCha20 с заданным ключом и инициализационным вектором (nonce)
 	var nonce [12]byte
@@ -31,7 +32,7 @@ func Encrypt(key [32]byte, plaintext []byte) (string, error) {
 	return fmt.Sprintf("%x:%x", nonce, ciphertext), nil
 }
 
-// Decrypt Функция для расшифровки текста
+// Decrypt Функция для расшифровки текста.
 func Decrypt(key [32]byte, encrypted string) ([]byte, error) {
 	// Разделяем зашифрованный текст и nonce
 	parts := strings.Split(encrypted, ":")

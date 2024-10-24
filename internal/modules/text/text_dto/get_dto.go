@@ -2,9 +2,10 @@ package text_dto
 
 import (
 	"fmt"
-	"github.com/go-chi/chi/v5"
 	"gophKeeper/internal/helpers"
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
 )
 
 type GetTextDTO struct {

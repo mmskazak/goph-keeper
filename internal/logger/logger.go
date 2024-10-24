@@ -2,9 +2,10 @@ package logger
 
 import (
 	"fmt"
+	"gophKeeper/internal/config"
+
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"gophKeeper/internal/config"
 )
 
 var Log *zap.SugaredLogger

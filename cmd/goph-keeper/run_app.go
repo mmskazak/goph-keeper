@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"gophKeeper/internal/app"
 	"gophKeeper/internal/config"
 	"gophKeeper/internal/logger"
@@ -11,6 +10,8 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 func runApp(
