@@ -6,19 +6,19 @@ import (
 	"errors"
 	"fmt"
 	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgxpool"
 	request2 "gophKeeper/internal/modules/pwd/pwd_dto/request"
 	response2 "gophKeeper/internal/modules/pwd/pwd_dto/response"
 	"gophKeeper/internal/modules/pwd/value_obj"
+	"gophKeeper/internal/storage"
 	"gophKeeper/pkg/crypto"
 )
 
 type PwdService struct {
-	pool      *pgxpool.Pool
+	pool      storage.Database
 	cryptoKey [32]byte
 }
 
-func NewPwdService(pool *pgxpool.Pool, enKey [32]byte) *PwdService {
+func NewPwdService(pool storage.Database, enKey [32]byte) *PwdService {
 	return &PwdService{
 		pool:      pool,
 		cryptoKey: enKey,
