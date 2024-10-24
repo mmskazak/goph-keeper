@@ -52,7 +52,10 @@ func (s *AuthHandlers) Registration(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Authorization", "Bearer "+token)
 
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte("ok"))
+	_, err = w.Write([]byte("ok"))
+	if err != nil {
+		logger.Log.Errorf("Error write: %v", err)
+	}
 }
 
 func (s *AuthHandlers) Login(w http.ResponseWriter, r *http.Request) {
@@ -74,11 +77,17 @@ func (s *AuthHandlers) Login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Authorization", "Bearer "+token)
 
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("ok"))
+	_, err = w.Write([]byte("ok"))
+	if err != nil {
+		logger.Log.Errorf("Error write: %v", err)
+	}
 }
 
 func (s *AuthHandlers) Logout(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Authorization", "")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("logout"))
+	_, err := w.Write([]byte("logout"))
+	if err != nil {
+		logger.Log.Errorf("Error write: %v", err)
+	}
 }

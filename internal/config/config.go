@@ -9,13 +9,13 @@ import (
 
 // Config содержит поля конфигурации.
 type Config struct {
+	LogLevel            LogLevel `json:"log_level"`          // Уровень логирования
 	EncryptionKey       [32]byte `json:"-"`                  // 32-байтный ключ в байтах (не сериализуется)
 	Address             string   `json:"address"`            // Адрес сервера
 	DataBaseDSN         string   `json:"database_dsn"`       // Строка подключения к базе данных
 	SecretKey           string   `json:"secret_key"`         // Секретный ключ JWT токена
 	EncryptionKeyString string   `json:"encryption_key_hex"` // 32-байтный ключ для шифрования в hex
 	DirSavedFiles       string   `json:"dir_saved_files"`    // Папка для сохранных файлов
-	LogLevel            LogLevel `json:"log_level"`          // Уровень логирования
 }
 
 func NewConfig() *Config {
