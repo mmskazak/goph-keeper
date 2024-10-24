@@ -2,6 +2,7 @@ package authservice
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	dto2 "gophKeeper/internal/modules/auth/authdto"
 	"gophKeeper/internal/modules/auth/authservices/authhashpwd"
@@ -33,7 +34,7 @@ func (a *AuthService) Login(ctx context.Context, logDTO *dto2.LoginDTO) (int, er
 	sql := "SELECT id, password FROM users WHERE login = $1;"
 	row := a.pool.QueryRow(ctx, sql, logDTO.Login)
 	if row == nil {
-		return 0, fmt.Errorf("user not found")
+		return 0, errors.New("user not found")
 	}
 	var id int
 	var hashedPassword string
@@ -43,7 +44,7 @@ func (a *AuthService) Login(ctx context.Context, logDTO *dto2.LoginDTO) (int, er
 	}
 	isLogin := authhashpwd.CheckHashedPassword(hashedPassword, logDTO.Password)
 	if !isLogin {
-		return 0, fmt.Errorf("user not found")
+		return 0, errors.New("password incorrect")
 	}
 	return id, nil
 }

@@ -20,12 +20,12 @@ type SaveCardDTO struct {
 func SaveCardDTOFromHTTP(r *http.Request) (SaveCardDTO, error) {
 	data, err := io.ReadAll(r.Body)
 	if err != nil {
-		return SaveCardDTO{}, fmt.Errorf("reading body: %w", err)
+		return SaveCardDTO{}, fmt.Errorf("reading body for save card dto: %w", err)
 	}
 	var saveCardDTO SaveCardDTO
 	err = json.Unmarshal(data, &saveCardDTO)
 	if err != nil {
-		return SaveCardDTO{}, fmt.Errorf("unmarshalling body: %w", err)
+		return SaveCardDTO{}, fmt.Errorf("unmarshalling body for save card dto: %w", err)
 	}
 	return saveCardDTO, nil
 }

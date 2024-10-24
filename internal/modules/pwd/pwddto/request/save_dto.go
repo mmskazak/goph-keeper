@@ -10,9 +10,9 @@ import (
 )
 
 type SavePwdDTO struct {
-	UserID      int                  `json:"user_id"`
 	Title       string               `json:"title"`
 	Description string               `json:"description"`
+	UserID      int                  `json:"user_id"`
 	Credentials valueobj.Credentials `json:"credentials"`
 }
 

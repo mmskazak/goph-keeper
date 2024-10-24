@@ -1,6 +1,7 @@
 package request
 
 import (
+	"errors"
 	"fmt"
 	"gophKeeper/internal/helpers"
 	"net/http"
@@ -17,7 +18,7 @@ func GetFileDTOFromHTTP(r *http.Request) (GetFileDTO, error) {
 	// Извлекаем file_id из пути запроса
 	fileID := chi.URLParam(r, "file_id")
 	if fileID == "" {
-		return GetFileDTO{}, fmt.Errorf("file_id not found in the request path")
+		return GetFileDTO{}, errors.New("file_id not found in the request path")
 	}
 
 	// Извлекаем userID из контекста

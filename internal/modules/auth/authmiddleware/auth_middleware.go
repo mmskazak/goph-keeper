@@ -20,7 +20,7 @@ func Authentication(next http.Handler, secretKey string) http.Handler {
 		jwtBearer := r.Header.Get("Authorization")
 		logger.Log.Infoln(jwtBearer)
 		strArr := strings.Split(jwtBearer, " ")
-		if len(strArr) != 2 {
+		if len(strArr) != 2 { //nolint:gomnd //2 части - Bearer + JWT
 			logger.Log.Errorln("jwt bearer format error")
 			w.WriteHeader(http.StatusUnauthorized)
 			return
