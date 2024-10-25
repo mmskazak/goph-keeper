@@ -24,7 +24,7 @@ func GetFileDTOFromHTTP(r *http.Request) (GetFileDTO, error) {
 	// Извлекаем userID из контекста
 	userID, err := helpers.GetUserIDFromContext(r.Context())
 	if err != nil {
-		return GetFileDTO{}, fmt.Errorf("error GetUserIDFromContext: %w", err)
+		return GetFileDTO{}, fmt.Errorf("error GetUserIDFromContext GetFileDTOFromHTTP: %w", err)
 	}
 
 	// Формируем DTO

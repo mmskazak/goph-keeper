@@ -8,13 +8,13 @@ import (
 )
 
 type SaveCardDTO struct {
-	UserID      int    `json:"user_id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	Number      string `json:"number"`
 	PinCode     string `json:"pincode"`
 	CVV         string `json:"cvv"`
 	Expire      string `json:"expire"`
+	UserID      int    `json:"user_id"`
 }
 
 func SaveCardDTOFromHTTP(r *http.Request) (SaveCardDTO, error) {

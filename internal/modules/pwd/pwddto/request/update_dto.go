@@ -20,7 +20,7 @@ type UpdatePwdDTO struct {
 func UpdatePwdDTOFromHTTP(r *http.Request) (UpdatePwdDTO, error) {
 	data, err := io.ReadAll(r.Body)
 	if err != nil {
-		return UpdatePwdDTO{}, fmt.Errorf("reading body registration: %w", err)
+		return UpdatePwdDTO{}, fmt.Errorf("reading body for UpdatePwdDTOFromHTTP: %w", err)
 	}
 	var updatePwdDTO UpdatePwdDTO
 	err = json.Unmarshal(data, &updatePwdDTO)

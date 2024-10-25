@@ -3,15 +3,17 @@ package request
 import (
 	"fmt"
 	"gophKeeper/internal/helpers"
+	"gophKeeper/internal/logger"
 	"io"
+	"mime/multipart"
 	"net/http"
 )
 
 type SaveFileDTO struct {
-	UserID      int    `json:"user_id"`
 	Title       string `json:"title"`
 	Description []byte `json:"description"` // Описание в байтовом формате
 	FileData    []byte `json:"file_data"`   // Содержимое файла
+	UserID      int    `json:"user_id"`
 }
 
 func SaveFileDTOFromHTTP(r *http.Request) (SaveFileDTO, error) {
@@ -26,7 +28,12 @@ func SaveFileDTOFromHTTP(r *http.Request) (SaveFileDTO, error) {
 	if err != nil {
 		return SaveFileDTO{}, fmt.Errorf("error retrieving file from form-data: %w", err)
 	}
-	defer file.Close()
+	defer func(file multipart.File) {
+		err := file.Close()
+		if err != nil {
+			logger.Log.Errorf("error closing file: %w", err)
+		}
+	}(file)
 
 	// Читаем содержимое файла
 	fileData, err := io.ReadAll(file)

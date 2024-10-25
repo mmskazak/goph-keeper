@@ -1,6 +1,7 @@
 package carddto
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -19,7 +20,7 @@ func GetCardDTOFromHTTP(r *http.Request) (GetCardDTO, error) {
 	// Извлекаем cardID из пути запроса (пример: card_id)
 	cardIDStr := chi.URLParam(r, "card_id")
 	if cardIDStr == "" {
-		return GetCardDTO{}, fmt.Errorf("card_id not found in the request path")
+		return GetCardDTO{}, errors.New("card_id not found in the request path")
 	}
 
 	// Преобразуем cardID в int
@@ -31,7 +32,7 @@ func GetCardDTOFromHTTP(r *http.Request) (GetCardDTO, error) {
 	// Извлекаем userID из контекста
 	userID, err := helpers.GetUserIDFromContext(r.Context())
 	if err != nil {
-		return GetCardDTO{}, fmt.Errorf("error GetUserIDFromContext: %w", err)
+		return GetCardDTO{}, fmt.Errorf("error GetUserIDFromContext GetCardDTOFromHTTP: %w", err)
 	}
 
 	// Формируем DTO

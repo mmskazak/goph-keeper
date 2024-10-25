@@ -26,7 +26,7 @@ func NewPwdService(pool storage.Database, enKey [32]byte) *PwdService {
 	}
 }
 
-func (pwd *PwdService) SavePassword(ctx context.Context, dto request2.SavePwdDTO) error {
+func (pwd *PwdService) SavePassword(ctx context.Context, dto *request2.SavePwdDTO) error {
 	sql := `INSERT INTO passwords (user_id, title, description, credentials) VALUES ($1, $2, $3, $4)`
 
 	marshaledCredentials, err := json.Marshal(dto.Credentials)
@@ -48,7 +48,7 @@ func (pwd *PwdService) SavePassword(ctx context.Context, dto request2.SavePwdDTO
 	return nil
 }
 
-func (pwd *PwdService) DeletePassword(ctx context.Context, dto request2.DeletePwdDTO) error {
+func (pwd *PwdService) DeletePassword(ctx context.Context, dto *request2.DeletePwdDTO) error {
 	sql := `DELETE FROM passwords WHERE user_id = $1 AND id = $2;`
 	_, err := pwd.pool.Exec(ctx, sql, dto.UserID, dto.PwdID)
 	if err != nil {
@@ -57,7 +57,7 @@ func (pwd *PwdService) DeletePassword(ctx context.Context, dto request2.DeletePw
 	return nil
 }
 
-func (pwd *PwdService) GetPassword(ctx context.Context, dto request2.GetPwdDTO) (response2.CredentialsDTO, error) {
+func (pwd *PwdService) GetPassword(ctx context.Context, dto *request2.GetPwdDTO) (response2.CredentialsDTO, error) {
 	sql := `SELECT credentials FROM passwords WHERE user_id = $1 AND id = $2;`
 	row := pwd.pool.QueryRow(ctx, sql, dto.UserID, dto.PwdID)
 
@@ -76,7 +76,7 @@ func (pwd *PwdService) GetPassword(ctx context.Context, dto request2.GetPwdDTO) 
 	// Расшифровываем данные
 	decryptedCredentials, err := crypto.Decrypt(pwd.cryptoKey, string(credentialsData))
 	if err != nil {
-		return response2.CredentialsDTO{}, err
+		return response2.CredentialsDTO{}, fmt.Errorf("error decrypt for GetPassword %w", err)
 	}
 
 	var credentials response2.CredentialsDTO
@@ -87,7 +87,7 @@ func (pwd *PwdService) GetPassword(ctx context.Context, dto request2.GetPwdDTO) 
 	return credentials, nil
 }
 
-func (pwd *PwdService) GetAllPasswords(ctx context.Context, dto request2.AllPwdDTO) ([]response2.PwdDTO, error) {
+func (pwd *PwdService) GetAllPasswords(ctx context.Context, dto *request2.AllPwdDTO) ([]response2.PwdDTO, error) {
 	sql := `SELECT id,resource, login, password FROM passwords WHERE user_id = $1`
 	rows, err := pwd.pool.Query(ctx, sql, dto.UserID)
 	if err != nil {
@@ -109,7 +109,7 @@ func (pwd *PwdService) GetAllPasswords(ctx context.Context, dto request2.AllPwdD
 		// Расшифровываем данные
 		decryptedCredentials, err := crypto.Decrypt(pwd.cryptoKey, string(credentialsData))
 		if err != nil {
-			return []response2.PwdDTO{}, err
+			return []response2.PwdDTO{}, fmt.Errorf("error decrypt for GetAllPasswords %w", err)
 		}
 
 		var credentials valueobj.Credentials
@@ -128,7 +128,7 @@ func (pwd *PwdService) GetAllPasswords(ctx context.Context, dto request2.AllPwdD
 	return listPasswords, nil
 }
 
-func (pwd *PwdService) UpdatePassword(ctx context.Context, dto request2.UpdatePwdDTO) error {
+func (pwd *PwdService) UpdatePassword(ctx context.Context, dto *request2.UpdatePwdDTO) error {
 	marshaledCredentials, err := json.Marshal(dto.Credentials)
 	if err != nil {
 		return fmt.Errorf("error marshalling credentials: %w", err)
@@ -136,6 +136,9 @@ func (pwd *PwdService) UpdatePassword(ctx context.Context, dto request2.UpdatePw
 
 	// Шифруем данные
 	encryptedCredentials, err := crypto.Encrypt(pwd.cryptoKey, marshaledCredentials)
+	if err != nil {
+		return fmt.Errorf("error while encrypting credentials: %w", err)
+	}
 
 	sql := `UPDATE passwords SET title = $2, descriotion = $3, credentials = $4 WHERE id = $5 AND user_id = $6`
 	result, err := pwd.pool.Exec(ctx, sql, dto.Title, dto.Description, encryptedCredentials, dto.ID, dto.UserID)

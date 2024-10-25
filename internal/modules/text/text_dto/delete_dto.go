@@ -16,7 +16,7 @@ type DeleteTextDTO struct {
 func DeleteTextDTOFromHTTP(r *http.Request) (DeleteTextDTO, error) {
 	data, err := io.ReadAll(r.Body)
 	if err != nil {
-		return DeleteTextDTO{}, fmt.Errorf("reading body registration: %w", err)
+		return DeleteTextDTO{}, fmt.Errorf("reading body for DeleteTextDTOFromHTTP: %w", err)
 	}
 	var deleteTextDTO DeleteTextDTO
 	err = json.Unmarshal(data, &deleteTextDTO)

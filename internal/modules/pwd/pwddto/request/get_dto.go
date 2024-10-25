@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"gophKeeper/internal/helpers"
+	"gophKeeper/internal/logger"
 	"io"
 	"net/http"
 )
@@ -17,9 +18,14 @@ func GetPwdDTOFromHTTP(r *http.Request) (GetPwdDTO, error) {
 	// Читаем тело запроса
 	data, err := io.ReadAll(r.Body)
 	if err != nil {
-		return GetPwdDTO{}, fmt.Errorf("reading body registration: %w", err)
+		return GetPwdDTO{}, fmt.Errorf("reading body for GetPwdDTOFromHTTP: %w", err)
 	}
-	defer r.Body.Close() // Закрываем тело запроса после чтения
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			logger.Log.Errorf("error closing body reader: %v", err)
+		}
+	}(r.Body) // Закрываем тело запроса после чтения
 
 	var getPwdDTO GetPwdDTO
 	// Декодируем JSON в структуру

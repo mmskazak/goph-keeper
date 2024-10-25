@@ -10,16 +10,16 @@ import (
 
 type UpdateTextDTO struct {
 	ID          string `json:"text_id"`
-	UserID      int    `json:"user_id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	TextContent string `json:"text_content"`
+	UserID      int    `json:"user_id"`
 }
 
 func UpdateTextDTOFromHTTP(r *http.Request) (UpdateTextDTO, error) {
 	data, err := io.ReadAll(r.Body)
 	if err != nil {
-		return UpdateTextDTO{}, fmt.Errorf("reading body registration: %w", err)
+		return UpdateTextDTO{}, fmt.Errorf("reading body for UpdateTextDTOFromHTTP: %w", err)
 	}
 	var updateTextDTO UpdateTextDTO
 	err = json.Unmarshal(data, &updateTextDTO)

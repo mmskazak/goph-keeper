@@ -15,7 +15,7 @@ type LoginDTO struct {
 func GetLoginDTOFromHTTP(r *http.Request) (*LoginDTO, error) {
 	data, err := io.ReadAll(r.Body)
 	if err != nil {
-		return nil, fmt.Errorf("reading body registration: %w", err)
+		return nil, fmt.Errorf("reading body for get login dto: %w", err)
 	}
 	var logDTO LoginDTO
 	err = json.Unmarshal(data, &logDTO)

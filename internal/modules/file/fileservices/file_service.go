@@ -42,51 +42,67 @@ func (fs *FileService) SaveFile(ctx context.Context, dto request.SaveFileDTO) er
 	// Создаем файл в целевой директории
 	destFile, err := os.Create(destPath)
 	if err != nil {
-		return err
+		return fmt.Errorf("create file %s failed", destPath)
 	}
-	defer destFile.Close()
+	defer func(destFile *os.File) {
+		err := destFile.Close()
+		if err != nil {
+			logger.Log.Errorf("Failed to close file %s, err: %s", destPath, err)
+		}
+	}(destFile)
 
 	// Шифруем данные
 	encryptedFile, err := crypto.Encrypt(fs.cryptoKey, dto.FileData)
+	if err != nil {
+		return fmt.Errorf("encrypt file %s failed", destPath)
+	}
 
 	// Пишем содержимое файла в созданный файл
-	if _, err := destFile.Write([]byte(encryptedFile)); err != nil {
-		return err
+	if _, err = destFile.Write([]byte(encryptedFile)); err != nil {
+		return fmt.Errorf("write file %s failed", destPath)
 	}
 
 	// Сохраняем информацию о файле в базе данных
 	_, err = fs.pool.Exec(ctx, "INSERT INTO files (user_id, title, description, path_to_file) VALUES ($1, $2, $3, $4)",
 		dto.UserID, dto.Title, dto.Description, destPath)
+	if err != nil {
+		return fmt.Errorf("insert query  %s failed", destPath)
+	}
 
-	return err
+	return fmt.Errorf("save file %s failed", destPath)
 }
 
 // DeleteFile удаляет файл с сервера и удаляет метаданные из базы данных.
 func (fs *FileService) DeleteFile(ctx context.Context, dto request.DeleteFileDTO) error {
 	var filePath string
-
 	// Получаем путь к файлу и проверяем, что файл принадлежит пользователю
-	err := fs.pool.QueryRow(ctx, "SELECT path_to_file FROM files WHERE id = $1 AND user_id = $2", dto.FileID, dto.UserID).Scan(&filePath)
+	err := fs.pool.QueryRow(ctx, "SELECT path_to_file FROM files WHERE id = $1 AND user_id = $2",
+		dto.FileID, dto.UserID).
+		Scan(&filePath)
 	if err != nil {
-		return err
+		return fmt.Errorf("select query file %s failed", dto.FileID)
 	}
 
 	// Удаляем файл с диска
 	if err := os.Remove(filePath); err != nil {
-		return err
+		return fmt.Errorf("delete file %s failed", filePath)
 	}
 
 	// Удаляем информацию о файле из базы данных
 	_, err = fs.pool.Exec(ctx, "DELETE FROM files WHERE id = $1 AND user_id = $2", dto.FileID, dto.UserID)
-	return err
+	if err != nil {
+		return fmt.Errorf("delete query file %s failed", dto.FileID)
+	}
+	return nil
 }
 
 // GetFile возвращает путь к временно созданному расшифрованному файлу.
 func (fs *FileService) GetFile(ctx context.Context, dto request.GetFileDTO) (string, error) {
 	var filePath string
-
 	// Получаем путь к файлу и проверяем, что файл принадлежит пользователю
-	err := fs.pool.QueryRow(ctx, "SELECT path_to_file FROM files WHERE id = $1 AND user_id = $2", dto.FileID, dto.UserID).Scan(&filePath)
+	err := fs.pool.QueryRow(ctx, "SELECT path_to_file FROM files WHERE id = $1 AND user_id = $2",
+		dto.FileID, dto.UserID).
+		Scan(&filePath)
 	if err != nil {
 		logger.Log.Errorf("get file %s error: %v", dto.FileID, err)
 		return "", fmt.Errorf("error retrieving file path: %w", err)
@@ -115,15 +131,15 @@ func (fs *FileService) GetFile(ctx context.Context, dto request.GetFileDTO) (str
 		return "", fmt.Errorf("error creating temp file: %w", err)
 	}
 	defer func() {
-		time.AfterFunc(5*time.Second, func() {
-			if err := os.Remove(tempFile.Name()); err != nil {
+		time.AfterFunc(5*time.Second, func() { //nolint:gomnd //5 секунд
+			if err = os.Remove(tempFile.Name()); err != nil {
 				logger.Log.Errorf("failed to remove temp file: %v", err)
 			}
 		})
 	}()
 
 	// Записываем расшифрованные данные во временный файл
-	if _, err := tempFile.Write(decryptedData); err != nil {
+	if _, err = tempFile.Write(decryptedData); err != nil {
 		return "", fmt.Errorf("error writing to temp file: %w", err)
 	}
 
@@ -140,17 +156,17 @@ func (fs *FileService) GetFile(ctx context.Context, dto request.GetFileDTO) (str
 func (fs *FileService) GetAllFiles(ctx context.Context, dto request.AllFilesDTO) ([]FileInfo, error) {
 	rows, err := fs.pool.Query(ctx, "SELECT id, title, description FROM files WHERE user_id = $1", dto.UserID)
 	if err != nil {
-		logger.Log.Errorf("error getting all files: %v", err)
-		return nil, err
+		logger.Log.Errorf("error querying all files: %v", err)
+		return nil, fmt.Errorf("error getting all files: %w", err)
 	}
 	defer rows.Close()
 
 	var files []FileInfo
 	for rows.Next() {
 		var fileInfo FileInfo
-		if err := rows.Scan(&fileInfo.ID, &fileInfo.Title, &fileInfo.Description); err != nil {
-			logger.Log.Errorf("error getting all files: %v", err)
-			return nil, err
+		if err = rows.Scan(&fileInfo.ID, &fileInfo.Title, &fileInfo.Description); err != nil {
+			logger.Log.Errorf("error scanning row: %v", err)
+			return nil, fmt.Errorf("error getting all files: %w", err)
 		}
 		files = append(files, fileInfo)
 	}
@@ -159,9 +175,10 @@ func (fs *FileService) GetAllFiles(ctx context.Context, dto request.AllFilesDTO)
 }
 
 func generateRandomFileName() (string, error) {
-	b := make([]byte, 16) // 16 байт = 128 бит случайных данных
+	b := make([]byte, 16) //nolint:gomnd //16 байт = 128 бит случайных данных
 	if _, err := rand.Read(b); err != nil {
-		return "", err
+		logger.Log.Errorf("error generating random filename: %v", err)
+		return "", fmt.Errorf("error generating random filename: %w", err)
 	}
 	return hex.EncodeToString(b), nil
 }

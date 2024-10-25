@@ -18,7 +18,7 @@ type SaveTextDTO struct {
 func SaveTextDTOFromHTTP(r *http.Request) (SaveTextDTO, error) {
 	data, err := io.ReadAll(r.Body)
 	if err != nil {
-		return SaveTextDTO{}, fmt.Errorf("reading body registration: %w", err)
+		return SaveTextDTO{}, fmt.Errorf("reading body for SaveTextDTOFromHTTP: %w", err)
 	}
 	var saveTextDTO SaveTextDTO
 	err = json.Unmarshal(data, &saveTextDTO)

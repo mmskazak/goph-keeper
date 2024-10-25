@@ -16,12 +16,12 @@ type DeletePwdDTO struct {
 func DeletePwdDTOFromHTTP(r *http.Request) (DeletePwdDTO, error) {
 	data, err := io.ReadAll(r.Body)
 	if err != nil {
-		return DeletePwdDTO{}, fmt.Errorf("reading body registration: %w", err)
+		return DeletePwdDTO{}, fmt.Errorf("reading body for delete pwd dto: %w", err)
 	}
 	var deletePwdDTO DeletePwdDTO
 	err = json.Unmarshal(data, &deletePwdDTO)
 	if err != nil {
-		return DeletePwdDTO{}, fmt.Errorf("unmarshalling body registration: %w", err)
+		return DeletePwdDTO{}, fmt.Errorf("unmarshalling for deletePwdDTO: %w", err)
 	}
 
 	// Извлекаем userID из контекста

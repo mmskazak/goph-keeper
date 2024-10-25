@@ -7,6 +7,7 @@ import (
 	"gophKeeper/internal/modules/file/filedto/request"
 	"gophKeeper/internal/modules/file/fileservices"
 	"path/filepath"
+	"strconv"
 
 	"net/http"
 )
@@ -36,12 +37,18 @@ func (p FileHandlers) SaveFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte("OK"))
+	_, err = w.Write([]byte("OK"))
+	if err != nil {
+		logger.Log.Errorf("error writing response: %v", err)
+		http.Error(w, "", http.StatusInternalServerError)
+		return
+	}
 }
 
 func (p FileHandlers) GetFile(w http.ResponseWriter, r *http.Request) {
 	getFileDTO, err := request.GetFileDTOFromHTTP(r)
 	if err != nil {
+		logger.Log.Errorf("error build DTO for get file: %v", err)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
@@ -56,9 +63,8 @@ func (p FileHandlers) GetFile(w http.ResponseWriter, r *http.Request) {
 	// Устанавливаем заголовки для скачивания файла
 	w.Header().Set("Content-Type", "application/octet-stream")
 	w.Header().Set("Content-Disposition",
-		fmt.Sprintf("attachment; filename=\"%s\"",
-			filepath.Base(string(tempFilePath))))
-	w.Header().Set("Content-Length", fmt.Sprintf("%d", len(tempFilePath)))
+		fmt.Sprintf("attachment; filename=\"%q\"", filepath.Base(tempFilePath)))
+	w.Header().Set("Content-Length", strconv.Itoa(len(tempFilePath)))
 
 	// Отправляем временный файл в ответ
 	http.ServeFile(w, r, tempFilePath)
@@ -67,16 +73,23 @@ func (p FileHandlers) GetFile(w http.ResponseWriter, r *http.Request) {
 func (p FileHandlers) DeleteFile(w http.ResponseWriter, r *http.Request) {
 	deletePwdDTO, err := request.DeleteFileDTOFromHTTP(r)
 	if err != nil {
+		logger.Log.Errorf("error build DTO for delete file: %v", err)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
 	err = p.fileService.DeleteFile(r.Context(), deletePwdDTO)
 	if err != nil {
+		logger.Log.Errorf("error deleting file: %v", err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("OK"))
+	_, err = w.Write([]byte("OK"))
+	if err != nil {
+		logger.Log.Errorf("error writing response: %v", err)
+		http.Error(w, "", http.StatusInternalServerError)
+		return
+	}
 }
 
 func (p FileHandlers) GetAllFiles(w http.ResponseWriter, r *http.Request) {
@@ -87,6 +100,7 @@ func (p FileHandlers) GetAllFiles(w http.ResponseWriter, r *http.Request) {
 	}
 	allPasswords, err := p.fileService.GetAllFiles(r.Context(), allPwdDTO)
 	if err != nil {
+		logger.Log.Errorf("error getting all files: %v", err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
@@ -96,5 +110,10 @@ func (p FileHandlers) GetAllFiles(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	w.Write(marshaledAllPasswords)
+	_, err = w.Write(marshaledAllPasswords)
+	if err != nil {
+		logger.Log.Errorf("error writing response: %v", err)
+		http.Error(w, "", http.StatusInternalServerError)
+		return
+	}
 }

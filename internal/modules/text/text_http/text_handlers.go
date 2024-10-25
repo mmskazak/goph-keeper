@@ -3,6 +3,7 @@ package text_http
 import (
 	"encoding/json"
 	"errors"
+	"gophKeeper/internal/logger"
 	"gophKeeper/internal/modules/text/text_dto"
 	"gophKeeper/internal/modules/text/text_services"
 	"net/http"
@@ -55,7 +56,12 @@ func (p TextHandlers) GetText(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	w.Write(jsonResponse)
+	_, err = w.Write(jsonResponse)
+	if err != nil {
+		logger.Log.Errorf("failed to write response: %s", err)
+		http.Error(w, "", http.StatusInternalServerError)
+		return
+	}
 }
 
 func (p TextHandlers) DeleteText(w http.ResponseWriter, r *http.Request) {
@@ -70,7 +76,12 @@ func (p TextHandlers) DeleteText(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("OK"))
+	_, err = w.Write([]byte("OK"))
+	if err != nil {
+		logger.Log.Errorf("failed to write response: %s", err)
+		http.Error(w, "", http.StatusInternalServerError)
+		return
+	}
 }
 
 func (p TextHandlers) GetAllTexts(w http.ResponseWriter, r *http.Request) {
@@ -111,5 +122,10 @@ func (p TextHandlers) UpdateText(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("OK"))
+	_, err = w.Write([]byte("OK"))
+	if err != nil {
+		logger.Log.Errorf("failed to write response: %s", err)
+		http.Error(w, "", http.StatusInternalServerError)
+		return
+	}
 }

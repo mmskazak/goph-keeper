@@ -14,7 +14,7 @@ type GetAllCardsDTO struct {
 func GetAllCardsDTOFromHTTP(r *http.Request) (GetAllCardsDTO, error) {
 	data, err := io.ReadAll(r.Body)
 	if err != nil {
-		return GetAllCardsDTO{}, fmt.Errorf("reading body for get cards dto: %w", err)
+		return GetAllCardsDTO{}, fmt.Errorf("reading body for get all cards dto: %w", err)
 	}
 	var getAllCardsDTO GetAllCardsDTO
 	err = json.Unmarshal(data, &getAllCardsDTO)

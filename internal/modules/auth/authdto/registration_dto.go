@@ -15,7 +15,7 @@ type RegistrationDTO struct {
 func GetRegistrationDTOFromHTTP(r *http.Request) (*RegistrationDTO, error) {
 	data, err := io.ReadAll(r.Body)
 	if err != nil {
-		return nil, fmt.Errorf("reading body registration: %w", err)
+		return nil, fmt.Errorf("reading body for get registration dto: %w", err)
 	}
 	var regDTO RegistrationDTO
 	err = json.Unmarshal(data, &regDTO)
