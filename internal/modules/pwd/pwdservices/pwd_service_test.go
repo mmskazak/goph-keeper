@@ -40,6 +40,31 @@ func TestPwdService_SavePassword(t *testing.T) {
 		mock.Anything,
 	).Return(ct, nil)
 	s := NewPwdService(mockPool, key)
-	err := s.SavePassword(ctx, dto)
+	err := s.SavePassword(ctx, &dto)
+	require.Nil(t, err)
+}
+
+func TestPwdService_DeletePassword(t *testing.T) {
+	mockPool := new(mocks.MockDatabase)
+	ctx := context.Background()
+	dto := request.DeletePwdDTO{
+		UserID: 1,
+		PwdID:  "1",
+	}
+
+	// Строка длиной 32 символа
+	strKey := "MySecretEncryptionKey1234567890a"
+	// Преобразуем строку в массив байтов
+	var key [32]byte
+	copy(key[:], strKey)
+	ct := pgconn.NewCommandTag("success")
+	mockPool.On("Exec", ctx,
+		mock.Anything,
+		mock.Anything,
+		mock.Anything,
+		mock.Anything,
+	).Return(ct, nil)
+	s := NewPwdService(mockPool, key)
+	err := s.DeletePassword(ctx, &dto)
 	require.Nil(t, err)
 }
