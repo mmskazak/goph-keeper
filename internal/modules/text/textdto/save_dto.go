@@ -9,10 +9,10 @@ import (
 )
 
 type SaveTextDTO struct {
-	UserID      int    `json:"user_id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 	TextContent string `json:"text_content"`
+	UserID      int    `json:"user_id"`
 }
 
 func SaveTextDTOFromHTTP(r *http.Request) (SaveTextDTO, error) {

@@ -11,10 +11,10 @@ import (
 
 type UpdatePwdDTO struct {
 	ID          string               `json:"pwd_id"`
-	UserID      int                  `json:"user_id"`
 	Title       string               `json:"title"`
 	Description string               `json:"description"`
 	Credentials valueobj.Credentials `json:"credentials"`
+	UserID      int                  `json:"user_id"`
 }
 
 func UpdatePwdDTOFromHTTP(r *http.Request) (UpdatePwdDTO, error) {

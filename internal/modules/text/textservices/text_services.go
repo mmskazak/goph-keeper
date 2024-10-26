@@ -75,7 +75,7 @@ func (svc *TextService) DeleteText(ctx context.Context, dto textdto.DeleteTextDT
 	}
 
 	if commandTag.RowsAffected() == 0 {
-		return fmt.Errorf("no rows affected, text not found")
+		return errors.New("no rows affected, text not found")
 	}
 
 	return nil
@@ -133,7 +133,7 @@ func (svc *TextService) UpdateText(ctx context.Context, dto textdto.UpdateTextDT
 	}
 
 	if commandTag.RowsAffected() == 0 {
-		return fmt.Errorf("nothing to update")
+		return errors.New("error for update text is nothing to update")
 	}
 
 	return nil

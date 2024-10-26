@@ -3,6 +3,7 @@ package crypto
 import (
 	"crypto/rand" // Для генерации случайных данных
 	"encoding/hex"
+	"errors"
 	"fmt" // Пакет для форматирования строк
 	"strings"
 
@@ -36,8 +37,8 @@ func Encrypt(key [32]byte, plaintext []byte) (string, error) {
 func Decrypt(key [32]byte, encrypted string) ([]byte, error) {
 	// Разделяем зашифрованный текст и nonce
 	parts := strings.Split(encrypted, ":")
-	if len(parts) != 2 {
-		return nil, fmt.Errorf("invalid format: expected nonce:ciphertext")
+	if len(parts) != 2 { //nolint:gomnd //2 части - Bearer + JWT
+		return nil, errors.New("invalid format: expected nonce:ciphertext")
 	}
 
 	// Парсим nonce

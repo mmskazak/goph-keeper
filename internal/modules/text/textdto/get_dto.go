@@ -1,6 +1,7 @@
 package textdto
 
 import (
+	"errors"
 	"fmt"
 	"gophKeeper/internal/helpers"
 	"net/http"
@@ -17,7 +18,7 @@ func GetTextDTOFromHTTP(r *http.Request) (GetTextDTO, error) {
 	// Извлекаем текстовый ID из пути запроса (пример: text_id)
 	textID := chi.URLParam(r, "text_id")
 	if textID == "" {
-		return GetTextDTO{}, fmt.Errorf("text_id not found in the request path")
+		return GetTextDTO{}, errors.New("text_id not found in the request path")
 	}
 
 	// Извлекаем userID из контекста
@@ -32,5 +33,5 @@ func GetTextDTOFromHTTP(r *http.Request) (GetTextDTO, error) {
 	getTextDTO.TextID = textID
 	getTextDTO.UserID = userID
 
-	return getTextDTO, nil // Возвращаем DTO и nil (если нет ошибки)
+	return getTextDTO, nil
 }

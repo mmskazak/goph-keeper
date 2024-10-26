@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-var someSpecificError = errors.New("updated record not found")
+var errSomeSpecificError = errors.New("error updated record not found")
 
 type TextHandlers struct {
 	textService textservices.ITextService
@@ -33,7 +33,10 @@ func (p TextHandlers) SaveText(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte("OK"))
+	_, err = w.Write([]byte("OK"))
+	if err != nil {
+		logger.Log.Error(err.Error())
+	}
 }
 
 func (p TextHandlers) GetText(w http.ResponseWriter, r *http.Request) {
@@ -98,10 +101,17 @@ func (p TextHandlers) GetAllTexts(w http.ResponseWriter, r *http.Request) {
 
 	marshaledAllTexts, err := json.Marshal(allTexts)
 	if err != nil {
+		logger.Log.Errorf("failed to marshal all texts: %s", err)
+		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	w.Write(marshaledAllTexts)
+	_, err = w.Write(marshaledAllTexts)
+	if err != nil {
+		logger.Log.Errorf("error GetAllTexts writing response: %s", err)
+		http.Error(w, "", http.StatusInternalServerError)
+		return
+	}
 }
 
 func (p TextHandlers) UpdateText(w http.ResponseWriter, r *http.Request) {
@@ -113,7 +123,7 @@ func (p TextHandlers) UpdateText(w http.ResponseWriter, r *http.Request) {
 
 	err = p.textService.UpdateText(r.Context(), updateTextDTO)
 	if err != nil {
-		if errors.Is(err, someSpecificError) {
+		if errors.Is(err, errSomeSpecificError) {
 			http.Error(w, "", http.StatusNotFound) // Запись для обновления не найдена
 		} else {
 			http.Error(w, "", http.StatusInternalServerError)

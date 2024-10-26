@@ -26,7 +26,7 @@ func DeleteTextDTOFromHTTP(r *http.Request) (DeleteTextDTO, error) {
 
 	userID, err := helpers.GetUserIDFromContext(r.Context())
 	if err != nil {
-		return DeleteTextDTO{}, fmt.Errorf("error GetUserIDFromContext: %w", err)
+		return DeleteTextDTO{}, fmt.Errorf("error DeleteTextDTOFromHTTP GetUserIDFromContext: %w", err)
 	}
 
 	deleteTextDTO.UserID = userID
