@@ -60,10 +60,11 @@ func (pwd *PwdService) DeletePassword(ctx context.Context, dto *request2.DeleteP
 func (pwd *PwdService) GetPassword(ctx context.Context, dto *request2.GetPwdDTO) (response2.CredentialsDTO, error) {
 	sql := `SELECT credentials FROM passwords WHERE user_id = $1 AND id = $2;`
 	row := pwd.pool.QueryRow(ctx, sql, dto.UserID, dto.PwdID)
-
+	fmt.Println(row)
+	fmt.Println("QueryRow")
 	var credentialsData []byte
 	err := row.Scan(&credentialsData)
-
+	fmt.Println("Scan")
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			// Обработка случая, когда запись не найдена

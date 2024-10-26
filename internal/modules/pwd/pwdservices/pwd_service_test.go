@@ -2,6 +2,8 @@ package pwdservices
 
 import (
 	"context"
+	"fmt"
+	"github.com/stretchr/testify/assert"
 	"gophKeeper/internal/modules/pwd/pwddto/request"
 	"gophKeeper/internal/modules/pwd/valueobj"
 	"gophKeeper/internal/storage/mocks"
@@ -67,4 +69,40 @@ func TestPwdService_DeletePassword(t *testing.T) {
 	s := NewPwdService(mockPool, key)
 	err := s.DeletePassword(ctx, &dto)
 	require.Nil(t, err)
+}
+
+func TestPwdService_GetPassword(t *testing.T) {
+	mockPool := new(mocks.MockDatabase)
+	ctx := context.Background()
+	dto := request.GetPwdDTO{
+		UserID: 1,
+		PwdID:  "1",
+	}
+
+	// Строка длиной 32 символа
+	strKey := "MySecretEncryptionKey1234567890a"
+	// Преобразуем строку в массив байтов
+	var key [32]byte
+	copy(key[:], strKey)
+	mkRow := new(mocks.MockRow)
+
+	mockPool.On("QueryRow", ctx,
+		mock.Anything,
+		mock.Anything,
+		mock.Anything,
+		mock.Anything,
+	).Return(mkRow)
+
+	mkRow.On("Scan", mock.Anything).
+		Run(func(args mock.Arguments) {
+			if dest, ok := args.Get(0).(*[]byte); ok {
+				*dest = []byte("error credentials")
+			}
+		}).
+		Return(nil)
+
+	s := NewPwdService(mockPool, key)
+	pwd, err := s.GetPassword(ctx, &dto)
+	assert.EqualError(t, err, "error decrypt for GetPassword invalid format: expected nonce:ciphertext")
+	fmt.Println(pwd)
 }
