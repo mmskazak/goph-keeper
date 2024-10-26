@@ -32,7 +32,7 @@ func GetCardDTOFromHTTP(r *http.Request) (GetCardDTO, error) {
 	// Извлекаем userID из контекста
 	userID, err := helpers.GetUserIDFromContext(r.Context())
 	if err != nil {
-		return GetCardDTO{}, fmt.Errorf("error GetUserIDFromContext GetCardDTOFromHTTP: %w", err)
+		return GetCardDTO{}, fmt.Errorf("error GetCardDTOFromHTTP GetUserIDFromContext : %w", err)
 	}
 
 	// Формируем DTO

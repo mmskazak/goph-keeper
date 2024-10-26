@@ -9,7 +9,7 @@ import (
 	"gophKeeper/internal/modules/card/routescard"
 	"gophKeeper/internal/modules/file/routesfile"
 	"gophKeeper/internal/modules/pwd/routespwd"
-	"gophKeeper/internal/modules/text/routes_text"
+	"gophKeeper/internal/modules/text/routestext"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -42,7 +42,7 @@ func registrationHandlersHTTP(
 
 		routespwd.RegistrationRoutesPwd(r, pool, cfg)
 		routesfile.RegistrationRoutesFile(r, pool, cfg)
-		routes_text.RegistrationRoutesText(r, pool, cfg)
+		routestext.RegistrationRoutesText(r, pool, cfg)
 		routescard.RegistrationRoutesCard(r, pool, cfg)
 	})
 

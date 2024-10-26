@@ -1,9 +1,9 @@
-package routes_text
+package routestext
 
 import (
 	"gophKeeper/internal/config"
-	"gophKeeper/internal/modules/text/text_http"
-	"gophKeeper/internal/modules/text/text_services"
+	"gophKeeper/internal/modules/text/texthttp"
+	"gophKeeper/internal/modules/text/textservices"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -37,8 +37,8 @@ func RegistrationRoutesText(
 	})
 }
 
-func getTextHandlers(pool *pgxpool.Pool, enKey [32]byte) *text_http.TextHandlers {
-	textService := text_services.NewTextService(pool, enKey)
-	textHandlers := text_http.NewTextHandlersHTTP(textService)
+func getTextHandlers(pool *pgxpool.Pool, enKey [32]byte) *texthttp.TextHandlers {
+	textService := textservices.NewTextService(pool, enKey)
+	textHandlers := texthttp.NewTextHandlersHTTP(textService)
 	return &textHandlers
 }

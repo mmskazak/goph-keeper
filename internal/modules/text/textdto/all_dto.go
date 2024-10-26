@@ -1,4 +1,4 @@
-package text_dto
+package textdto
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ type AllTextDTO struct {
 func AllTextDTOFromHTTP(r *http.Request) (AllTextDTO, error) {
 	userID, err := helpers.GetUserIDFromContext(r.Context())
 	if err != nil {
-		return AllTextDTO{}, fmt.Errorf("error GetUserIDFromContext: %w", err)
+		return AllTextDTO{}, fmt.Errorf("error AllTextDTOFromHTTP GetUserIDFromContext: %w", err)
 	}
 	return AllTextDTO{
 		UserID: userID,

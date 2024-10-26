@@ -1,28 +1,28 @@
-package text_http
+package texthttp
 
 import (
 	"encoding/json"
 	"errors"
 	"gophKeeper/internal/logger"
-	"gophKeeper/internal/modules/text/text_dto"
-	"gophKeeper/internal/modules/text/text_services"
+	"gophKeeper/internal/modules/text/textdto"
+	"gophKeeper/internal/modules/text/textservices"
 	"net/http"
 )
 
 var someSpecificError = errors.New("updated record not found")
 
 type TextHandlers struct {
-	textService text_services.ITextService
+	textService textservices.ITextService
 }
 
-func NewTextHandlersHTTP(service text_services.ITextService) TextHandlers {
+func NewTextHandlersHTTP(service textservices.ITextService) TextHandlers {
 	return TextHandlers{
 		textService: service,
 	}
 }
 
 func (p TextHandlers) SaveText(w http.ResponseWriter, r *http.Request) {
-	saveTextDTO, err := text_dto.SaveTextDTOFromHTTP(r)
+	saveTextDTO, err := textdto.SaveTextDTOFromHTTP(r)
 	if err != nil {
 		http.Error(w, "", http.StatusBadRequest)
 		return
@@ -37,7 +37,7 @@ func (p TextHandlers) SaveText(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p TextHandlers) GetText(w http.ResponseWriter, r *http.Request) {
-	getTextDTO, err := text_dto.GetTextDTOFromHTTP(r)
+	getTextDTO, err := textdto.GetTextDTOFromHTTP(r)
 	if err != nil {
 		http.Error(w, "", http.StatusBadRequest)
 		return
@@ -65,7 +65,7 @@ func (p TextHandlers) GetText(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p TextHandlers) DeleteText(w http.ResponseWriter, r *http.Request) {
-	deleteTextDTO, err := text_dto.DeleteTextDTOFromHTTP(r)
+	deleteTextDTO, err := textdto.DeleteTextDTOFromHTTP(r)
 	if err != nil {
 		http.Error(w, "", http.StatusBadRequest)
 		return
@@ -85,7 +85,7 @@ func (p TextHandlers) DeleteText(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p TextHandlers) GetAllTexts(w http.ResponseWriter, r *http.Request) {
-	allTextDTO, err := text_dto.AllTextDTOFromHTTP(r)
+	allTextDTO, err := textdto.AllTextDTOFromHTTP(r)
 	if err != nil {
 		http.Error(w, "", http.StatusBadRequest)
 		return
@@ -105,7 +105,7 @@ func (p TextHandlers) GetAllTexts(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p TextHandlers) UpdateText(w http.ResponseWriter, r *http.Request) {
-	updateTextDTO, err := text_dto.UpdateTextDTOFromHTTP(r)
+	updateTextDTO, err := textdto.UpdateTextDTOFromHTTP(r)
 	if err != nil {
 		http.Error(w, "", http.StatusBadRequest)
 		return

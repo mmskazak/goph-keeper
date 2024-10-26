@@ -1,4 +1,4 @@
-package text_dto
+package textdto
 
 type TextDTO struct {
 	ID          string `json:"id"`
