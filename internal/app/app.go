@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"google.golang.org/grpc"
 	"gophKeeper/internal/config"
 	"gophKeeper/internal/logger"
 	"net/http"
@@ -19,7 +20,8 @@ const writeTimeout = 5 * time.Second
 
 // App представляет приложение с HTTP сервером и логгером.
 type App struct {
-	server *http.Server
+	grpcServer *grpc.Server
+	server     *http.Server
 }
 
 // NewApp создает новый экземпляр приложения.
@@ -45,6 +47,7 @@ func NewApp(
 			// для TLS-конфигурации используем менеджер сертификатов
 			TLSConfig: manager.TLSConfig(),
 		},
+		grpcServer: createGRPCServer(),
 	}
 }
 
@@ -65,4 +68,13 @@ func (a *App) Stop(ctx context.Context) error {
 		return fmt.Errorf("err Shutdown server: %w", err)
 	}
 	return nil
+}
+
+func createGRPCServer() *grpc.Server {
+	grpcServer := grpc.NewServer()
+
+	// Регистрируем сервисы
+	//proto.RegisterPasswordGRPCService(grpcServer, NewPasswordGRPCService(cfg, store, zapLog))
+
+	return grpcServer
 }

@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "internal/proto";
+
+
+
+service PasswordGRPCService {
+  //rpc SavePassword(SavePasswordRequest) returns (SavePasswordResponse);
+}
