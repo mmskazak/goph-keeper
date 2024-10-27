@@ -25,7 +25,7 @@ func (ch CardHandlers) SaveCard(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	err = ch.cardService.SaveCard(r.Context(), saveCardDTO)
+	err = ch.cardService.SaveCard(r.Context(), &saveCardDTO)
 	if err != nil {
 		http.Error(w, "Error saving card", http.StatusInternalServerError)
 		return
@@ -45,7 +45,7 @@ func (ch CardHandlers) GetCard(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	card, err := ch.cardService.GetCard(r.Context(), getCardDTO)
+	card, err := ch.cardService.GetCard(r.Context(), &getCardDTO)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			http.Error(w, "Card not found", http.StatusNotFound)
@@ -69,7 +69,7 @@ func (ch CardHandlers) UpdateCard(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	err = ch.cardService.UpdateCard(r.Context(), updateCardDTO)
+	err = ch.cardService.UpdateCard(r.Context(), &updateCardDTO)
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
 		return
@@ -89,7 +89,7 @@ func (ch CardHandlers) DeleteCard(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	err = ch.cardService.DeleteCard(r.Context(), deleteCardDTO)
+	err = ch.cardService.DeleteCard(r.Context(), &deleteCardDTO)
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
 		return
@@ -103,7 +103,7 @@ func (ch CardHandlers) GetAllCards(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	cards, err := ch.cardService.GetAllCards(r.Context(), getAllCardsDTO)
+	cards, err := ch.cardService.GetAllCards(r.Context(), &getAllCardsDTO)
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
 		return
