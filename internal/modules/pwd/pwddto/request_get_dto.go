@@ -1,11 +1,10 @@
 package pwddto
 
 import (
-	"encoding/json"
+	"errors"
 	"fmt"
+	"github.com/go-chi/chi/v5"
 	"gophKeeper/internal/helpers"
-	"gophKeeper/internal/logger"
-	"io"
 	"net/http"
 )
 
@@ -15,31 +14,23 @@ type GetPwdDTO struct {
 }
 
 func GetPwdDTOFromHTTP(r *http.Request) (GetPwdDTO, error) {
-	// Читаем тело запроса
-	data, err := io.ReadAll(r.Body)
-	if err != nil {
-		return GetPwdDTO{}, fmt.Errorf("reading body for GetPwdDTOFromHTTP: %w", err)
-	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			logger.Log.Errorf("error closing body reader: %v", err)
-		}
-	}(r.Body) // Закрываем тело запроса после чтения
-
-	var getPwdDTO GetPwdDTO
-	// Декодируем JSON в структуру
-	err = json.Unmarshal(data, &getPwdDTO)
-	if err != nil {
-		return GetPwdDTO{}, fmt.Errorf("unmarshalling body registration: %w", err)
+	// Извлекаем текстовый ID из пути запроса (пример: text_id)
+	pwdID := chi.URLParam(r, "pwd_id")
+	if pwdID == "" {
+		return GetPwdDTO{}, errors.New("text_id not found in the request path")
 	}
 
 	// Извлекаем userID из контекста
 	userID, err := helpers.GetUserIDFromContext(r.Context())
 	if err != nil {
-		return GetPwdDTO{}, fmt.Errorf("error GetPwdDTOFromHTTP GetUserIDFromContext: %w", err)
+		return GetPwdDTO{}, fmt.Errorf("error GetUserIDFromContext: %w", err)
 	}
 
-	getPwdDTO.UserID = userID // Устанавливаем userID в структуру
-	return getPwdDTO, nil     // Возвращаем структуру и nil (без ошибки)
+	// Формируем DTO
+	var getTextDTO GetPwdDTO
+	// Устанавливаем полученные значения в DTO
+	getTextDTO.PwdID = pwdID
+	getTextDTO.UserID = userID
+
+	return getTextDTO, nil
 }
