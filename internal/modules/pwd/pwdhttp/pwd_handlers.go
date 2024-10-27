@@ -26,7 +26,7 @@ func (p PwdHandlers) SavePassword(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	err = p.pwdService.SavePassword(r.Context(), savePwdDTO)
+	err = p.pwdService.SavePassword(r.Context(), &savePwdDTO)
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
 		return
@@ -41,7 +41,7 @@ func (p PwdHandlers) GetPassword(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	credentials, err := p.pwdService.GetPassword(r.Context(), getPwdDTO)
+	credentials, err := p.pwdService.GetPassword(r.Context(), &getPwdDTO)
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
 		return
@@ -65,7 +65,7 @@ func (p PwdHandlers) DeletePassword(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	err = p.pwdService.DeletePassword(r.Context(), deletePwdDTO)
+	err = p.pwdService.DeletePassword(r.Context(), &deletePwdDTO)
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
 		return
@@ -80,7 +80,7 @@ func (p PwdHandlers) GetAllPasswords(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	allPasswords, err := p.pwdService.GetAllPasswords(r.Context(), allPwdDTO)
+	allPasswords, err := p.pwdService.GetAllPasswords(r.Context(), &allPwdDTO)
 	if err != nil {
 		http.Error(w, "", http.StatusInternalServerError)
 		return
@@ -101,7 +101,7 @@ func (p PwdHandlers) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = p.pwdService.UpdatePassword(r.Context(), updatePwdDTO)
+	err = p.pwdService.UpdatePassword(r.Context(), &updatePwdDTO)
 	if err != nil {
 		if errors.Is(err, someSpecificError) {
 			http.Error(w, "", http.StatusNotFound) // Запись для обновления не найдена

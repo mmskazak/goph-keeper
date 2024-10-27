@@ -3,9 +3,11 @@ BEGIN TRANSACTION;
 CREATE TABLE IF NOT EXISTS passwords(
                                          id SERIAL PRIMARY KEY,
                                          user_id BIGINT,
-                                         resource VARCHAR(255) NOT NULL,
-                                         login VARCHAR(255) NOT NULL,
-                                         password VARCHAR(255) NOT NULL
+                                         title VARCHAR(255) NOT NULL,
+                                         description VARCHAR(255),
+                                         credentials JSONB
+
+
 );
 
 -- Добавляем внешний ключ отдельно
@@ -17,3 +19,4 @@ ALTER TABLE passwords
 
 
 COMMIT;
+

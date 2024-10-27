@@ -5,8 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	request2 "gophKeeper/internal/modules/pwd/pwddto/request"
-	response2 "gophKeeper/internal/modules/pwd/pwddto/response"
+	"gophKeeper/internal/logger"
+	"gophKeeper/internal/modules/pwd/pwddto/request"
+	"gophKeeper/internal/modules/pwd/pwddto/response"
 	"gophKeeper/internal/modules/pwd/valueobj"
 	"gophKeeper/internal/storage"
 	"gophKeeper/pkg/crypto"
@@ -26,29 +27,26 @@ func NewPwdService(pool storage.Database, enKey [32]byte) *PwdService {
 	}
 }
 
-func (pwd *PwdService) SavePassword(ctx context.Context, dto *request2.SavePwdDTO) error {
+func (pwd *PwdService) SavePassword(ctx context.Context, dto *request.SavePwdDTO) error {
+	logger.Log.Infoln("start save password")
 	sql := `INSERT INTO passwords (user_id, title, description, credentials) VALUES ($1, $2, $3, $4)`
 
 	marshaledCredentials, err := json.Marshal(dto.Credentials)
 	if err != nil {
+		logger.Log.Debugln("marshal password failed")
 		return fmt.Errorf("error marshalling credentials: %w", err)
-	}
 
-	// Шифруем данные
-	encryptedCredentials, err := crypto.Encrypt(pwd.cryptoKey, marshaledCredentials)
-	if err != nil {
-		return fmt.Errorf("error while encrypting credentials: %w", err)
 	}
-
-	_, err = pwd.pool.Exec(ctx, sql, dto.UserID, dto.Title, dto.Description, encryptedCredentials)
+	_, err = pwd.pool.Exec(ctx, sql, dto.UserID, dto.Title, dto.Description, marshaledCredentials)
 	if err != nil {
+		logger.Log.Debugln("error save password from pwd service: %v", err)
 		return fmt.Errorf("error save password from pwd service: %w", err)
 	}
 
 	return nil
 }
 
-func (pwd *PwdService) DeletePassword(ctx context.Context, dto *request2.DeletePwdDTO) error {
+func (pwd *PwdService) DeletePassword(ctx context.Context, dto *request.DeletePwdDTO) error {
 	sql := `DELETE FROM passwords WHERE user_id = $1 AND id = $2;`
 	_, err := pwd.pool.Exec(ctx, sql, dto.UserID, dto.PwdID)
 	if err != nil {
@@ -57,7 +55,7 @@ func (pwd *PwdService) DeletePassword(ctx context.Context, dto *request2.DeleteP
 	return nil
 }
 
-func (pwd *PwdService) GetPassword(ctx context.Context, dto *request2.GetPwdDTO) (response2.CredentialsDTO, error) {
+func (pwd *PwdService) GetPassword(ctx context.Context, dto *request.GetPwdDTO) (response.CredentialsDTO, error) {
 	sql := `SELECT credentials FROM passwords WHERE user_id = $1 AND id = $2;`
 	row := pwd.pool.QueryRow(ctx, sql, dto.UserID, dto.PwdID)
 	fmt.Println(row)
@@ -68,34 +66,28 @@ func (pwd *PwdService) GetPassword(ctx context.Context, dto *request2.GetPwdDTO)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			// Обработка случая, когда запись не найдена
-			return response2.CredentialsDTO{}, fmt.Errorf("password not found for user: %w", err)
+			return response.CredentialsDTO{}, fmt.Errorf("password not found for user: %w", err)
 		}
 		// Обработка других ошибок
-		return response2.CredentialsDTO{}, fmt.Errorf("error scanning password from pwd service: %w", err)
+		return response.CredentialsDTO{}, fmt.Errorf("error scanning password from pwd service: %w", err)
 	}
 
-	// Расшифровываем данные
-	decryptedCredentials, err := crypto.Decrypt(pwd.cryptoKey, string(credentialsData))
-	if err != nil {
-		return response2.CredentialsDTO{}, fmt.Errorf("error decrypt for GetPassword %w", err)
-	}
-
-	var credentials response2.CredentialsDTO
-	if err := json.Unmarshal(decryptedCredentials, &credentials); err != nil {
-		return response2.CredentialsDTO{}, fmt.Errorf("error unmarshalling credentials: %w", err)
+	var credentials response.CredentialsDTO
+	if err := json.Unmarshal(credentialsData, &credentials); err != nil {
+		return response.CredentialsDTO{}, fmt.Errorf("error unmarshalling credentials: %w", err)
 	}
 
 	return credentials, nil
 }
 
-func (pwd *PwdService) GetAllPasswords(ctx context.Context, dto *request2.AllPwdDTO) ([]response2.PwdDTO, error) {
+func (pwd *PwdService) GetAllPasswords(ctx context.Context, dto *request.AllPwdDTO) ([]response.PwdDTO, error) {
 	sql := `SELECT id,resource, login, password FROM passwords WHERE user_id = $1`
 	rows, err := pwd.pool.Query(ctx, sql, dto.UserID)
 	if err != nil {
-		return []response2.PwdDTO{}, fmt.Errorf("error query get all passwords: %w", err)
+		return []response.PwdDTO{}, fmt.Errorf("error query get all passwords: %w", err)
 	}
 
-	var listPasswords []response2.PwdDTO
+	var listPasswords []response.PwdDTO
 
 	for rows.Next() {
 		var id string
@@ -104,21 +96,21 @@ func (pwd *PwdService) GetAllPasswords(ctx context.Context, dto *request2.AllPwd
 		var credentialsData []byte
 		err := rows.Scan(&id, &title, &description, &credentialsData)
 		if err != nil {
-			return []response2.PwdDTO{}, fmt.Errorf("error scan get all passwords from pwd service: %w", err)
+			return []response.PwdDTO{}, fmt.Errorf("error scan get all passwords from pwd service: %w", err)
 		}
 
 		// Расшифровываем данные
 		decryptedCredentials, err := crypto.Decrypt(pwd.cryptoKey, string(credentialsData))
 		if err != nil {
-			return []response2.PwdDTO{}, fmt.Errorf("error decrypt for GetAllPasswords %w", err)
+			return []response.PwdDTO{}, fmt.Errorf("error decrypt for GetAllPasswords %w", err)
 		}
 
 		var credentials valueobj.Credentials
 		if err := json.Unmarshal(decryptedCredentials, &credentials); err != nil {
-			return []response2.PwdDTO{}, fmt.Errorf("error unmarshalling credentials: %w", err)
+			return []response.PwdDTO{}, fmt.Errorf("error unmarshalling credentials: %w", err)
 		}
 
-		listPasswords = append(listPasswords, response2.PwdDTO{
+		listPasswords = append(listPasswords, response.PwdDTO{
 			ID:          id,
 			Title:       title,
 			Description: description,
@@ -129,7 +121,7 @@ func (pwd *PwdService) GetAllPasswords(ctx context.Context, dto *request2.AllPwd
 	return listPasswords, nil
 }
 
-func (pwd *PwdService) UpdatePassword(ctx context.Context, dto *request2.UpdatePwdDTO) error {
+func (pwd *PwdService) UpdatePassword(ctx context.Context, dto *request.UpdatePwdDTO) error {
 	marshaledCredentials, err := json.Marshal(dto.Credentials)
 	if err != nil {
 		return fmt.Errorf("error marshalling credentials: %w", err)
