@@ -11,19 +11,22 @@ import (
 
 type FakePwdService struct{}
 
-func (f FakePwdService) SavePassword(ctx context.Context, dto pwddto.SavePwdDTO) error {
+func (f FakePwdService) SavePassword(ctx context.Context, dto *pwddto.SavePwdDTO) error {
 	return nil
 }
 
-func (f FakePwdService) DeletePassword(ctx context.Context, dto pwddto.DeletePwdDTO) error {
+func (f FakePwdService) DeletePassword(ctx context.Context, dto *pwddto.DeletePwdDTO) error {
 	return nil
 }
-func (f FakePwdService) GetPassword(ctx context.Context, dto pwddto.GetPwdDTO) (pwddto.CredentialsDTO, error) {
+func (f FakePwdService) GetPassword(ctx context.Context, dto *pwddto.GetPwdDTO) (pwddto.CredentialsDTO, error) {
 	return pwddto.CredentialsDTO{}, nil
 }
 
-func (f FakePwdService) GetAllPasswords(ctx context.Context, dto pwddto.AllPwdDTO) ([]pwddto.PwdDTO, error) {
+func (f FakePwdService) GetAllPasswords(ctx context.Context, dto *pwddto.AllPwdDTO) ([]pwddto.PwdDTO, error) {
 	return []pwddto.PwdDTO{}, nil
+}
+func (f FakePwdService) UpdatePassword(ctx context.Context, dto *pwddto.UpdatePwdDTO) error {
+	return nil
 }
 
 func TestPwdHandlers_SavePassword(t *testing.T) {

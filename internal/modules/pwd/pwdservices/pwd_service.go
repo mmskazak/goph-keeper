@@ -34,7 +34,6 @@ func (pwd *PwdService) SavePassword(ctx context.Context, dto *pwddto.SavePwdDTO)
 	if err != nil {
 		logger.Log.Debugln("marshal password failed")
 		return fmt.Errorf("error marshalling credentials: %w", err)
-
 	}
 	_, err = pwd.pool.Exec(ctx, sql, dto.UserID, dto.Title, dto.Description, marshaledCredentials)
 	if err != nil {
@@ -80,7 +79,7 @@ func (pwd *PwdService) GetPassword(ctx context.Context, dto *pwddto.GetPwdDTO) (
 }
 
 func (pwd *PwdService) GetAllPasswords(ctx context.Context, dto *pwddto.AllPwdDTO) ([]pwddto.PwdDTO, error) {
-	sql := `SELECT id,resource, login, password FROM passwords WHERE user_id = $1`
+	sql := `SELECT id,title, description, credentials FROM passwords WHERE user_id = $1`
 	rows, err := pwd.pool.Query(ctx, sql, dto.UserID)
 	if err != nil {
 		return []pwddto.PwdDTO{}, fmt.Errorf("error query get all passwords: %w", err)
@@ -98,14 +97,8 @@ func (pwd *PwdService) GetAllPasswords(ctx context.Context, dto *pwddto.AllPwdDT
 			return []pwddto.PwdDTO{}, fmt.Errorf("error scan get all passwords from pwd service: %w", err)
 		}
 
-		// Расшифровываем данные
-		decryptedCredentials, err := crypto.Decrypt(pwd.cryptoKey, string(credentialsData))
-		if err != nil {
-			return []pwddto.PwdDTO{}, fmt.Errorf("error decrypt for GetAllPasswords %w", err)
-		}
-
 		var credentials valueobj.Credentials
-		if err := json.Unmarshal(decryptedCredentials, &credentials); err != nil {
+		if err := json.Unmarshal(credentialsData, &credentials); err != nil {
 			return []pwddto.PwdDTO{}, fmt.Errorf("error unmarshalling credentials: %w", err)
 		}
 
