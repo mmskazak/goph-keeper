@@ -53,6 +53,11 @@ func (p PwdHandlers) GetPassword(w http.ResponseWriter, r *http.Request) {
 	}
 	credentials, err := p.pwdService.GetPassword(r.Context(), &getPwdDTO)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			logger.Log.Infoln("Get password not found")
+			http.Error(w, "", http.StatusNotFound)
+			return
+		}
 		logger.Log.Errorf("Error work pwdService GetPwdDTO: %v", err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return
