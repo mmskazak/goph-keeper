@@ -3,13 +3,14 @@ package pwdhttp
 import (
 	"encoding/json"
 	"errors"
+	"github.com/jackc/pgx/v5"
 	"gophKeeper/internal/logger"
 	"gophKeeper/internal/modules/pwd/pwddto"
 	"gophKeeper/internal/modules/pwd/pwdservices"
 	"net/http"
 )
 
-var someSpecificError = errors.New("updated record not found")
+var ErrUpdatedRecordNotFound = errors.New("updated record not found")
 
 type PwdHandlers struct {
 	pwdService pwdservices.IPwdService
@@ -84,10 +85,16 @@ func (p PwdHandlers) DeletePassword(w http.ResponseWriter, r *http.Request) {
 	}
 	err = p.pwdService.DeletePassword(r.Context(), &deletePwdDTO)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			logger.Log.Errorf("Error work pwdService DeletePwdDTO: %v", err)
+			http.Error(w, "", http.StatusNotFound)
+			return
+		}
 		logger.Log.Errorf("Error work pwdService DeletePwdDTO: %v", err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
+
 	w.WriteHeader(http.StatusOK)
 	_, err = w.Write([]byte("OK"))
 	if err != nil {
@@ -136,7 +143,7 @@ func (p PwdHandlers) UpdatePassword(w http.ResponseWriter, r *http.Request) {
 
 	err = p.pwdService.UpdatePassword(r.Context(), &updatePwdDTO)
 	if err != nil {
-		if errors.Is(err, someSpecificError) {
+		if errors.Is(err, ErrUpdatedRecordNotFound) {
 			logger.Log.Errorf("Error work pwdService UpdatePwdDTO: %v", err)
 			http.Error(w, "", http.StatusNotFound) // Запись для обновления не найдена
 		} else {

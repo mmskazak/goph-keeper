@@ -45,11 +45,16 @@ func (pwd *PwdService) SavePassword(ctx context.Context, dto *pwddto.SavePwdDTO)
 }
 
 func (pwd *PwdService) DeletePassword(ctx context.Context, dto *pwddto.DeletePwdDTO) error {
-	sql := `DELETE FROM passwords WHERE user_id = $1 AND id = $2;`
-	_, err := pwd.pool.Exec(ctx, sql, dto.UserID, dto.PwdID)
+	sql := `DELETE FROM passwords WHERE user_id = $1 AND id = $2 RETURNING id;`
+	var deletedID int
+	err := pwd.pool.QueryRow(ctx, sql, dto.UserID, dto.PwdID).Scan(&deletedID)
 	if err != nil {
-		return fmt.Errorf("error delete password from pwd service: %w", err)
+		if errors.Is(err, pgx.ErrNoRows) {
+			return fmt.Errorf("no password found to delete for user %d", dto.UserID)
+		}
+		return fmt.Errorf("error deleting password from pwd service: %w", err)
 	}
+
 	return nil
 }
 
