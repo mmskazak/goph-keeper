@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/stretchr/testify/assert"
-	"gophKeeper/internal/modules/pwd/pwddto/request"
+	"gophKeeper/internal/modules/pwd/pwddto"
 	"gophKeeper/internal/modules/pwd/valueobj"
 	"gophKeeper/internal/storage/mocks"
 	"testing"
@@ -18,7 +18,7 @@ func TestPwdService_SavePassword(t *testing.T) {
 	mockPool := new(mocks.MockDatabase)
 
 	ctx := context.Background()
-	dto := request.SavePwdDTO{
+	dto := pwddto.SavePwdDTO{
 		UserID:      1,
 		Title:       "test title",
 		Description: "test description",
@@ -49,7 +49,7 @@ func TestPwdService_SavePassword(t *testing.T) {
 func TestPwdService_DeletePassword(t *testing.T) {
 	mockPool := new(mocks.MockDatabase)
 	ctx := context.Background()
-	dto := request.DeletePwdDTO{
+	dto := pwddto.DeletePwdDTO{
 		UserID: 1,
 		PwdID:  "1",
 	}
@@ -74,7 +74,7 @@ func TestPwdService_DeletePassword(t *testing.T) {
 func TestPwdService_GetPassword(t *testing.T) {
 	mockPool := new(mocks.MockDatabase)
 	ctx := context.Background()
-	dto := request.GetPwdDTO{
+	dto := pwddto.GetPwdDTO{
 		UserID: 1,
 		PwdID:  "1",
 	}

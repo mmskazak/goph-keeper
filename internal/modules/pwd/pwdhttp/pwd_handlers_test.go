@@ -3,8 +3,7 @@ package pwdhttp
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
-	request2 "gophKeeper/internal/modules/pwd/pwddto/request"
-	response2 "gophKeeper/internal/modules/pwd/pwddto/response"
+	"gophKeeper/internal/modules/pwd/pwddto"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -12,19 +11,19 @@ import (
 
 type FakePwdService struct{}
 
-func (f FakePwdService) SavePassword(ctx context.Context, dto request2.SavePwdDTO) error {
+func (f FakePwdService) SavePassword(ctx context.Context, dto pwddto.SavePwdDTO) error {
 	return nil
 }
 
-func (f FakePwdService) DeletePassword(ctx context.Context, dto request2.DeletePwdDTO) error {
+func (f FakePwdService) DeletePassword(ctx context.Context, dto pwddto.DeletePwdDTO) error {
 	return nil
 }
-func (f FakePwdService) GetPassword(ctx context.Context, dto request2.GetPwdDTO) (response2.CredentialsDTO, error) {
-	return response2.CredentialsDTO{}, nil
+func (f FakePwdService) GetPassword(ctx context.Context, dto pwddto.GetPwdDTO) (pwddto.CredentialsDTO, error) {
+	return pwddto.CredentialsDTO{}, nil
 }
 
-func (f FakePwdService) GetAllPasswords(ctx context.Context, dto request2.AllPwdDTO) ([]response2.PwdDTO, error) {
-	return []response2.PwdDTO{}, nil
+func (f FakePwdService) GetAllPasswords(ctx context.Context, dto pwddto.AllPwdDTO) ([]pwddto.PwdDTO, error) {
+	return []pwddto.PwdDTO{}, nil
 }
 
 func TestPwdHandlers_SavePassword(t *testing.T) {

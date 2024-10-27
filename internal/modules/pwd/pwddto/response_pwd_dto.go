@@ -1,4 +1,4 @@
-package response
+package pwddto
 
 import (
 	"gophKeeper/internal/modules/pwd/valueobj"
