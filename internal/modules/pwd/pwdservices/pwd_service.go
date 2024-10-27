@@ -30,6 +30,13 @@ func (pwd *PwdService) SavePassword(ctx context.Context, dto *pwddto.SavePwdDTO)
 	logger.Log.Infoln("start save password")
 	sql := `INSERT INTO passwords (user_id, title, description, credentials) VALUES ($1, $2, $3, $4)`
 
+	// Шифруем
+	encryptedPassword, err := crypto.Encrypt(pwd.cryptoKey, []byte(dto.Credentials.Password))
+	if err != nil {
+		return fmt.Errorf("error while encrypting text: %w", err)
+	}
+	dto.Credentials.Password = encryptedPassword
+
 	marshaledCredentials, err := json.Marshal(dto.Credentials)
 	if err != nil {
 		logger.Log.Debugln("marshal password failed")
@@ -65,7 +72,6 @@ func (pwd *PwdService) GetPassword(ctx context.Context, dto *pwddto.GetPwdDTO) (
 	fmt.Println("QueryRow")
 	var credentialsData []byte
 	err := row.Scan(&credentialsData)
-	fmt.Println("Scan")
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			// Обработка случая, когда запись не найдена
@@ -79,6 +85,13 @@ func (pwd *PwdService) GetPassword(ctx context.Context, dto *pwddto.GetPwdDTO) (
 	if err := json.Unmarshal(credentialsData, &credentials); err != nil {
 		return pwddto.CredentialsDTO{}, fmt.Errorf("error unmarshalling credentials: %w", err)
 	}
+
+	// Расшифровка текста
+	decryptedPassword, err := crypto.Decrypt(pwd.cryptoKey, credentials.Password)
+	if err != nil {
+		return pwddto.CredentialsDTO{}, fmt.Errorf("error while decrypting text: %w", err)
+	}
+	credentials.Password = string(decryptedPassword)
 
 	return credentials, nil
 }
