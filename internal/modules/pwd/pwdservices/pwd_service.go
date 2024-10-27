@@ -120,6 +120,13 @@ func (pwd *PwdService) GetAllPasswords(ctx context.Context, dto *pwddto.AllPwdDT
 			return []pwddto.PwdDTO{}, fmt.Errorf("error unmarshalling credentials: %w", err)
 		}
 
+		// Расшифровка текста
+		decryptedPassword, err := crypto.Decrypt(pwd.cryptoKey, credentials.Password)
+		if err != nil {
+			return []pwddto.PwdDTO{}, fmt.Errorf("error while decrypting text: %w", err)
+		}
+		credentials.Password = string(decryptedPassword)
+
 		listPasswords = append(listPasswords, pwddto.PwdDTO{
 			ID:          id,
 			Title:       title,
@@ -137,14 +144,15 @@ func (pwd *PwdService) UpdatePassword(ctx context.Context, dto *pwddto.UpdatePwd
 		return fmt.Errorf("error marshalling credentials: %w", err)
 	}
 
-	// Шифруем данные
-	encryptedCredentials, err := crypto.Encrypt(pwd.cryptoKey, marshaledCredentials)
+	// Шифруем
+	encryptedPassword, err := crypto.Encrypt(pwd.cryptoKey, []byte(dto.Credentials.Password))
 	if err != nil {
-		return fmt.Errorf("error while encrypting credentials: %w", err)
+		return fmt.Errorf("error while encrypting text: %w", err)
 	}
+	dto.Credentials.Password = encryptedPassword
 
-	sql := `UPDATE passwords SET title = $2, descriotion = $3, credentials = $4 WHERE id = $5 AND user_id = $6`
-	result, err := pwd.pool.Exec(ctx, sql, dto.Title, dto.Description, encryptedCredentials, dto.ID, dto.UserID)
+	sql := `UPDATE passwords SET title = $2, description = $3, credentials = $4 WHERE id = $5 AND user_id = $6`
+	result, err := pwd.pool.Exec(ctx, sql, dto.Title, dto.Description, marshaledCredentials, dto.ID, dto.UserID)
 	if err != nil {
 		return fmt.Errorf("error updating password: %w", err)
 	}
