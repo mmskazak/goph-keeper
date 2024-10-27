@@ -86,7 +86,7 @@ func (p PwdHandlers) DeletePassword(w http.ResponseWriter, r *http.Request) {
 	err = p.pwdService.DeletePassword(r.Context(), &deletePwdDTO)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			logger.Log.Errorf("Error work pwdService DeletePwdDTO: %v", err)
+			logger.Log.Infoln("Deleted password not found")
 			http.Error(w, "", http.StatusNotFound)
 			return
 		}
