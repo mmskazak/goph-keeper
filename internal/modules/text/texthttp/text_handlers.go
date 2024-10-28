@@ -3,6 +3,7 @@ package texthttp
 import (
 	"encoding/json"
 	"errors"
+	"github.com/jackc/pgx/v5"
 	"gophKeeper/internal/logger"
 	"gophKeeper/internal/modules/text/textdto"
 	"gophKeeper/internal/modules/text/textservices"
@@ -24,18 +25,20 @@ func NewTextHandlersHTTP(service textservices.ITextService) TextHandlers {
 func (p TextHandlers) SaveText(w http.ResponseWriter, r *http.Request) {
 	saveTextDTO, err := textdto.SaveTextDTOFromHTTP(r)
 	if err != nil {
+		logger.Log.Errorf("error create dto from SaveTextDTOFromHTTP: %v", err)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
 	err = p.textService.SaveText(r.Context(), saveTextDTO)
 	if err != nil {
+		logger.Log.Errorf("error saving record to textService.SaveText: %v", err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
 	_, err = w.Write([]byte("OK"))
 	if err != nil {
-		logger.Log.Error(err.Error())
+		logger.Log.Errorf("error writing response for handler SaveText: %v", err)
 	}
 }
 
@@ -47,6 +50,12 @@ func (p TextHandlers) GetText(w http.ResponseWriter, r *http.Request) {
 	}
 	text, err := p.textService.GetText(r.Context(), getTextDTO)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			logger.Log.Infoln("by query secret text not found")
+			http.Error(w, "", http.StatusNotFound)
+			return
+		}
+		logger.Log.Errorf("error getting record from textService.GetText: %v", err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}

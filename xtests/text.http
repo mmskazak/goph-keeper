@@ -1,0 +1,46 @@
+###
+POST http://localhost:8080/text/save
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjF9.X2KuV_6nTWk5ysPSjZ3DQe-eSn8QLiYv5qmyx93S2iE
+
+{
+  "title": "My Password",
+  "description": "This is my email password",
+  "text_content": "Secret text"
+}
+
+###
+DELETE http://localhost:8080/text/delete
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjF9.X2KuV_6nTWk5ysPSjZ3DQe-eSn8QLiYv5qmyx93S2iE
+
+{
+  "user_id": 1,
+  "text_id": "3"
+}
+
+###
+POST http://localhost:8080/text/all
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjF9.X2KuV_6nTWk5ysPSjZ3DQe-eSn8QLiYv5qmyx93S2iE
+
+{
+  "user_id": 1
+}
+
+###
+GET http://localhost:8080/text/get/2
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjF9.X2KuV_6nTWk5ysPSjZ3DQe-eSn8QLiYv5qmyx93S2iE
+
+###
+POST http://localhost:8080/text/update
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjF9.X2KuV_6nTWk5ysPSjZ3DQe-eSn8QLiYv5qmyx93S2iE
+
+{
+  "text_id": "1",
+  "title": "My T",
+  "description": "This is T",
+  "text_content": "T"
+}

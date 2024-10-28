@@ -1,11 +1,11 @@
 BEGIN TRANSACTION;
 
 CREATE TABLE IF NOT EXISTS texts (
-                                     id BIGINT PRIMARY KEY,
+                                     id SERIAL PRIMARY KEY,
                                      user_id BIGINT,
                                      title VARCHAR(255),
                                      description VARCHAR(255),
-                                     text TEXT
+                                     text_content TEXT
 );
 
 -- Добавляем внешний ключ отдельно
