@@ -4,8 +4,23 @@ package proto;
 
 option go_package = "internal/proto";
 
-
-
 service PasswordGRPCService {
-  //rpc SavePassword(SavePasswordRequest) returns (SavePasswordResponse);
+  rpc SavePassword(SavePasswordRequest) returns (SavePasswordResponse);
+}
+
+message Credential {
+  string login = 1;
+  string password = 2;
+}
+
+// Запрос для метода SavePassword
+message SavePasswordRequest {
+  int64 user_id = 1;
+  string title  = 2;
+  string description = 3;
+  Credential credential = 4;
+}
+
+// Ответ для метода SavePassword
+message SavePasswordResponse {
 }

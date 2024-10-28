@@ -72,9 +72,7 @@ func (a *App) Stop(ctx context.Context) error {
 
 func createGRPCServer() *grpc.Server {
 	grpcServer := grpc.NewServer()
-
 	// Регистрируем сервисы
 	//proto.RegisterPasswordGRPCService(grpcServer, NewPasswordGRPCService(cfg, store, zapLog))
-
 	return grpcServer
 }
