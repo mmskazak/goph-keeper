@@ -15,7 +15,7 @@ type GetTextDTO struct {
 }
 
 func GetTextDTOFromHTTP(r *http.Request) (GetTextDTO, error) {
-	// Извлекаем текстовый ID из пути запроса (пример: text_id)
+	// Извлекаем текстовый PwdID из пути запроса (пример: text_id)
 	textID := chi.URLParam(r, "text_id")
 	if textID == "" {
 		return GetTextDTO{}, errors.New("text_id not found in the request path")

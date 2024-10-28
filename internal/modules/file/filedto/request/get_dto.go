@@ -10,7 +10,7 @@ import (
 )
 
 type GetFileDTO struct {
-	FileID string `json:"file_id"` // ID пароля в базе данных
+	FileID string `json:"file_id"` // PwdID пароля в базе данных
 	UserID int    `json:"user_id"` // Идентификатор пользователя
 }
 

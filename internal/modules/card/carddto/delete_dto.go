@@ -8,7 +8,7 @@ import (
 )
 
 type DeleteCardDTO struct {
-	CardID int `json:"card_id"` // ID карточки для удаления
+	CardID int `json:"card_id"` // PwdID карточки для удаления
 }
 
 func DeleteCardDTOFromHTTP(r *http.Request) (DeleteCardDTO, error) {

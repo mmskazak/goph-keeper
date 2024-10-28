@@ -12,7 +12,7 @@ import (
 )
 
 type GetCardDTO struct {
-	CardID int `json:"card_id"` // ID карточки в базе данных
+	CardID int `json:"card_id"` // PwdID карточки в базе данных
 	UserID int `json:"user_id"` // Идентификатор пользователя
 }
 

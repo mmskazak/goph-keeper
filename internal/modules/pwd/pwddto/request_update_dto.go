@@ -10,7 +10,7 @@ import (
 )
 
 type UpdatePwdDTO struct {
-	ID          string               `json:"pwd_id"`
+	PwdID       string               `json:"pwd_id"`
 	Title       string               `json:"title"`
 	Description string               `json:"description"`
 	Credentials valueobj.Credentials `json:"credentials"`

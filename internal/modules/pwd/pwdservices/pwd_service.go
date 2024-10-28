@@ -161,8 +161,8 @@ func (pwd *PwdService) UpdatePassword(ctx context.Context, dto *pwddto.UpdatePwd
 	}
 	dto.Credentials.Password = encryptedPassword
 
-	sql := `UPDATE passwords SET title = $2, description = $3, credentials = $4 WHERE id = $5 AND user_id = $6`
-	result, err := pwd.pool.Exec(ctx, sql, dto.Title, dto.Description, marshaledCredentials, dto.ID, dto.UserID)
+	sql := `UPDATE passwords SET title = $1, description = $2, credentials = $3 WHERE id = $4 AND user_id = $5`
+	result, err := pwd.pool.Exec(ctx, sql, dto.Title, dto.Description, marshaledCredentials, dto.PwdID, dto.UserID)
 	if err != nil {
 		logger.Log.Errorf("error updating password: %v", err)
 		return fmt.Errorf("error updating password: %w", err)

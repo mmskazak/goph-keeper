@@ -14,7 +14,7 @@ type UpdateCardDTO struct {
 	PinCode     string `json:"pincode"`     // Новый ПИН-код
 	CVV         string `json:"cvv"`         // Новый CVV
 	Expire      string `json:"expire"`      // Новая дата истечения
-	CardID      int    `json:"card_id"`     // ID карточки
+	CardID      int    `json:"card_id"`     // PwdID карточки
 }
 
 func UpdateCardDTOFromHTTP(r *http.Request) (UpdateCardDTO, error) {
