@@ -26,12 +26,12 @@ func RegistrationRoutesCard(
 	})
 
 	// Обновить кредитную карточку
-	r.Put("/card/update", func(w http.ResponseWriter, req *http.Request) {
+	r.Post("/card/update", func(w http.ResponseWriter, req *http.Request) {
 		getCardHandlers(pool).UpdateCard(w, req)
 	})
 
 	// Удалить кредитную карточку
-	r.Delete("/card/delete", func(w http.ResponseWriter, req *http.Request) {
+	r.Post("/card/delete", func(w http.ResponseWriter, req *http.Request) {
 		getCardHandlers(pool).DeleteCard(w, req)
 	})
 

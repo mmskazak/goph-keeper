@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"gophKeeper/internal/logger"
 	"gophKeeper/internal/modules/card/carddto"
 
 	"github.com/jackc/pgx/v5"
@@ -25,6 +26,7 @@ func (cs *CardService) SaveCard(ctx context.Context, dto *carddto.SaveCardDTO) e
 		dto.Description, dto.Number, dto.PinCode,
 		dto.CVV, dto.Expire)
 	if err != nil {
+		logger.Log.Errorf("Error saving card: %v", err)
 		return fmt.Errorf("error saving card: %w", err)
 	}
 	return nil
@@ -38,9 +40,11 @@ func (cs *CardService) GetCard(ctx context.Context, dto *carddto.GetCardDTO) (ca
 	err := row.Scan(&card.UserID, &card.Title, &card.Description, &card.Number, &card.PinCode, &card.CVV, &card.Expire)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
+			logger.Log.Errorf("Card not found: %v", err)
 			return card, fmt.Errorf("card not found: %w", err)
 		}
-		return card, fmt.Errorf("error retrieving card: %w", err)
+		logger.Log.Errorf("Error scaning card: %v", err)
+		return card, fmt.Errorf("error scaning card: %w", err)
 	}
 	return card, nil
 }
@@ -53,6 +57,7 @@ func (cs *CardService) UpdateCard(ctx context.Context, dto *carddto.UpdateCardDT
 		dto.PinCode, dto.CVV,
 		dto.Expire, dto.CardID)
 	if err != nil {
+		logger.Log.Errorf("Error updating card: %v", err)
 		return fmt.Errorf("error updating card: %w", err)
 	}
 	return nil
@@ -62,6 +67,7 @@ func (cs *CardService) DeleteCard(ctx context.Context, dto *carddto.DeleteCardDT
 	sql := `DELETE FROM cards WHERE id = $1 AND user_id = (SELECT user_id FROM cards WHERE id = $1)`
 	_, err := cs.pool.Exec(ctx, sql, dto.CardID)
 	if err != nil {
+		logger.Log.Errorf("Error deleting card: %v", err)
 		return fmt.Errorf("error deleting card: %w", err)
 	}
 	return nil
@@ -72,7 +78,8 @@ func (cs *CardService) GetAllCards(ctx context.Context, dto *carddto.GetAllCards
 	sql := `SELECT id, title, description, number, pincode, cvv, expire FROM cards WHERE user_id = $1`
 	rows, err := cs.pool.Query(ctx, sql, dto.UserID)
 	if err != nil {
-		return nil, fmt.Errorf("error retrieving cards: %w", err)
+		logger.Log.Errorf("Error getting cards: %v", err)
+		return nil, fmt.Errorf("error getting cards: %w", err)
 	}
 	defer rows.Close()
 
@@ -83,12 +90,14 @@ func (cs *CardService) GetAllCards(ctx context.Context, dto *carddto.GetAllCards
 			&card.Number, &card.PinCode,
 			&card.CVV, &card.Expire)
 		if err != nil {
+			logger.Log.Errorf("Error scanning card: %v", err)
 			return nil, fmt.Errorf("error scanning card: %w", err)
 		}
 		cards = append(cards, card)
 	}
 
 	if err = rows.Err(); err != nil {
+		logger.Log.Errorf("Error iterating over cards: %v", err)
 		return nil, fmt.Errorf("error iterating over cards: %w", err)
 	}
 

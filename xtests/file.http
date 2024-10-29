@@ -18,12 +18,12 @@ Content-Type: text/plain
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
 ###
-DELETE http://localhost:8080/file/delete
+POST http://localhost:8080/file/delete
 Content-Type: application/json
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjF9.X2KuV_6nTWk5ysPSjZ3DQe-eSn8QLiYv5qmyx93S2iE
 
 {
-  "file_id": "1",
+  "file_id": "100",
   "user_id": 1
 }
 

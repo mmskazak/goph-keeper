@@ -3,6 +3,7 @@ package carddto
 import (
 	"encoding/json"
 	"fmt"
+	"gophKeeper/internal/helpers"
 	"io"
 	"net/http"
 )
@@ -27,5 +28,14 @@ func SaveCardDTOFromHTTP(r *http.Request) (SaveCardDTO, error) {
 	if err != nil {
 		return SaveCardDTO{}, fmt.Errorf("unmarshalling body for save card dto: %w", err)
 	}
+
+	// Извлекаем userID из контекста
+	userID, err := helpers.GetUserIDFromContext(r.Context())
+	if err != nil {
+		return SaveCardDTO{}, fmt.Errorf("error GetUserIDFromContext: %w", err)
+	}
+
+	saveCardDTO.UserID = userID
+
 	return saveCardDTO, nil
 }

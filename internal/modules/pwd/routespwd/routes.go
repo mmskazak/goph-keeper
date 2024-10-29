@@ -24,7 +24,7 @@ func RegistrationRoutesPwd(
 		getPwdHandlers(pool, cfg.EncryptionKey).GetAllPasswords(w, req)
 	})
 	// Удалить пароль
-	r.Delete("/pwd/delete", func(w http.ResponseWriter, req *http.Request) {
+	r.Post("/pwd/delete", func(w http.ResponseWriter, req *http.Request) {
 		getPwdHandlers(pool, cfg.EncryptionKey).DeletePassword(w, req)
 	})
 	// Получить конкретный пароль

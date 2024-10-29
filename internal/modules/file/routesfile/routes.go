@@ -24,7 +24,7 @@ func RegistrationRoutesFile(
 		getFilesHandlers(pool, cfg.EncryptionKey, cfg.DirSavedFiles).GetAllFiles(w, req)
 	})
 	// Удалить пароль
-	r.Delete("/file/delete", func(w http.ResponseWriter, req *http.Request) {
+	r.Post("/file/delete", func(w http.ResponseWriter, req *http.Request) {
 		getFilesHandlers(pool, cfg.EncryptionKey, cfg.DirSavedFiles).DeleteFile(w, req)
 	})
 	// Получить конкретный пароль

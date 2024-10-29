@@ -24,7 +24,7 @@ func RegistrationRoutesText(
 		getTextHandlers(pool, cfg.EncryptionKey).GetAllTexts(w, req)
 	})
 	// Удалить текст
-	r.Delete("/text/delete", func(w http.ResponseWriter, req *http.Request) {
+	r.Post("/text/delete", func(w http.ResponseWriter, req *http.Request) {
 		getTextHandlers(pool, cfg.EncryptionKey).DeleteText(w, req)
 	})
 	// Получить конкретный текст
