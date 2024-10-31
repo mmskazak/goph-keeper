@@ -2,14 +2,14 @@ package app
 
 import (
 	"context"
-	"gophKeeper/internal/config"
-	"gophKeeper/internal/modules/auth/authhttp"
-	"gophKeeper/internal/modules/auth/authmiddleware"
-	"gophKeeper/internal/modules/auth/authservices/authservice"
-	"gophKeeper/internal/modules/card/routescard"
-	"gophKeeper/internal/modules/file/routesfile"
-	"gophKeeper/internal/modules/pwd/routespwd"
-	"gophKeeper/internal/modules/text/routestext"
+	"goph-keeper/internal/config"
+	"goph-keeper/internal/modules/auth/authhttp"
+	"goph-keeper/internal/modules/auth/authmiddleware"
+	"goph-keeper/internal/modules/auth/authservices/authservice"
+	"goph-keeper/internal/modules/card/routescard"
+	"goph-keeper/internal/modules/file/routesfile"
+	"goph-keeper/internal/modules/pwd/routespwd"
+	"goph-keeper/internal/modules/text/routestext"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"

@@ -1,15 +1,15 @@
-module gophKeeper
+module goph-keeper
 
 go 1.22.0
 
-toolchain go1.22.2
+toolchain go1.22.5
 
 require (
 	dario.cat/mergo v1.0.1
 	github.com/go-chi/chi/v5 v5.1.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang-migrate/migrate/v4 v4.18.1
-	github.com/jackc/pgerrcode v0.0.0-20220416144525-469b46aa5efa
+	github.com/jackc/pgerrcode v0.0.0-20240316143900-6e2875d9b438
 	github.com/jackc/pgx/v5 v5.7.1
 	github.com/stretchr/testify v1.9.0
 	go.uber.org/zap v1.27.0

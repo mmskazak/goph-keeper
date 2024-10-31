@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	dto2 "gophKeeper/internal/modules/auth/authdto"
-	"gophKeeper/internal/modules/auth/authservices/authhashpwd"
+	dto2 "goph-keeper/internal/modules/auth/authdto"
+	"goph-keeper/internal/modules/auth/authservices/authhashpwd"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )

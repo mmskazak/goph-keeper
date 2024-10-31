@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gophKeeper/internal/modules/auth/authmiddleware"
+	"goph-keeper/internal/modules/auth/authmiddleware"
 
 	"github.com/golang-jwt/jwt"
 )

@@ -2,7 +2,7 @@ package logger
 
 import (
 	"fmt"
-	"gophKeeper/internal/config"
+	"goph-keeper/internal/config"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"

@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gophKeeper/internal/config"
-	"gophKeeper/internal/logger"
+	"goph-keeper/internal/config"
+	"goph-keeper/internal/logger"
 	"net/http"
 	"time"
 

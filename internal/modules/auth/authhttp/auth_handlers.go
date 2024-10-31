@@ -2,10 +2,10 @@ package authhttp
 
 import (
 	"errors"
-	"gophKeeper/internal/logger"
-	dto "gophKeeper/internal/modules/auth/authdto"
-	"gophKeeper/internal/modules/auth/authservices/authjwtservice"
-	"gophKeeper/internal/modules/auth/authservices/authservice"
+	"goph-keeper/internal/logger"
+	dto "goph-keeper/internal/modules/auth/authdto"
+	"goph-keeper/internal/modules/auth/authservices/authjwtservice"
+	"goph-keeper/internal/modules/auth/authservices/authservice"
 	"net/http"
 
 	"github.com/jackc/pgerrcode"

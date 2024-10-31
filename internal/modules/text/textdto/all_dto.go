@@ -2,7 +2,7 @@ package textdto
 
 import (
 	"fmt"
-	"gophKeeper/internal/helpers"
+	"goph-keeper/internal/helpers"
 	"net/http"
 )
 

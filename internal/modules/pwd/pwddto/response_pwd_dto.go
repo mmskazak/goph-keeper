@@ -1,7 +1,7 @@
 package pwddto
 
 import (
-	"gophKeeper/internal/modules/pwd/valueobj"
+	"goph-keeper/internal/modules/pwd/valueobj"
 )
 
 type PwdDTO struct {

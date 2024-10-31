@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"gophKeeper/internal/helpers"
+	"goph-keeper/internal/helpers"
 
 	"github.com/go-chi/chi/v5"
 )

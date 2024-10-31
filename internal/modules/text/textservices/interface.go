@@ -2,7 +2,7 @@ package textservices
 
 import (
 	"context"
-	"gophKeeper/internal/modules/text/textdto"
+	"goph-keeper/internal/modules/text/textdto"
 )
 
 type ITextService interface {

@@ -1,9 +1,9 @@
 package routestext
 
 import (
-	"gophKeeper/internal/config"
-	"gophKeeper/internal/modules/text/texthttp"
-	"gophKeeper/internal/modules/text/textservices"
+	"goph-keeper/internal/config"
+	"goph-keeper/internal/modules/text/texthttp"
+	"goph-keeper/internal/modules/text/textservices"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"

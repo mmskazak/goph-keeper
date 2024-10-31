@@ -3,7 +3,7 @@ package carddto
 import (
 	"encoding/json"
 	"fmt"
-	"gophKeeper/internal/helpers"
+	"goph-keeper/internal/helpers"
 	"io"
 	"net/http"
 )

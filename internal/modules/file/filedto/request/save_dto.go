@@ -2,8 +2,8 @@ package request
 
 import (
 	"fmt"
-	"gophKeeper/internal/helpers"
-	"gophKeeper/internal/logger"
+	"goph-keeper/internal/helpers"
+	"goph-keeper/internal/logger"
 	"io"
 	"mime/multipart"
 	"net/http"

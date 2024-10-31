@@ -2,8 +2,8 @@ package authmiddleware
 
 import (
 	"context"
-	"gophKeeper/internal/logger"
-	"gophKeeper/internal/modules/auth/authservices/authjwtservice"
+	"goph-keeper/internal/logger"
+	"goph-keeper/internal/modules/auth/authservices/authjwtservice"
 	"net/http"
 	"strings"
 

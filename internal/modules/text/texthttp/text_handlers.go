@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/jackc/pgx/v5"
-	"gophKeeper/internal/logger"
-	"gophKeeper/internal/modules/text/textdto"
-	"gophKeeper/internal/modules/text/textservices"
+	"goph-keeper/internal/logger"
+	"goph-keeper/internal/modules/text/textdto"
+	"goph-keeper/internal/modules/text/textservices"
 	"net/http"
 )
 

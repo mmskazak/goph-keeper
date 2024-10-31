@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/stretchr/testify/assert"
-	"gophKeeper/internal/modules/pwd/pwddto"
-	"gophKeeper/internal/modules/pwd/valueobj"
-	"gophKeeper/internal/storage/mocks"
+	"goph-keeper/internal/modules/pwd/pwddto"
+	"goph-keeper/internal/modules/pwd/valueobj"
+	"goph-keeper/internal/storage/mocks"
 	"testing"
 
 	"github.com/jackc/pgx/v5/pgconn"

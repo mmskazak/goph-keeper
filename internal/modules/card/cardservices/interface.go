@@ -2,7 +2,7 @@ package cardservices
 
 import (
 	"context"
-	"gophKeeper/internal/modules/card/carddto"
+	"goph-keeper/internal/modules/card/carddto"
 )
 
 type ICardService interface {

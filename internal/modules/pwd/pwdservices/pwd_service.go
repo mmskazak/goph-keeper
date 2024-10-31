@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"gophKeeper/internal/logger"
-	"gophKeeper/internal/modules/pwd/pwddto"
-	"gophKeeper/internal/modules/pwd/valueobj"
-	"gophKeeper/internal/storage"
-	"gophKeeper/pkg/crypto"
+	"goph-keeper/internal/logger"
+	"goph-keeper/internal/modules/pwd/pwddto"
+	"goph-keeper/internal/modules/pwd/valueobj"
+	"goph-keeper/internal/storage"
+	"goph-keeper/pkg/crypto"
 
 	"github.com/jackc/pgx/v5"
 )

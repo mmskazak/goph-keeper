@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
-	"gophKeeper/internal/app"
-	"gophKeeper/internal/config"
-	"gophKeeper/internal/logger"
+	"goph-keeper/internal/app"
+	"goph-keeper/internal/config"
+	"goph-keeper/internal/logger"
 	"os"
 	"os/signal"
 	"syscall"

@@ -3,9 +3,9 @@ package cardhttp
 import (
 	"encoding/json"
 	"errors"
-	"gophKeeper/internal/logger"
-	"gophKeeper/internal/modules/card/carddto"
-	"gophKeeper/internal/modules/card/cardservices"
+	"goph-keeper/internal/logger"
+	"goph-keeper/internal/modules/card/carddto"
+	"goph-keeper/internal/modules/card/cardservices"
 	"net/http"
 
 	"github.com/jackc/pgx/v5"

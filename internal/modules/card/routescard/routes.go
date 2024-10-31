@@ -1,9 +1,9 @@
 package routescard
 
 import (
-	"gophKeeper/internal/config"
-	"gophKeeper/internal/modules/card/cardhttp"
-	"gophKeeper/internal/modules/card/cardservices"
+	"goph-keeper/internal/config"
+	"goph-keeper/internal/modules/card/cardhttp"
+	"goph-keeper/internal/modules/card/cardservices"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"

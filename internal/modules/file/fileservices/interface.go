@@ -2,7 +2,7 @@ package fileservices
 
 import (
 	"context"
-	"gophKeeper/internal/modules/file/filedto/request"
+	"goph-keeper/internal/modules/file/filedto/request"
 )
 
 type FileInfo struct {

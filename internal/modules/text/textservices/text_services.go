@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gophKeeper/internal/modules/text/textdto"
-	"gophKeeper/pkg/crypto"
+	"goph-keeper/internal/modules/text/textdto"
+	"goph-keeper/pkg/crypto"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"

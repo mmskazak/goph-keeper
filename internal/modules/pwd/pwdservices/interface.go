@@ -2,7 +2,7 @@ package pwdservices
 
 import (
 	"context"
-	"gophKeeper/internal/modules/pwd/pwddto"
+	"goph-keeper/internal/modules/pwd/pwddto"
 )
 
 type IPwdService interface {

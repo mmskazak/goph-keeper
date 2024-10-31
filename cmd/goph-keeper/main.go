@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
-	"gophKeeper/internal/config"
-	"gophKeeper/internal/logger"
-	"gophKeeper/internal/storage/psql"
+	"goph-keeper/internal/config"
+	"goph-keeper/internal/logger"
+	"goph-keeper/internal/storage/psql"
 	"log"
 	"time"
 )

@@ -3,7 +3,7 @@ package pwdhttp
 import (
 	"context"
 	"github.com/stretchr/testify/assert"
-	"gophKeeper/internal/modules/pwd/pwddto"
+	"goph-keeper/internal/modules/pwd/pwddto"
 	"net/http"
 	"net/http/httptest"
 	"testing"

@@ -3,8 +3,8 @@ package pwddto
 import (
 	"encoding/json"
 	"fmt"
-	"gophKeeper/internal/helpers"
-	"gophKeeper/internal/modules/pwd/valueobj"
+	"goph-keeper/internal/helpers"
+	"goph-keeper/internal/modules/pwd/valueobj"
 	"io"
 	"net/http"
 )

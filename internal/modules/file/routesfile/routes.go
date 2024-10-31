@@ -1,9 +1,9 @@
 package routesfile
 
 import (
-	"gophKeeper/internal/config"
-	"gophKeeper/internal/modules/file/filehttp"
-	"gophKeeper/internal/modules/file/fileservices"
+	"goph-keeper/internal/config"
+	"goph-keeper/internal/modules/file/filehttp"
+	"goph-keeper/internal/modules/file/fileservices"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"

@@ -3,7 +3,7 @@ package psql
 import (
 	"context"
 	"fmt"
-	"gophKeeper/internal/config"
+	"goph-keeper/internal/config"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )

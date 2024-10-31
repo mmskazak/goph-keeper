@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-chi/chi/v5"
-	"gophKeeper/internal/helpers"
+	"goph-keeper/internal/helpers"
 	"net/http"
 )
 

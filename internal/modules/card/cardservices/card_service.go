@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"gophKeeper/internal/logger"
-	"gophKeeper/internal/modules/card/carddto"
+	"goph-keeper/internal/logger"
+	"goph-keeper/internal/modules/card/carddto"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"

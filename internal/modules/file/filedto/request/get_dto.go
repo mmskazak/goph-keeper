@@ -3,7 +3,7 @@ package request
 import (
 	"errors"
 	"fmt"
-	"gophKeeper/internal/helpers"
+	"goph-keeper/internal/helpers"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"

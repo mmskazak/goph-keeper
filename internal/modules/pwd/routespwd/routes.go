@@ -1,9 +1,9 @@
 package routespwd
 
 import (
-	"gophKeeper/internal/config"
-	"gophKeeper/internal/modules/pwd/pwdhttp"
-	"gophKeeper/internal/modules/pwd/pwdservices"
+	"goph-keeper/internal/config"
+	"goph-keeper/internal/modules/pwd/pwdhttp"
+	"goph-keeper/internal/modules/pwd/pwdservices"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"

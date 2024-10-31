@@ -3,9 +3,9 @@ package filehttp
 import (
 	"encoding/json"
 	"fmt"
-	"gophKeeper/internal/logger"
-	"gophKeeper/internal/modules/file/filedto/request"
-	"gophKeeper/internal/modules/file/fileservices"
+	"goph-keeper/internal/logger"
+	"goph-keeper/internal/modules/file/filedto/request"
+	"goph-keeper/internal/modules/file/fileservices"
 	"path/filepath"
 	"strconv"
 
