@@ -59,7 +59,7 @@ func (s *AuthHandlers) Registration(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *AuthHandlers) Login(w http.ResponseWriter, r *http.Request) {
-	inDTO, _ := dto.GetLoginDTOFromHTTP(r)
+	inDTO, _ := dto.LoginDTOFromRequestHTTP(r)
 	userID, err := s.authService.Login(r.Context(), inDTO)
 	if err != nil {
 		logger.Log.Errorf("Error authService.Login: %v", err)
@@ -78,15 +78,6 @@ func (s *AuthHandlers) Login(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	_, err = w.Write([]byte("ok"))
-	if err != nil {
-		logger.Log.Errorf("Error write: %v", err)
-	}
-}
-
-func (s *AuthHandlers) Logout(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Authorization", "")
-	w.WriteHeader(http.StatusOK)
-	_, err := w.Write([]byte("logout"))
 	if err != nil {
 		logger.Log.Errorf("Error write: %v", err)
 	}

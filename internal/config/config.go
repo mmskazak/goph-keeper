@@ -25,7 +25,7 @@ func NewConfig() *Config {
 		SecretKey:           "secret",
 		DataBaseDSN:         "postgresql://gkuser:gkpass@localhost:5432/goph_keeper?sslmode=disable",
 		EncryptionKeyString: "MySecretEncryptionKey1234567890a",
-		DirSavedFiles:       "E:/test/",
+		DirSavedFiles:       "/Users/mihail/Downloads/",
 	}
 }
 

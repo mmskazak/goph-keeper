@@ -3,6 +3,7 @@ package authdto
 import (
 	"encoding/json"
 	"fmt"
+	pb "goph-keeper/internal/modules/auth/proto"
 	"io"
 	"net/http"
 )
@@ -23,4 +24,17 @@ func GetRegistrationDTOFromHTTP(r *http.Request) (*RegistrationDTO, error) {
 		return nil, fmt.Errorf("unmarshalling body registration: %w", err)
 	}
 	return &regDTO, nil
+}
+
+// GetRegistrationDTOFromRegistrationRequestGRPC преобразует RegistrationRequest в RegistrationDTO
+func GetRegistrationDTOFromRegistrationRequestGRPC(req *pb.RegistrationRequest) (*RegistrationDTO, error) {
+	// Проверяем, что логин и пароль не пустые
+	if req.Login == "" || req.Password == "" {
+		return nil, fmt.Errorf("login and password must not be empty")
+	}
+
+	return &RegistrationDTO{
+		Login:    req.Login,
+		Password: req.Password,
+	}, nil
 }
