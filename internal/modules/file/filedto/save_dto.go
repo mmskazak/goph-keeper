@@ -1,4 +1,4 @@
-package request
+package filedto
 
 import (
 	"fmt"
@@ -24,21 +24,21 @@ func SaveFileDTOFromHTTP(r *http.Request) (SaveFileDTO, error) {
 	}
 
 	// Получаем файл из формы
-	file, _, err := r.FormFile("file")
+	file, _, err := r.FormFile("file.proto")
 	if err != nil {
-		return SaveFileDTO{}, fmt.Errorf("error retrieving file from form-data: %w", err)
+		return SaveFileDTO{}, fmt.Errorf("error retrieving file.proto from form-data: %w", err)
 	}
 	defer func(file multipart.File) {
 		err := file.Close()
 		if err != nil {
-			logger.Log.Errorf("error closing file: %w", err)
+			logger.Log.Errorf("error closing file.proto: %w", err)
 		}
 	}(file)
 
 	// Читаем содержимое файла
 	fileData, err := io.ReadAll(file)
 	if err != nil {
-		return SaveFileDTO{}, fmt.Errorf("error reading file: %w", err)
+		return SaveFileDTO{}, fmt.Errorf("error reading file.proto: %w", err)
 	}
 
 	// Извлекаем userID из контекста

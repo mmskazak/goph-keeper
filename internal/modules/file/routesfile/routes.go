@@ -16,19 +16,19 @@ func RegistrationRoutesFile(
 	cfg *config.Config,
 ) {
 	// Сохранить пароль
-	r.Post("/file/save", func(w http.ResponseWriter, req *http.Request) {
+	r.Post("/file.proto/save", func(w http.ResponseWriter, req *http.Request) {
 		getFilesHandlers(pool, cfg.EncryptionKey, cfg.DirSavedFiles).SaveFile(w, req)
 	})
 	// Получить все пароли
-	r.Post("/file/all", func(w http.ResponseWriter, req *http.Request) {
+	r.Post("/file.proto/all", func(w http.ResponseWriter, req *http.Request) {
 		getFilesHandlers(pool, cfg.EncryptionKey, cfg.DirSavedFiles).GetAllFiles(w, req)
 	})
 	// Удалить пароль
-	r.Post("/file/delete", func(w http.ResponseWriter, req *http.Request) {
+	r.Post("/file.proto/delete", func(w http.ResponseWriter, req *http.Request) {
 		getFilesHandlers(pool, cfg.EncryptionKey, cfg.DirSavedFiles).DeleteFile(w, req)
 	})
 	// Получить конкретный пароль
-	r.Get("/file/get/{file_id}", func(w http.ResponseWriter, req *http.Request) {
+	r.Get("/file.proto/get/{file_id}", func(w http.ResponseWriter, req *http.Request) {
 		getFilesHandlers(pool, cfg.EncryptionKey, cfg.DirSavedFiles).GetFile(w, req)
 	})
 }

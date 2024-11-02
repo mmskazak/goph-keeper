@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"goph-keeper/internal/logger"
-	"goph-keeper/internal/modules/file/filedto/request"
+	"goph-keeper/internal/modules/file/filedto"
 	"goph-keeper/internal/modules/file/fileservices"
 	"path/filepath"
 	"strconv"
@@ -23,16 +23,16 @@ func NewFileHandlersHTTP(service fileservices.IFileService) FileHandlers {
 }
 
 func (p FileHandlers) SaveFile(w http.ResponseWriter, r *http.Request) {
-	saveFileDTO, err := request.SaveFileDTOFromHTTP(r)
+	saveFileDTO, err := filedto.SaveFileDTOFromHTTP(r)
 	if err != nil {
-		logger.Log.Errorf("error build DTO for save file: %v", err)
+		logger.Log.Errorf("error build DTO for save file.proto: %v", err)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
 
 	err = p.fileService.SaveFile(r.Context(), saveFileDTO)
 	if err != nil {
-		logger.Log.Errorf("error saving file: %v", err)
+		logger.Log.Errorf("error saving file.proto: %v", err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
@@ -46,16 +46,16 @@ func (p FileHandlers) SaveFile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p FileHandlers) GetFile(w http.ResponseWriter, r *http.Request) {
-	getFileDTO, err := request.GetFileDTOFromHTTP(r)
+	getFileDTO, err := filedto.GetFileDTOFromHTTP(r)
 	if err != nil {
-		logger.Log.Errorf("error build DTO for get file: %v", err)
+		logger.Log.Errorf("error build DTO for get file.proto: %v", err)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
 
 	tempFilePath, err := p.fileService.GetFile(r.Context(), getFileDTO)
 	if err != nil {
-		logger.Log.Errorf("error getting file: %v", err)
+		logger.Log.Errorf("error getting file.proto: %v", err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
@@ -71,15 +71,15 @@ func (p FileHandlers) GetFile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p FileHandlers) DeleteFile(w http.ResponseWriter, r *http.Request) {
-	deletePwdDTO, err := request.DeleteFileDTOFromHTTP(r)
+	deletePwdDTO, err := filedto.DeleteFileDTOFromHTTP(r)
 	if err != nil {
-		logger.Log.Errorf("error build DTO for delete file: %v", err)
+		logger.Log.Errorf("error build DTO for delete file.proto: %v", err)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
 	err = p.fileService.DeleteFile(r.Context(), deletePwdDTO)
 	if err != nil {
-		logger.Log.Errorf("error deleting file: %v", err)
+		logger.Log.Errorf("error deleting file.proto: %v", err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
@@ -93,7 +93,7 @@ func (p FileHandlers) DeleteFile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (p FileHandlers) GetAllFiles(w http.ResponseWriter, r *http.Request) {
-	allPwdDTO, err := request.AllFileDTOFromHTTP(r)
+	allPwdDTO, err := filedto.AllFileDTOFromHTTP(r)
 	if err != nil {
 		http.Error(w, "", http.StatusBadRequest)
 		return

@@ -2,7 +2,7 @@ package fileservices
 
 import (
 	"context"
-	"goph-keeper/internal/modules/file/filedto/request"
+	"goph-keeper/internal/modules/file/filedto"
 )
 
 type FileInfo struct {
@@ -12,8 +12,8 @@ type FileInfo struct {
 }
 
 type IFileService interface {
-	SaveFile(ctx context.Context, dto request.SaveFileDTO) error
-	DeleteFile(ctx context.Context, dto request.DeleteFileDTO) error
-	GetFile(context.Context, request.GetFileDTO) (string, error)
-	GetAllFiles(ctx context.Context, dto request.AllFilesDTO) ([]FileInfo, error)
+	SaveFile(ctx context.Context, dto filedto.SaveFileDTO) error
+	DeleteFile(ctx context.Context, dto filedto.DeleteFileDTO) error
+	GetFile(context.Context, filedto.GetFileDTO) (string, error)
+	GetAllFiles(ctx context.Context, dto filedto.AllFilesDTO) ([]FileInfo, error)
 }

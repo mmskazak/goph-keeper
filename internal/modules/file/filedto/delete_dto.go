@@ -1,4 +1,4 @@
-package request
+package filedto
 
 import (
 	"encoding/json"
@@ -16,7 +16,7 @@ type DeleteFileDTO struct {
 func DeleteFileDTOFromHTTP(r *http.Request) (DeleteFileDTO, error) {
 	data, err := io.ReadAll(r.Body)
 	if err != nil {
-		return DeleteFileDTO{}, fmt.Errorf("reading body for delete file dto: %w", err)
+		return DeleteFileDTO{}, fmt.Errorf("reading body for delete file.proto dto: %w", err)
 	}
 	var deletePwdDTO DeleteFileDTO
 	err = json.Unmarshal(data, &deletePwdDTO)

@@ -18,8 +18,8 @@ func (f FakePwdService) SavePassword(ctx context.Context, dto *pwddto.SavePwdDTO
 func (f FakePwdService) DeletePassword(ctx context.Context, dto *pwddto.DeletePwdDTO) error {
 	return nil
 }
-func (f FakePwdService) GetPassword(ctx context.Context, dto *pwddto.GetPwdDTO) (pwddto.ResponsePassword, error) {
-	return pwddto.ResponsePassword{}, nil
+func (f FakePwdService) GetPassword(ctx context.Context, dto *pwddto.GetPwdDTO) (pwddto.ResponsePwdDTO, error) {
+	return pwddto.ResponsePwdDTO{}, nil
 }
 
 func (f FakePwdService) GetAllPasswords(ctx context.Context, dto *pwddto.AllPwdDTO) ([]pwddto.ResponsePwdDTO, error) {

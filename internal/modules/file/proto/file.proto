@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package file;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "../proto";
+
+// Сервис для работы с файлами
+service FileService {
+  // Метод для сохранения файла
+  rpc SaveFile (SaveFileRequest) returns (BasicResponse);
+
+  // Метод для получения файла
+  rpc GetFile (GetFileRequest) returns (GetFileResponse);
+
+  // Метод для удаления файла
+  rpc DeleteFile (DeleteFileRequest) returns (BasicResponse);
+
+  // Метод для получения всех файлов пользователя
+  rpc GetAllFiles (GetAllFilesRequest) returns (GetAllFilesResponse);
+}
+
+// Общий ответ для операций, которые не возвращают специфичные данные
+message BasicResponse {
+  string status = 1;
+  string message = 2;
+}
+
+// Запрос на сохранение файла
+message SaveFileRequest {
+  string jwt = 1;
+  string title = 2;
+  string description = 3;
+  bytes file_data = 4;
+}
+
+// Запрос на получение файла
+message GetFileRequest {
+  string jwt = 1;
+  string file_id = 2;
+}
+
+// Ответ на запрос получения файла
+message GetFileResponse {
+  string file_id = 1;
+  string title = 2;
+  string description = 3;
+  bytes file_data = 4;
+}
+
+// Запрос на удаление файла
+message DeleteFileRequest {
+  string jwt = 1;
+  string file_id = 2;
+}
+
+// Запрос на получение всех файлов пользователя
+message GetAllFilesRequest {
+  string jwt = 1;
+}
+
+// Ответ на запрос всех файлов
+message GetAllFilesResponse {
+  repeated FileInfo files = 1;
+}
+
+// Информация о файле в ответе GetAllFilesResponse
+message FileInfo {
+  string file_id = 1;
+  string title = 2;
+  string description = 3;
+}
