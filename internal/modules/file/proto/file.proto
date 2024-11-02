@@ -6,18 +6,10 @@ import "google/protobuf/empty.proto";
 
 option go_package = "../proto";
 
-// Сервис для работы с файлами
 service FileService {
-  // Метод для сохранения файла
   rpc SaveFile (SaveFileRequest) returns (BasicResponse);
-
-  // Метод для получения файла
   rpc GetFile (GetFileRequest) returns (GetFileResponse);
-
-  // Метод для удаления файла
   rpc DeleteFile (DeleteFileRequest) returns (BasicResponse);
-
-  // Метод для получения всех файлов пользователя
   rpc GetAllFiles (GetAllFilesRequest) returns (GetAllFilesResponse);
 }
 
