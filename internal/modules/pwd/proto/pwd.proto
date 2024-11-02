@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package pwd;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "../proto";
+
+// Сервис для работы с паролями
+service PasswordService {
+  rpc SavePassword(SavePwdRequest) returns (BasicResponse);       // Используем BasicResponse вместо пустого ответа
+  rpc UpdatePassword(UpdatePwdRequest) returns (BasicResponse);   // Также возвращает BasicResponse
+  rpc DeletePassword(DeletePwdRequest) returns (BasicResponse);
+  rpc GetPassword(GetPwdRequest) returns (PwdResponse);           // Возвращает один объект пароля
+  rpc GetAllPasswords(AllPwdRequest) returns (AllPwdResponse);    // Возвращает список всех паролей
+}
+
+// Общий ответ для операций, которые не возвращают данные
+message BasicResponse {
+  string status = 1;
+  string message = 2;
+}
+
+// Запрос на сохранение пароля
+message SavePwdRequest {
+  string jwt = 1;
+  string title = 2;
+  string description = 3;
+  Credentials credentials = 4;
+}
+
+// Запрос на обновление пароля
+message UpdatePwdRequest {
+  string jwt = 1;
+  string pwd_id = 2;
+  string title = 3;
+  string description = 4;
+  Credentials credentials = 5;
+}
+
+// Запрос на удаление пароля
+message DeletePwdRequest {
+  string jwt = 1;
+  string pwd_id =2;
+}
+
+// Запрос на получение пароля
+message GetPwdRequest {
+  string jwt = 1;
+  string pwd_id = 2;
+}
+
+// Запрос на получение всех паролей
+message AllPwdRequest {
+  string jwt = 1;
+}
+
+// Ответ с информацией о пароле
+message PwdResponse {
+  string pwd_id = 1; // Идентификатор пароля
+  string title = 2;
+  string description = 3;
+  Credentials credentials = 4;
+}
+
+// Ответ на запрос всех паролей
+message AllPwdResponse {
+  repeated PwdResponse passwords = 1; // Список паролей пользователя
+}
+
+// Определение структуры учетных данных
+message Credentials {
+  string login = 1;
+  string password = 2;
+}

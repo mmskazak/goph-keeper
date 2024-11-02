@@ -51,7 +51,7 @@ func (p PwdHandlers) GetPassword(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
-	credentials, err := p.pwdService.GetPassword(r.Context(), &getPwdDTO)
+	responsePwdDTO, err := p.pwdService.GetPassword(r.Context(), &getPwdDTO)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			logger.Log.Infoln("Get password not found")
@@ -64,7 +64,7 @@ func (p PwdHandlers) GetPassword(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	jsonResponse, err := json.Marshal(credentials)
+	jsonResponse, err := json.Marshal(responsePwdDTO)
 	if err != nil {
 		logger.Log.Errorf("Error work pwdService GetPwdDTO: %v", err)
 		http.Error(w, "", http.StatusInternalServerError)

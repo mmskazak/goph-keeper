@@ -65,50 +65,47 @@ func (pwd *PwdService) DeletePassword(ctx context.Context, dto *pwddto.DeletePwd
 	return nil
 }
 
-func (pwd *PwdService) GetPassword(ctx context.Context, dto *pwddto.GetPwdDTO) (pwddto.CredentialsDTO, error) {
-	sql := `SELECT credentials FROM passwords WHERE user_id = $1 AND id = $2;`
+func (pwd *PwdService) GetPassword(ctx context.Context, dto *pwddto.GetPwdDTO) (pwddto.ResponsePwdDTO, error) {
+	sql := `SELECT id, title, description, credentials FROM passwords WHERE user_id = $1 AND id = $2;`
 	row := pwd.pool.QueryRow(ctx, sql, dto.UserID, dto.PwdID)
-	fmt.Println(row)
-	fmt.Println("QueryRow")
+
+	var id, title, description string
 	var credentialsData []byte
-	err := row.Scan(&credentialsData)
+	err := row.Scan(&id, &title, &description, &credentialsData)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			// Обработка случая, когда запись не найдена
-			logger.Log.Errorf("password not found for user: %v", err)
-			return pwddto.CredentialsDTO{}, fmt.Errorf("password not found for user: %w", err)
+			logger.Log.Errorf("password not found for user %s: %v", dto.UserID, err)
+			return pwddto.ResponsePwdDTO{}, fmt.Errorf("password not found for user: %w", err)
 		}
 		// Обработка других ошибок
 		logger.Log.Errorf("error scanning password from pwd service: %v", err)
-		return pwddto.CredentialsDTO{}, fmt.Errorf("error scanning password from pwd service: %w", err)
+		return pwddto.ResponsePwdDTO{}, fmt.Errorf("error scanning password from pwd service: %w", err)
 	}
 
-	var credentials pwddto.CredentialsDTO
-	if err := json.Unmarshal(credentialsData, &credentials); err != nil {
+	var responsePwdDTO pwddto.ResponsePwdDTO
+	if err := json.Unmarshal(credentialsData, &responsePwdDTO); err != nil {
 		logger.Log.Errorf("error unmarshalling credentials: %v", err)
-		return pwddto.CredentialsDTO{}, fmt.Errorf("error unmarshalling credentials: %w", err)
+		return pwddto.ResponsePwdDTO{}, fmt.Errorf("error unmarshalling credentials: %w", err)
 	}
 
-	// Расшифровка текста
-	decryptedPassword, err := crypto.Decrypt(pwd.cryptoKey, credentials.Password)
-	if err != nil {
-		logger.Log.Errorf("error while decrypting text: %v", err)
-		return pwddto.CredentialsDTO{}, fmt.Errorf("error while decrypting text: %w", err)
-	}
-	credentials.Password = string(decryptedPassword)
+	// Заполнение всех необходимых данных для ответа
+	responsePwdDTO.PwdID = id
+	responsePwdDTO.Title = title
+	responsePwdDTO.Description = description
 
-	return credentials, nil
+	return responsePwdDTO, nil
 }
 
-func (pwd *PwdService) GetAllPasswords(ctx context.Context, dto *pwddto.AllPwdDTO) ([]pwddto.PwdDTO, error) {
+func (pwd *PwdService) GetAllPasswords(ctx context.Context, dto *pwddto.AllPwdDTO) ([]pwddto.ResponsePwdDTO, error) {
 	sql := `SELECT id,title, description, credentials FROM passwords WHERE user_id = $1`
 	rows, err := pwd.pool.Query(ctx, sql, dto.UserID)
 	if err != nil {
 		logger.Log.Errorf("error query get all passwords: %v", err)
-		return []pwddto.PwdDTO{}, fmt.Errorf("error query get all passwords: %w", err)
+		return []pwddto.ResponsePwdDTO{}, fmt.Errorf("error query get all passwords: %w", err)
 	}
 
-	var listPasswords []pwddto.PwdDTO
+	var listPasswords []pwddto.ResponsePwdDTO
 
 	for rows.Next() {
 		var id string
@@ -118,25 +115,25 @@ func (pwd *PwdService) GetAllPasswords(ctx context.Context, dto *pwddto.AllPwdDT
 		err = rows.Scan(&id, &title, &description, &credentialsData)
 		if err != nil {
 			logger.Log.Errorf("error scan get all passwords from pwd service: %v", err)
-			return []pwddto.PwdDTO{}, fmt.Errorf("error scan get all passwords from pwd service: %w", err)
+			return []pwddto.ResponsePwdDTO{}, fmt.Errorf("error scan get all passwords from pwd service: %w", err)
 		}
 
 		var credentials valueobj.Credentials
 		if err = json.Unmarshal(credentialsData, &credentials); err != nil {
 			logger.Log.Errorf("error unmarshalling credentials: %v", err)
-			return []pwddto.PwdDTO{}, fmt.Errorf("error unmarshalling credentials: %w", err)
+			return []pwddto.ResponsePwdDTO{}, fmt.Errorf("error unmarshalling credentials: %w", err)
 		}
 
 		// Расшифровка текста
 		decryptedPassword, err := crypto.Decrypt(pwd.cryptoKey, credentials.Password)
 		if err != nil {
 			logger.Log.Errorf("error while decrypting text: %v", err)
-			return []pwddto.PwdDTO{}, fmt.Errorf("error while decrypting text: %w", err)
+			return []pwddto.ResponsePwdDTO{}, fmt.Errorf("error while decrypting text: %w", err)
 		}
 		credentials.Password = string(decryptedPassword)
 
-		listPasswords = append(listPasswords, pwddto.PwdDTO{
-			ID:          id,
+		listPasswords = append(listPasswords, pwddto.ResponsePwdDTO{
+			PwdID:       id,
 			Title:       title,
 			Description: description,
 			Credentials: credentials,
