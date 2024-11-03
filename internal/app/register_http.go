@@ -6,10 +6,8 @@ import (
 	"goph-keeper/internal/modules/auth/authhttp"
 	"goph-keeper/internal/modules/auth/authmiddleware"
 	"goph-keeper/internal/modules/auth/authservices/authservice"
-	"goph-keeper/internal/modules/card/routescard"
 	"goph-keeper/internal/modules/file/routesfile"
 	"goph-keeper/internal/modules/pwd/routespwd"
-	"goph-keeper/internal/modules/text/routestext"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -36,14 +34,8 @@ func registrationHandlersHTTP(
 			return authmiddleware.Authentication(next, cfg.SecretKey)
 		})
 
-		r.Get("/logout", func(w http.ResponseWriter, r *http.Request) {
-			getAuthHandlers(pool, cfg.SecretKey).Logout(w, r)
-		})
-
 		routespwd.RegistrationRoutesPwd(r, pool, cfg)
 		routesfile.RegistrationRoutesFile(r, pool, cfg)
-		routestext.RegistrationRoutesText(r, pool, cfg)
-		routescard.RegistrationRoutesCard(r, pool, cfg)
 	})
 
 	return r
