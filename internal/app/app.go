@@ -90,7 +90,7 @@ func (a *App) Start() error {
 	// Запуск gRPC сервера
 	listener, err := net.Listen("tcp", ":50051") // Порт для gRPC
 	if err != nil {
-		return fmt.Errorf("failed to listen: %v", err)
+		return fmt.Errorf("failed to listen: %w", err)
 	}
 
 	go func() {

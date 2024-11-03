@@ -10,7 +10,7 @@ import (
 )
 
 type LoginDTO struct {
-	Login    string `json:"login"`
+	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
@@ -30,12 +30,12 @@ func LoginDTOFromRequestHTTP(r *http.Request) (*LoginDTO, error) {
 
 // LoginDTOFromLoginRequestGRPC преобразует LoginRequest в LoginDTO
 func LoginDTOFromLoginRequestGRPC(req *pb.LoginRequest) (*LoginDTO, error) {
-	if req.Login == "" || req.Password == "" {
-		return nil, fmt.Errorf("login and password must not be empty")
+	if req.GetLogin() == "" || req.GetPassword() == "" {
+		return nil, fmt.Errorf("username and password must not be empty")
 	}
 
 	return &LoginDTO{
-		Login:    req.Login,
+		Username: req.Login,
 		Password: req.Password,
 	}, nil
 }

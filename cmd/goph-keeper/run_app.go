@@ -14,6 +14,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+// runApp запуск приложения
 func runApp(
 	ctx context.Context,
 	cfg *config.Config,

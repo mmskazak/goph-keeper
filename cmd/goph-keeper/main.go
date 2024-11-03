@@ -11,16 +11,17 @@ import (
 
 const shutdownDuration = 5 * time.Second
 
+// Главная функция запуска приложения
 func main() {
 	ctx := context.Background()
 
-	// Инициализация конфигурации.
+	// Инициализация конфигурации
 	cfg, err := config.InitConfig()
 	if err != nil {
 		log.Fatalf("Ошибка инициализации конфигурации: %v", err)
 	}
 
-	// Инициализация глобального logger.
+	// Инициализация глобального logger
 	err = logger.InitGlobalLogger(cfg)
 	if err != nil {
 		log.Printf("Ошибка инициализации глобального логера: %v", err)
@@ -38,6 +39,7 @@ func main() {
 		logger.Log.Fatalf("Ошибка запуска миграций: %v", err)
 	}
 
+	// Запуск приложения
 	err = runApp(ctx, cfg, pool, shutdownDuration)
 	if err != nil {
 		logger.Log.Fatalf("Ошибка запусака приложения: %v", err)
