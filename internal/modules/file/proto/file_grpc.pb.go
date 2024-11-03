@@ -16,7 +16,7 @@ import (
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
 // Requires gRPC-Go v1.64.0 or later.
-const _ = grpc.SupportPackageIsVersion
+const _ = grpc.SupportPackageIsVersion9
 
 const (
 	FileService_SaveFile_FullMethodName    = "/file.FileService/SaveFile"
@@ -28,16 +28,10 @@ const (
 // FileServiceClient is the client API for FileService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-//
-// Сервис для работы с файлами
 type FileServiceClient interface {
-	// Метод для сохранения файла
 	SaveFile(ctx context.Context, in *SaveFileRequest, opts ...grpc.CallOption) (*BasicResponse, error)
-	// Метод для получения файла
 	GetFile(ctx context.Context, in *GetFileRequest, opts ...grpc.CallOption) (*GetFileResponse, error)
-	// Метод для удаления файла
 	DeleteFile(ctx context.Context, in *DeleteFileRequest, opts ...grpc.CallOption) (*BasicResponse, error)
-	// Метод для получения всех файлов пользователя
 	GetAllFiles(ctx context.Context, in *GetAllFilesRequest, opts ...grpc.CallOption) (*GetAllFilesResponse, error)
 }
 
@@ -92,16 +86,10 @@ func (c *fileServiceClient) GetAllFiles(ctx context.Context, in *GetAllFilesRequ
 // FileServiceServer is the server API for FileService service.
 // All implementations must embed UnimplementedFileServiceServer
 // for forward compatibility.
-//
-// Сервис для работы с файлами
 type FileServiceServer interface {
-	// Метод для сохранения файла
 	SaveFile(context.Context, *SaveFileRequest) (*BasicResponse, error)
-	// Метод для получения файла
 	GetFile(context.Context, *GetFileRequest) (*GetFileResponse, error)
-	// Метод для удаления файла
 	DeleteFile(context.Context, *DeleteFileRequest) (*BasicResponse, error)
-	// Метод для получения всех файлов пользователя
 	GetAllFiles(context.Context, *GetAllFilesRequest) (*GetAllFilesResponse, error)
 	mustEmbedUnimplementedFileServiceServer()
 }

@@ -6,7 +6,6 @@ import (
 	"goph-keeper/internal/logger"
 	"goph-keeper/internal/modules/file/filedto"
 	"goph-keeper/internal/modules/file/fileservices"
-	"path/filepath"
 	"strconv"
 
 	"net/http"
@@ -53,7 +52,8 @@ func (p FileHandlers) GetFile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tempFilePath, err := p.fileService.GetFile(r.Context(), getFileDTO)
+	// Получаем байты файла из сервиса
+	fileData, err := p.fileService.GetFile(r.Context(), getFileDTO)
 	if err != nil {
 		logger.Log.Errorf("error getting file.proto: %v", err)
 		http.Error(w, "", http.StatusInternalServerError)
@@ -62,12 +62,15 @@ func (p FileHandlers) GetFile(w http.ResponseWriter, r *http.Request) {
 
 	// Устанавливаем заголовки для скачивания файла
 	w.Header().Set("Content-Type", "application/octet-stream")
-	w.Header().Set("Content-Disposition",
-		fmt.Sprintf("attachment; filename=\"%q\"", filepath.Base(tempFilePath)))
-	w.Header().Set("Content-Length", strconv.Itoa(len(tempFilePath)))
+	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", getFileDTO.FileID))
+	w.Header().Set("Content-Length", strconv.Itoa(len(fileData)))
 
-	// Отправляем временный файл в ответ
-	http.ServeFile(w, r, tempFilePath)
+	// Отправляем байты файла в ответ
+	if _, err := w.Write(fileData); err != nil {
+		logger.Log.Errorf("error writing file data to response: %v", err)
+		http.Error(w, "", http.StatusInternalServerError)
+		return
+	}
 }
 
 func (p FileHandlers) DeleteFile(w http.ResponseWriter, r *http.Request) {

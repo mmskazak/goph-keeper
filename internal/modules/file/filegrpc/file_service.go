@@ -7,7 +7,6 @@ import (
 	"goph-keeper/internal/modules/file/filedto"
 	"goph-keeper/internal/modules/file/fileservices"
 	"goph-keeper/internal/modules/file/proto"
-	"os"
 )
 
 //go:generate protoc --proto_path=../proto --go_out=. --go-grpc_out=. file.proto
@@ -61,14 +60,10 @@ func (s *FileGRPCServer) GetFile(ctx context.Context, req *proto.GetFileRequest)
 		FileID: req.FileId,
 	}
 
-	tempFilePath, err := s.fileService.GetFile(ctx, getFileDTO)
+	// Получаем байты файла из сервиса
+	fileData, err := s.fileService.GetFile(ctx, getFileDTO)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get file: %w", err)
-	}
-
-	fileData, err := os.ReadFile(tempFilePath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read file data: %w", err)
 	}
 
 	return &proto.GetFileResponse{
