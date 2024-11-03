@@ -60,7 +60,10 @@ func (s *AuthGRPCServer) Login(ctx context.Context, req *pb.LoginRequest) (*pb.L
 }
 
 // Registration обрабатывает регистрацию пользователя
-func (s *AuthGRPCServer) Registration(ctx context.Context, req *pb.RegistrationRequest) (*pb.RegistrationResponse, error) {
+func (s *AuthGRPCServer) Registration(
+	ctx context.Context,
+	req *pb.RegistrationRequest,
+) (*pb.RegistrationResponse, error) {
 	// Преобразуем gRPC-запрос в DTO
 	regDTO, err := authdto.GetRegistrationDTOFromRegistrationRequestGRPC(req)
 	if err != nil {

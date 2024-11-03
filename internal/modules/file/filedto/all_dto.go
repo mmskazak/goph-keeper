@@ -3,7 +3,6 @@ package filedto
 import (
 	"fmt"
 	"goph-keeper/internal/helpers"
-	"goph-keeper/internal/modules/file/proto"
 	"net/http"
 )
 
@@ -20,8 +19,4 @@ func AllFileDTOFromHTTP(r *http.Request) (AllFilesDTO, error) {
 	return AllFilesDTO{
 		UserID: userID,
 	}, nil
-}
-
-func AllFileDTOFromAllFileRequestGRPC(req *proto.GetAllFilesRequest) (proto.GetAllFilesResponse, error) {
-	return proto.GetAllFilesResponse{}, nil
 }

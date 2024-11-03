@@ -11,7 +11,9 @@ import (
 
 //go:generate protoc --proto_path=../proto --go_out=. --go-grpc_out=. file.proto
 
-// FileGRPCServer сервис GRPC отвечающий за работу с файлами
+const ErrParsingValidateJWT = "error parsing and validating JWT token: %w"
+
+// FileGRPCServer сервис GRPC отвечающий за работу с файлами.
 type FileGRPCServer struct {
 	proto.UnimplementedFileServiceServer
 
@@ -29,16 +31,16 @@ func NewFileGRPCServer(fileService fileservices.IFileService, secretKey string) 
 
 // SaveFile сохраняет файл на сервере.
 func (s *FileGRPCServer) SaveFile(ctx context.Context, req *proto.SaveFileRequest) (*proto.BasicResponse, error) {
-	userID, err := helpers.ParseTokenAndExtractUserID(req.Jwt, s.secretKey)
+	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt(), s.secretKey)
 	if err != nil {
-		return nil, fmt.Errorf("error parsing and validating JWT token: %w", err)
+		return nil, fmt.Errorf(ErrParsingValidateJWT, err)
 	}
 
 	saveFileDTO := filedto.SaveFileDTO{
 		UserID:      userID,
-		Title:       req.Title,
-		Description: req.Description,
-		FileData:    req.FileData,
+		Title:       req.GetTitle(),
+		Description: req.GetDescription(),
+		FileData:    req.GetFileData(),
 	}
 
 	if err := s.fileService.SaveFile(ctx, saveFileDTO); err != nil {
@@ -52,12 +54,12 @@ func (s *FileGRPCServer) SaveFile(ctx context.Context, req *proto.SaveFileReques
 func (s *FileGRPCServer) GetFile(ctx context.Context, req *proto.GetFileRequest) (*proto.GetFileResponse, error) {
 	userID, err := helpers.ParseTokenAndExtractUserID(req.Jwt, s.secretKey)
 	if err != nil {
-		return nil, fmt.Errorf("error parsing and validating JWT token: %w", err)
+		return nil, fmt.Errorf(ErrParsingValidateJWT, err)
 	}
 
 	getFileDTO := filedto.GetFileDTO{
 		UserID: userID,
-		FileID: req.FileId,
+		FileID: req.GetFileId(),
 	}
 
 	// Получаем байты файла из сервиса
@@ -67,16 +69,16 @@ func (s *FileGRPCServer) GetFile(ctx context.Context, req *proto.GetFileRequest)
 	}
 
 	return &proto.GetFileResponse{
-		FileId:   req.FileId,
+		FileId:   req.GetFileId(),
 		FileData: fileData,
 	}, nil
 }
 
 // DeleteFile удаляет файл с сервера.
 func (s *FileGRPCServer) DeleteFile(ctx context.Context, req *proto.DeleteFileRequest) (*proto.BasicResponse, error) {
-	userID, err := helpers.ParseTokenAndExtractUserID(req.Jwt, s.secretKey)
+	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt(), s.secretKey)
 	if err != nil {
-		return nil, fmt.Errorf("error parsing and validating JWT token: %w", err)
+		return nil, fmt.Errorf(ErrParsingValidateJWT, err)
 	}
 
 	deleteFileDTO := filedto.DeleteFileDTO{
@@ -93,9 +95,9 @@ func (s *FileGRPCServer) DeleteFile(ctx context.Context, req *proto.DeleteFileRe
 
 // GetAllFiles возвращает список всех файлов пользователя.
 func (s *FileGRPCServer) GetAllFiles(ctx context.Context, req *proto.GetAllFilesRequest) (*proto.GetAllFilesResponse, error) {
-	userID, err := helpers.ParseTokenAndExtractUserID(req.Jwt, s.secretKey)
+	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt(), s.secretKey)
 	if err != nil {
-		return nil, fmt.Errorf("error parsing and validating JWT token: %w", err)
+		return nil, fmt.Errorf(ErrParsingValidateJWT, err)
 	}
 
 	getAllFilesDTO := filedto.AllFilesDTO{
