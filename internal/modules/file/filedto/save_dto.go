@@ -55,7 +55,7 @@ func SaveFileDTOFromHTTP(r *http.Request) (SaveFileDTO, error) {
 	saveFileDTO := SaveFileDTO{
 		UserID:      userID,
 		Title:       title,
-		Description: []byte(description),
+		Description: description,
 		FileData:    fileData,
 	}
 
