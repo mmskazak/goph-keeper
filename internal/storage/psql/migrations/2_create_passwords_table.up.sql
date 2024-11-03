@@ -6,8 +6,6 @@ CREATE TABLE IF NOT EXISTS passwords(
                                          title VARCHAR(255) NOT NULL,
                                          description VARCHAR(255),
                                          credentials JSONB
-
-
 );
 
 -- Добавляем внешний ключ отдельно
