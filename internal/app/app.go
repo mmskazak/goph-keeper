@@ -25,7 +25,7 @@ import (
 	"net"
 )
 
-// Константы для таймаутов
+// Константы для таймаутов.
 const readTimeout = 5 * time.Second
 const writeTimeout = 5 * time.Second
 
