@@ -34,7 +34,7 @@ func (s *AuthGRPCServer) Login(ctx context.Context, req *pb.LoginRequest) (*pb.L
 		return &pb.LoginResponse{
 			Status:  "error",
 			Message: "Invalid login data",
-		}, nil
+		}, fmt.Errorf("invalid login data: %w", err)
 	}
 
 	userID, err := s.authService.Login(ctx, inDTO)
@@ -42,7 +42,7 @@ func (s *AuthGRPCServer) Login(ctx context.Context, req *pb.LoginRequest) (*pb.L
 		return &pb.LoginResponse{
 			Status:  "error",
 			Message: "Login failed",
-		}, nil
+		}, fmt.Errorf("invalid login data: %w", err)
 	}
 
 	token, err := authjwtservice.GenerateToken(userID, s.secretKey)
@@ -50,7 +50,7 @@ func (s *AuthGRPCServer) Login(ctx context.Context, req *pb.LoginRequest) (*pb.L
 		return &pb.LoginResponse{
 			Status:  "error",
 			Message: "Failed to generate token",
-		}, nil
+		}, fmt.Errorf("invalid login data: %w", err)
 	}
 
 	return &pb.LoginResponse{
