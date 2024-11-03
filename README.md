@@ -15,8 +15,8 @@ Goph-Keeper — это серверное приложение, предназн
     Тело запроса:
     ```json
     {
-        "username": "your_username", // Уникальное имя
-        "password": "your_password"  // Пароль для входа в приложение
+        "username": "your_username",
+        "password": "your_password" 
     }
     ```
 
@@ -25,18 +25,9 @@ Goph-Keeper — это серверное приложение, предназн
     Успешный ответ
     ```json
     {
-         "status": "success",
-         "message": "User registered successfully."
+         "jwt": "jwt token"
     }
      ```
-  
-  Ошибка:
-  ```json
-  {
-       "status": "error",
-       "message": "Username already exists."
-  }
-  ```
   
 ### Авторизация
 
@@ -47,26 +38,16 @@ Goph-Keeper — это серверное приложение, предназн
     Тело запроса
     ```json
     {
-        "username": "your_username", // Уникальное имя
-        "password": "your_password"  // Пароль для входа в приложение
+        "username": "your_username",
+        "password": "your_password" 
     }
     ```
 
 - **Ответ**:
 
-  Успешный ответ
   ```json
   {
-    "status": "success",
-    "token": "your_jwt_token"
-  }
-  ```
-
-  Ошибка
-  ```json
-  {
-    "status": "error",
-    "message": "Invalid username or password."
+    "jwt": "jwt token"
   }
   ```
   
@@ -77,7 +58,7 @@ Goph-Keeper — это серверное приложение, предназн
 ### Сохранить пароль
 - **Запрос**:
 
-  `POST /pwd/save`
+  `POST /pwd/save` 
 
   Тело запроса
     ```json
@@ -89,22 +70,8 @@ Goph-Keeper — это серверное приложение, предназн
     ```
 
 - **Ответ**:
-
-  Успешный ответ
-  ```json
-  {
-     "status": "success",
-     "message": "Password saved successfully."
-  }
-  ```
-
-  Ошибка
-  ```json
-  {
-    "status": "error",
-    "message": "Invalid username or password."
-  }
-  ```
+    
+    Отсутствие ошибки в ответе будет являться критерием успешного запроса.
   
 ### Получить пароль
 - **Запрос**:
@@ -118,8 +85,9 @@ Goph-Keeper — это серверное приложение, предназн
       {
           "id": "123",
           "title": "My Email",
-          "password": "super_secret_password",
-          "description": "Email account password"
+          "description": "Email account password",
+          "login": "login for password",
+          "password": "super secret password"
       }
     ```
 
@@ -129,14 +97,9 @@ Goph-Keeper — это серверное приложение, предназн
   `GET /pwd/delete/{id}`
 
   - **Ответ**:
-
-  Успешный ответ
-  ```json
-  {
-    "status": "success",
-    "message": "Password deleted successfully."
-  }
-  ```
+  
+  Отсутствие ошибки в ответе будет являться критерием успешного запроса.
+  
 
 ###  Обновить пароль
 - **Запрос**:
@@ -146,20 +109,17 @@ Goph-Keeper — это серверное приложение, предназн
   - **Тело запроса**:
    ```json
   {
-    "title": "My Email Updated",
-    "password": "new_super_secret_password",
-    "description": "Updated email account password"
+          "id": "123",
+          "title": "My Email",
+          "description": "Email account password",
+          "login": "login for password",
+          "password": "super secret password"
   }
   ```
   - **Ответ**:
 
-    Успешный ответ
-    ```json
-    {
-    "status": "success",
-    "message": "Password updated successfully."
-    }
-    ```
+  Отсутствие ошибки в ответе будет являться критерием успешного запроса.
+    
     
 ###  Получить все пароли
 - **Запрос**:
@@ -206,13 +166,9 @@ Goph-Keeper — это серверное приложение, предназн
 
 - **Ответ**:
 
-  Успешный ответ
-  ```json
-  {
-    "status": "success",
-    "message": "File saved successfully."
-  }
-  ```
+  Отсутствие ошибки в ответе будет являться критерием успешного запроса.
+
+ 
 ### Получить файл
   - **Запрос**:
 
@@ -234,13 +190,8 @@ Goph-Keeper — это серверное приложение, предназн
 
   - **Ответ**:
 
-  Успешный ответ
-   ```json
-  {
-    "status": "success",
-    "message": "File deleted successfully."
-  }
-   ```
+    Отсутствие ошибки в ответе будет являться критерием успешного запроса.
+
 ### Получить все файлы
 - **Запрос**:
 

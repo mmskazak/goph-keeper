@@ -22,26 +22,39 @@ func NewFileHandlersHTTP(service fileservices.IFileService) FileHandlers {
 }
 
 func (p FileHandlers) SaveFile(w http.ResponseWriter, r *http.Request) {
+	// Преобразуем HTTP-запрос в DTO
 	saveFileDTO, err := filedto.SaveFileDTOFromHTTP(r)
 	if err != nil {
-		logger.Log.Errorf("error build DTO for save file.proto: %v", err)
-		http.Error(w, "", http.StatusBadRequest)
+		logger.Log.Errorf("Ошибка при построении DTO для сохранения файла: %v", err)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
+		_ = json.NewEncoder(w).Encode(map[string]string{
+			"status":  "error",
+			"message": "Invalid file data",
+		})
 		return
 	}
 
+	// Сохраняем файл
 	err = p.fileService.SaveFile(r.Context(), saveFileDTO)
 	if err != nil {
-		logger.Log.Errorf("error saving file.proto: %v", err)
-		http.Error(w, "", http.StatusInternalServerError)
+		logger.Log.Errorf("Ошибка сохранения файла: %v", err)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusInternalServerError)
+		_ = json.NewEncoder(w).Encode(map[string]string{
+			"status":  "error",
+			"message": "Failed to save file.",
+		})
 		return
 	}
+
+	// Успешный ответ при сохранении файла
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	_, err = w.Write([]byte("OK"))
-	if err != nil {
-		logger.Log.Errorf("error writing response: %v", err)
-		http.Error(w, "", http.StatusInternalServerError)
-		return
-	}
+	_ = json.NewEncoder(w).Encode(map[string]string{
+		"status":  "success",
+		"message": "File saved successfully.",
+	})
 }
 
 func (p FileHandlers) GetFile(w http.ResponseWriter, r *http.Request) {
@@ -62,7 +75,7 @@ func (p FileHandlers) GetFile(w http.ResponseWriter, r *http.Request) {
 
 	// Устанавливаем заголовки для скачивания файла
 	w.Header().Set("Content-Type", "application/octet-stream")
-	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s\"", getFileDTO.FileID))
+	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%q\"", getFileDTO.FileID))
 	w.Header().Set("Content-Length", strconv.Itoa(len(fileData)))
 
 	// Отправляем байты файла в ответ

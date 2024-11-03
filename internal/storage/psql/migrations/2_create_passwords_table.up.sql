@@ -4,7 +4,6 @@ CREATE TABLE IF NOT EXISTS passwords(
                                          id SERIAL PRIMARY KEY,
                                          user_id BIGINT,
                                          title VARCHAR(255) NOT NULL,
-                                         description VARCHAR(255),
                                          credentials JSONB
 );
 

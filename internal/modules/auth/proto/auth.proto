@@ -15,9 +15,7 @@ message LoginRequest {
 }
 
 message LoginResponse {
-  string status = 1;   // Статус выполнения, "success" или "error"
-  string message = 2;  // Сообщение об ошибке, если статус "error"
-  string jwt = 3;      // JWT токен, если статус "success"
+  string jwt = 1;      // JWT токен, если статус "success"
 }
 
 message RegistrationRequest {
@@ -26,7 +24,5 @@ message RegistrationRequest {
 }
 
 message RegistrationResponse {
-  string status = 1;   // Статус выполнения, "success" или "error"
-  string message = 2;  // Сообщение об ошибке, если статус "error"
-  string jwt = 3;      // JWT токен, если статус "success"
+  string jwt = 1;      // JWT токен, если статус "success"
 }

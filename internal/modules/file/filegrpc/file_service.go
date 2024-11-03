@@ -33,7 +33,11 @@ func NewFileGRPCServer(fileService fileservices.IFileService, secretKey string) 
 func (s *FileGRPCServer) SaveFile(ctx context.Context, req *proto.SaveFileRequest) (*proto.BasicResponse, error) {
 	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt(), s.secretKey)
 	if err != nil {
-		return nil, fmt.Errorf(ErrParsingValidateJWT, err)
+		// Возвращаем ошибку с соответствующим сообщением
+		return &proto.BasicResponse{
+			Status:  "error",
+			Message: "Failed to validate JWT token",
+		}, fmt.Errorf(ErrParsingValidateJWT, err)
 	}
 
 	saveFileDTO := filedto.SaveFileDTO{
@@ -44,10 +48,18 @@ func (s *FileGRPCServer) SaveFile(ctx context.Context, req *proto.SaveFileReques
 	}
 
 	if err := s.fileService.SaveFile(ctx, saveFileDTO); err != nil {
-		return nil, fmt.Errorf("failed to save file: %w", err)
+		// Возвращаем ошибку с соответствующим сообщением
+		return &proto.BasicResponse{
+			Status:  "error",
+			Message: "Failed to save file.",
+		}, fmt.Errorf("failed to save file: %w", err)
 	}
 
-	return &proto.BasicResponse{Status: "success", Message: "File saved successfully"}, nil
+	// Успешный ответ
+	return &proto.BasicResponse{
+		Status:  "success",
+		Message: "File saved successfully.",
+	}, nil
 }
 
 // GetFile возвращает файл пользователю.
@@ -94,7 +106,10 @@ func (s *FileGRPCServer) DeleteFile(ctx context.Context, req *proto.DeleteFileRe
 }
 
 // GetAllFiles возвращает список всех файлов пользователя.
-func (s *FileGRPCServer) GetAllFiles(ctx context.Context, req *proto.GetAllFilesRequest) (*proto.GetAllFilesResponse, error) {
+func (s *FileGRPCServer) GetAllFiles(
+	ctx context.Context,
+	req *proto.GetAllFilesRequest,
+) (*proto.GetAllFilesResponse, error) {
 	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt(), s.secretKey)
 	if err != nil {
 		return nil, fmt.Errorf(ErrParsingValidateJWT, err)

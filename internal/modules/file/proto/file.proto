@@ -8,23 +8,20 @@ option go_package = "../proto";
 
 service FileService {
   rpc SaveFile (SaveFileRequest) returns (BasicResponse);
-  rpc GetFile (GetFileRequest) returns (GetFileResponse);
+  rpc GetFile (GetFileRequest) returns (stream GetFileResponse);
   rpc DeleteFile (DeleteFileRequest) returns (BasicResponse);
   rpc GetAllFiles (GetAllFilesRequest) returns (GetAllFilesResponse);
 }
 
 // Общий ответ для операций, которые не возвращают специфичные данные
 message BasicResponse {
-  string status = 1;
-  string message = 2;
 }
 
 // Запрос на сохранение файла
 message SaveFileRequest {
   string jwt = 1;
-  string title = 2;
-  string description = 3;
-  bytes file_data = 4;
+  string name_file = 2;
+  bytes file_data = 3;
 }
 
 // Запрос на получение файла
@@ -35,10 +32,7 @@ message GetFileRequest {
 
 // Ответ на запрос получения файла
 message GetFileResponse {
-  string file_id = 1;
-  string title = 2;
-  string description = 3;
-  bytes file_data = 4;
+  bytes file_data = 1;
 }
 
 // Запрос на удаление файла
@@ -60,6 +54,5 @@ message GetAllFilesResponse {
 // Информация о файле в ответе GetAllFilesResponse
 message FileInfo {
   string file_id = 1;
-  string title = 2;
-  string description = 3;
+  string name_file = 2;
 }

@@ -17,15 +17,12 @@ service PasswordService {
 
 // Общий ответ для операций, которые не возвращают данные
 message BasicResponse {
-  string status = 1;
-  string message = 2;
 }
 
 // Запрос на сохранение пароля
 message SavePwdRequest {
   string jwt = 1;
   string title = 2;
-  string description = 3;
   Credentials credentials = 4;
 }
 
@@ -34,7 +31,6 @@ message UpdatePwdRequest {
   string jwt = 1;
   string pwd_id = 2;
   string title = 3;
-  string description = 4;
   Credentials credentials = 5;
 }
 
@@ -59,7 +55,6 @@ message AllPwdRequest {
 message PwdResponse {
   string pwd_id = 1; // Идентификатор пароля
   string title = 2;
-  string description = 3;
   Credentials credentials = 4;
 }
 
