@@ -11,7 +11,7 @@ import (
 
 type SaveFileDTO struct {
 	Title       string `json:"title"`
-	Description []byte `json:"description"` // Описание в байтовом формате
+	Description string `json:"description"` // Описание в байтовом формате
 	FileData    []byte `json:"file_data"`   // Содержимое файла
 	UserID      int    `json:"user_id"`
 }

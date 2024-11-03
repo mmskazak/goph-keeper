@@ -25,7 +25,7 @@ func Authentication(next http.Handler, secretKey string) http.Handler {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
-		logger.Log.Infoln(strArr[1])
+
 		token, err := authjwtservice.ParseAndValidateToken(strArr[1], secretKey)
 		if err != nil {
 			logger.Log.Errorln("Error parsing token:", err)

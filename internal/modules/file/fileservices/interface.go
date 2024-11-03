@@ -6,7 +6,7 @@ import (
 )
 
 type FileInfo struct {
-	ID          string `json:"id"`
+	FileID      string `json:"file_id"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 }

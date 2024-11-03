@@ -164,7 +164,7 @@ func (fs *FileService) GetAllFiles(ctx context.Context, dto filedto.AllFilesDTO)
 	var files []FileInfo
 	for rows.Next() {
 		var fileInfo FileInfo
-		if err = rows.Scan(&fileInfo.ID, &fileInfo.Title, &fileInfo.Description); err != nil {
+		if err = rows.Scan(&fileInfo.FileID, &fileInfo.Title, &fileInfo.Description); err != nil {
 			logger.Log.Errorf("error scanning row: %v", err)
 			return nil, fmt.Errorf("error getting all files: %w", err)
 		}

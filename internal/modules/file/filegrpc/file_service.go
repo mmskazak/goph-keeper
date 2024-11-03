@@ -3,7 +3,7 @@ package filegrpc
 import (
 	"context"
 	"fmt"
-	"goph-keeper/internal/modules/auth/authservices/authjwtservice"
+	"goph-keeper/internal/helpers"
 	"goph-keeper/internal/modules/file/filedto"
 	"goph-keeper/internal/modules/file/fileservices"
 	"goph-keeper/internal/modules/file/proto"
@@ -12,7 +12,7 @@ import (
 
 //go:generate protoc --proto_path=../proto --go_out=. --go-grpc_out=. file.proto
 
-// FileGRPCServer ...
+// FileGRPCServer сервис GRPC отвечающий за работу с файлами
 type FileGRPCServer struct {
 	proto.UnimplementedFileServiceServer
 
@@ -20,6 +20,7 @@ type FileGRPCServer struct {
 	secretKey   string
 }
 
+// NewFileGRPCServer ...
 func NewFileGRPCServer(fileService fileservices.IFileService, secretKey string) *FileGRPCServer {
 	return &FileGRPCServer{
 		fileService: fileService,
@@ -27,11 +28,11 @@ func NewFileGRPCServer(fileService fileservices.IFileService, secretKey string) 
 	}
 }
 
-// SaveFile сохраняет файл на сервере
+// SaveFile сохраняет файл на сервере.
 func (s *FileGRPCServer) SaveFile(ctx context.Context, req *proto.SaveFileRequest) (*proto.BasicResponse, error) {
-	userID, err := authjwtservice.ParseAndValidateToken(req.Jwt, s.secretKey)
+	userID, err := helpers.ParseTokenAndExtractUserID(req.Jwt, s.secretKey)
 	if err != nil {
-		return nil, fmt.Errorf("unauthorized: %w", err)
+		return nil, fmt.Errorf("error parsing and validating JWT token: %w", err)
 	}
 
 	saveFileDTO := filedto.SaveFileDTO{
@@ -48,11 +49,11 @@ func (s *FileGRPCServer) SaveFile(ctx context.Context, req *proto.SaveFileReques
 	return &proto.BasicResponse{Status: "success", Message: "File saved successfully"}, nil
 }
 
-// GetFile возвращает файл пользователю
+// GetFile возвращает файл пользователю.
 func (s *FileGRPCServer) GetFile(ctx context.Context, req *proto.GetFileRequest) (*proto.GetFileResponse, error) {
-	userID, err := authjwtservice.ParseAndValidateToken(req.Jwt, s.secretKey)
+	userID, err := helpers.ParseTokenAndExtractUserID(req.Jwt, s.secretKey)
 	if err != nil {
-		return nil, fmt.Errorf("unauthorized: %w", err)
+		return nil, fmt.Errorf("error parsing and validating JWT token: %w", err)
 	}
 
 	getFileDTO := filedto.GetFileDTO{
@@ -60,7 +61,7 @@ func (s *FileGRPCServer) GetFile(ctx context.Context, req *proto.GetFileRequest)
 		FileID: req.FileId,
 	}
 
-	tempFilePath, fileInfo, err := s.fileService.GetFile(ctx, getFileDTO)
+	tempFilePath, err := s.fileService.GetFile(ctx, getFileDTO)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get file: %w", err)
 	}
@@ -71,18 +72,16 @@ func (s *FileGRPCServer) GetFile(ctx context.Context, req *proto.GetFileRequest)
 	}
 
 	return &proto.GetFileResponse{
-		FileId:      fileInfo.FileID,
-		Title:       fileInfo.Title,
-		Description: fileInfo.Description,
-		FileData:    fileData,
+		FileId:   req.FileId,
+		FileData: fileData,
 	}, nil
 }
 
-// DeleteFile удаляет файл с сервера
+// DeleteFile удаляет файл с сервера.
 func (s *FileGRPCServer) DeleteFile(ctx context.Context, req *proto.DeleteFileRequest) (*proto.BasicResponse, error) {
-	userID, err := authjwtservice.ParseAndValidateToken(req.Jwt, s.secretKey)
+	userID, err := helpers.ParseTokenAndExtractUserID(req.Jwt, s.secretKey)
 	if err != nil {
-		return nil, fmt.Errorf("unauthorized: %w", err)
+		return nil, fmt.Errorf("error parsing and validating JWT token: %w", err)
 	}
 
 	deleteFileDTO := filedto.DeleteFileDTO{
@@ -97,11 +96,11 @@ func (s *FileGRPCServer) DeleteFile(ctx context.Context, req *proto.DeleteFileRe
 	return &proto.BasicResponse{Status: "success", Message: "File deleted successfully"}, nil
 }
 
-// GetAllFiles возвращает список всех файлов пользователя
+// GetAllFiles возвращает список всех файлов пользователя.
 func (s *FileGRPCServer) GetAllFiles(ctx context.Context, req *proto.GetAllFilesRequest) (*proto.GetAllFilesResponse, error) {
-	userID, err := authjwtservice.ParseAndValidateToken(req.Jwt, s.secretKey)
+	userID, err := helpers.ParseTokenAndExtractUserID(req.Jwt, s.secretKey)
 	if err != nil {
-		return nil, fmt.Errorf("unauthorized: %w", err)
+		return nil, fmt.Errorf("error parsing and validating JWT token: %w", err)
 	}
 
 	getAllFilesDTO := filedto.AllFilesDTO{
