@@ -17,24 +17,24 @@ func RegistrationRoutesFile(
 ) {
 	// Сохранить пароль
 	r.Post("/file.proto/save", func(w http.ResponseWriter, req *http.Request) {
-		getFilesHandlers(pool, cfg.EncryptionKey, cfg.DirSavedFiles).SaveFile(w, req)
+		getFilesHandlers(pool, cfg.EncryptionKey).SaveFile(w, req)
 	})
 	// Получить все пароли
 	r.Post("/file.proto/all", func(w http.ResponseWriter, req *http.Request) {
-		getFilesHandlers(pool, cfg.EncryptionKey, cfg.DirSavedFiles).GetAllFiles(w, req)
+		getFilesHandlers(pool, cfg.EncryptionKey).GetAllFiles(w, req)
 	})
 	// Удалить пароль
 	r.Post("/file.proto/delete", func(w http.ResponseWriter, req *http.Request) {
-		getFilesHandlers(pool, cfg.EncryptionKey, cfg.DirSavedFiles).DeleteFile(w, req)
+		getFilesHandlers(pool, cfg.EncryptionKey).DeleteFile(w, req)
 	})
 	// Получить конкретный пароль
 	r.Get("/file.proto/get/{file_id}", func(w http.ResponseWriter, req *http.Request) {
-		getFilesHandlers(pool, cfg.EncryptionKey, cfg.DirSavedFiles).GetFile(w, req)
+		getFilesHandlers(pool, cfg.EncryptionKey).GetFile(w, req)
 	})
 }
 
-func getFilesHandlers(pool *pgxpool.Pool, cryptoKey [32]byte, dirSavedFiles string) *filehttp.FileHandlers {
-	fileService := fileservices.NewFileService(pool, cryptoKey, dirSavedFiles)
+func getFilesHandlers(pool *pgxpool.Pool, cryptoKey [32]byte) *filehttp.FileHandlers {
+	fileService := fileservices.NewFileService(pool, cryptoKey)
 	pwdHandlers := filehttp.NewFileHandlersHTTP(fileService)
 	return &pwdHandlers
 }

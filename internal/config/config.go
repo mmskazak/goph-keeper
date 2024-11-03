@@ -13,11 +13,11 @@ type Config struct {
 	DataBaseDSN         string   `json:"database_dsn"`       // Строка подключения к базе данных
 	SecretKey           string   `json:"secret_key"`         // Секретный ключ JWT токена
 	EncryptionKeyString string   `json:"encryption_key_hex"` // 32-байтный ключ для шифрования в hex
-	DirSavedFiles       string   `json:"dir_saved_files"`    // Папка для сохранных файлов
 	LogLevel            LogLevel `json:"log_level"`          // Уровень логирования
 	EncryptionKey       [32]byte `json:"-"`                  // 32-байтный ключ в байтах (не сериализуется)
 }
 
+// NewConfig ...
 func NewConfig() *Config {
 	return &Config{
 		Address:             ":8080",
@@ -25,7 +25,6 @@ func NewConfig() *Config {
 		SecretKey:           "secret",
 		DataBaseDSN:         "postgresql://gkuser:gkpass@localhost:5432/goph_keeper?sslmode=disable",
 		EncryptionKeyString: "MySecretEncryptionKey1234567890a",
-		DirSavedFiles:       "/Users/mihail/Downloads/",
 	}
 }
 
