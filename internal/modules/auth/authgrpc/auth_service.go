@@ -11,7 +11,7 @@ import (
 
 //go:generate protoc --proto_path=../proto --go_out=. --go-grpc_out=. auth.proto
 
-// AuthGRPCServer сервер
+// AuthGRPCServer сервер ...
 type AuthGRPCServer struct {
 	pb.UnimplementedAuthServiceServer
 
@@ -19,6 +19,7 @@ type AuthGRPCServer struct {
 	secretKey   string
 }
 
+// NewAuthGRPCServer ...
 func NewAuthGRPCServer(authService *authservice.AuthService, secretKey string) *AuthGRPCServer {
 	return &AuthGRPCServer{
 		authService: authService,

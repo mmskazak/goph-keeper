@@ -29,12 +29,12 @@ func GetRegistrationDTOFromHTTP(r *http.Request) (*RegistrationDTO, error) {
 // GetRegistrationDTOFromRegistrationRequestGRPC преобразует RegistrationRequest в RegistrationDTO
 func GetRegistrationDTOFromRegistrationRequestGRPC(req *pb.RegistrationRequest) (*RegistrationDTO, error) {
 	// Проверяем, что логин и пароль не пустые
-	if req.Login == "" || req.Password == "" {
+	if req.GetUsername() == "" || req.GetPassword() == "" {
 		return nil, fmt.Errorf("login and password must not be empty")
 	}
 
 	return &RegistrationDTO{
-		Login:    req.Login,
-		Password: req.Password,
+		Login:    req.GetUsername(),
+		Password: req.GetPassword(),
 	}, nil
 }

@@ -32,6 +32,9 @@ func ParseAndValidateToken(tokenString, hmacSecret string) (*jwt.Token, error) {
 		// hmacSecret is a []byte containing your secret, e.g. []byte("my_secret_key")
 		return []byte(hmacSecret), nil
 	})
+	if err != nil {
+		return nil, fmt.Errorf("error parsing token: %w", err)
+	}
 
 	if _, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		return token, nil

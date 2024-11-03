@@ -18,33 +18,47 @@ func NewAuthService(pool *pgxpool.Pool) *AuthService {
 	return &AuthService{pool: pool}
 }
 
+// Registration выполняет регистрацию нового пользователя.
 func (a *AuthService) Registration(ctx context.Context, regDTO *dto2.RegistrationDTO) (int, error) {
-	hashedPassword, _ := authhashpwd.HashAndStorePassword(regDTO.Password)
-	sql := "INSERT INTO users (login, password) VALUES ($1, $2) RETURNING id;"
+	// Генерация хэша пароля
+	hashedPassword, err := authhashpwd.GenerateHashFromPassword(regDTO.Password)
+	if err != nil {
+		return 0, fmt.Errorf("failed to hash password: %w", err)
+	}
+
+	// SQL-запрос для добавления пользователя
+	sql := "INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id;"
 	row := a.pool.QueryRow(ctx, sql, regDTO.Login, hashedPassword)
+
+	// Сканируем полученный id
 	var id int
-	err := row.Scan(&id)
+	err = row.Scan(&id)
 	if err != nil {
 		return 0, fmt.Errorf("error while inserting user: %w", err)
 	}
+
 	return id, nil
 }
 
+// Login выполняет проверку логина и пароля пользователя.
 func (a *AuthService) Login(ctx context.Context, logDTO *dto2.LoginDTO) (int, error) {
-	sql := "SELECT id, password FROM users WHERE login = $1;"
-	row := a.pool.QueryRow(ctx, sql, logDTO.Login)
-	if row == nil {
-		return 0, errors.New("user not found")
-	}
+	// SQL-запрос для получения пользователя по имени
+	sql := "SELECT id, password FROM users WHERE username = $1;"
+	row := a.pool.QueryRow(ctx, sql, logDTO.Username)
+
+	// Проверка на наличие пользователя
 	var id int
 	var hashedPassword string
 	err := row.Scan(&id, &hashedPassword)
 	if err != nil {
 		return 0, fmt.Errorf("error while scanning user: %w", err)
 	}
-	isLogin := authhashpwd.CheckHashedPassword(hashedPassword, logDTO.Password)
+
+	// Сравнение пароля с хранимым хэшем
+	isLogin := authhashpwd.IsEqualHashedPassword(hashedPassword, logDTO.Password)
 	if !isLogin {
 		return 0, errors.New("password incorrect")
 	}
+
 	return id, nil
 }

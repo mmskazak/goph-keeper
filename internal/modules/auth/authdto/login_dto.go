@@ -2,6 +2,7 @@ package authdto
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	pb "goph-keeper/internal/modules/auth/proto"
 
@@ -30,12 +31,12 @@ func LoginDTOFromRequestHTTP(r *http.Request) (*LoginDTO, error) {
 
 // LoginDTOFromLoginRequestGRPC преобразует LoginRequest в LoginDTO
 func LoginDTOFromLoginRequestGRPC(req *pb.LoginRequest) (*LoginDTO, error) {
-	if req.GetLogin() == "" || req.GetPassword() == "" {
-		return nil, fmt.Errorf("username and password must not be empty")
+	if req.GetUsername() == "" || req.GetPassword() == "" {
+		return nil, errors.New("username and password must not be empty")
 	}
 
 	return &LoginDTO{
-		Username: req.Login,
-		Password: req.Password,
+		Username: req.GetUsername(),
+		Password: req.GetPassword(),
 	}, nil
 }

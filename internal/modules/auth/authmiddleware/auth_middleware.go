@@ -2,6 +2,7 @@ package authmiddleware
 
 import (
 	"context"
+	"encoding/json"
 	"goph-keeper/internal/logger"
 	"goph-keeper/internal/modules/auth/authservices/authjwtservice"
 	"net/http"
@@ -17,12 +18,18 @@ const Claims contextKey = "claims"
 
 func Authentication(next http.Handler, secretKey string) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+
 		jwtBearer := r.Header.Get("Authorization")
 		logger.Log.Infoln(jwtBearer)
 		strArr := strings.Split(jwtBearer, " ")
-		if len(strArr) != 2 { //nolint:gomnd //2 части - Bearer + JWT
+		if len(strArr) != 2 { //nolint:gomnd // 2 части - Bearer + JWT
 			logger.Log.Errorln("jwt bearer format error")
 			w.WriteHeader(http.StatusUnauthorized)
+			_ = json.NewEncoder(w).Encode(map[string]string{
+				"status":  "error",
+				"message": "Authorization header format must be 'Bearer <token>'",
+			})
 			return
 		}
 
@@ -30,6 +37,10 @@ func Authentication(next http.Handler, secretKey string) http.Handler {
 		if err != nil {
 			logger.Log.Errorln("Error parsing token:", err)
 			w.WriteHeader(http.StatusUnauthorized)
+			_ = json.NewEncoder(w).Encode(map[string]string{
+				"status":  "error",
+				"message": "Invalid or expired token",
+			})
 			return
 		}
 
@@ -38,6 +49,10 @@ func Authentication(next http.Handler, secretKey string) http.Handler {
 			logger.Log.Infoln("Token valid, claims: ", claims)
 		} else {
 			w.WriteHeader(http.StatusUnauthorized)
+			_ = json.NewEncoder(w).Encode(map[string]string{
+				"status":  "error",
+				"message": "Token validation failed",
+			})
 			return
 		}
 
