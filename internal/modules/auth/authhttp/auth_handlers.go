@@ -120,11 +120,11 @@ func (s *AuthHandlers) Registration(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Успешный ответ при регистрации
-	w.Header().Set("Authorization", "Bearer "+token)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	_ = json.NewEncoder(w).Encode(map[string]string{
 		"status":  "success",
 		"message": "User registered successfully",
+		"jwt":     "Bearer " + token,
 	})
 }
