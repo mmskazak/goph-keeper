@@ -28,7 +28,7 @@ func (a *AuthService) Registration(ctx context.Context, regDTO *dto2.Registratio
 
 	// SQL-запрос для добавления пользователя
 	sql := "INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id;"
-	row := a.pool.QueryRow(ctx, sql, regDTO.Login, hashedPassword)
+	row := a.pool.QueryRow(ctx, sql, regDTO.Username, hashedPassword)
 
 	// Сканируем полученный id
 	var id int

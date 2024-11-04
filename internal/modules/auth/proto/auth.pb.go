@@ -313,9 +313,9 @@ var file_auth_proto_goTypes = []any{
 	(*RegistrationResponse)(nil), // 3: auth.RegistrationResponse
 }
 var file_auth_proto_depIdxs = []int32{
-	0, // 0: auth.AuthService.Login:input_type -> auth.LoginRequest
+	0, // 0: auth.AuthService.Username:input_type -> auth.LoginRequest
 	2, // 1: auth.AuthService.Registration:input_type -> auth.RegistrationRequest
-	1, // 2: auth.AuthService.Login:output_type -> auth.LoginResponse
+	1, // 2: auth.AuthService.Username:output_type -> auth.LoginResponse
 	3, // 3: auth.AuthService.Registration:output_type -> auth.RegistrationResponse
 	2, // [2:4] is the sub-list for method output_type
 	0, // [0:2] is the sub-list for method input_type

@@ -35,7 +35,7 @@ func (s *AuthHandlers) Login(w http.ResponseWriter, r *http.Request) {
 
 	userID, err := s.authService.Login(r.Context(), inDTO)
 	if err != nil {
-		logger.Log.Errorf("Error authService.Login: %v", err)
+		logger.Log.Errorf("Error authService.Username: %v", err)
 		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
 		return
 	}

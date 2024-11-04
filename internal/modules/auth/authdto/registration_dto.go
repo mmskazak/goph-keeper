@@ -2,6 +2,7 @@ package authdto
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	pb "goph-keeper/internal/modules/auth/proto"
 	"io"
@@ -9,7 +10,7 @@ import (
 )
 
 type RegistrationDTO struct {
-	Login    string `json:"login"`
+	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
@@ -30,11 +31,11 @@ func GetRegistrationDTOFromHTTP(r *http.Request) (*RegistrationDTO, error) {
 func GetRegistrationDTOFromRegistrationRequestGRPC(req *pb.RegistrationRequest) (*RegistrationDTO, error) {
 	// Проверяем, что логин и пароль не пустые
 	if req.GetUsername() == "" || req.GetPassword() == "" {
-		return nil, fmt.Errorf("login and password must not be empty")
+		return nil, errors.New("login and password must not be empty")
 	}
 
 	return &RegistrationDTO{
-		Login:    req.GetUsername(),
+		Username: req.GetUsername(),
 		Password: req.GetPassword(),
 	}, nil
 }

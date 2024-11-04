@@ -19,7 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AuthService_Login_FullMethodName        = "/auth.AuthService/Login"
+	AuthService_Login_FullMethodName        = "/auth.AuthService/Username"
 	AuthService_Registration_FullMethodName = "/auth.AuthService/Registration"
 )
 
@@ -76,7 +76,7 @@ type AuthServiceServer interface {
 type UnimplementedAuthServiceServer struct{}
 
 func (UnimplementedAuthServiceServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
+	return nil, status.Errorf(codes.Unimplemented, "method Username not implemented")
 }
 func (UnimplementedAuthServiceServer) Registration(context.Context, *RegistrationRequest) (*RegistrationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Registration not implemented")
@@ -146,7 +146,7 @@ var AuthService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*AuthServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Login",
+			MethodName: "Username",
 			Handler:    _AuthService_Login_Handler,
 		},
 		{

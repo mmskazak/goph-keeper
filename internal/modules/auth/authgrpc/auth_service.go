@@ -37,7 +37,7 @@ func (s *AuthGRPCServer) Login(ctx context.Context, req *pb.LoginRequest) (*pb.L
 
 	userID, err := s.authService.Login(ctx, inDTO)
 	if err != nil {
-		return nil, status.Errorf(codes.Unauthenticated, "Login failed: %v", err)
+		return nil, status.Errorf(codes.Unauthenticated, "Username failed: %v", err)
 	}
 
 	token, err := authjwtservice.GenerateToken(userID, s.secretKey)
