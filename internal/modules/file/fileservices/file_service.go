@@ -31,9 +31,9 @@ func (fs *FileService) SaveFile(ctx context.Context, dto filedto.SaveFileDTO) er
 
 	// Сохраняем файл и его метаданные в базу данных
 	_, err = fs.pool.Exec(ctx, `
-		INSERT INTO files (user_id, title, description, file_data) 
-		VALUES ($1, $2, $3, $4)`,
-		dto.UserID, dto.Title, dto.Description, encryptedFile)
+		INSERT INTO files (user_id, name_file, file_data) 
+		VALUES ($1, $2, $4)`,
+		dto.UserID, dto.NameFile, encryptedFile)
 	if err != nil {
 		return fmt.Errorf("failed to insert file into database: %w", err)
 	}
@@ -92,7 +92,7 @@ func (fs *FileService) GetAllFiles(ctx context.Context, dto filedto.AllFilesDTO)
 	var files []FileInfo
 	for rows.Next() {
 		var fileInfo FileInfo
-		if err = rows.Scan(&fileInfo.FileID, &fileInfo.Title, &fileInfo.Description); err != nil {
+		if err = rows.Scan(&fileInfo.FileID, &fileInfo.NameFile); err != nil {
 			logger.Log.Errorf("error scanning row: %v", err)
 			return nil, fmt.Errorf("error getting all files: %w", err)
 		}

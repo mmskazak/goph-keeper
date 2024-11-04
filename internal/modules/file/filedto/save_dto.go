@@ -10,10 +10,9 @@ import (
 )
 
 type SaveFileDTO struct {
-	Title       string `json:"title"`
-	Description string `json:"description"` // Описание в байтовом формате
-	FileData    []byte `json:"file_data"`   // Содержимое файла
-	UserID      int    `json:"user_id"`
+	UserID   int    `json:"user_id"`
+	NameFile string `json:"name_file"` // Описание в байтовом формате
+	FileData []byte `json:"file_data"` // Содержимое файла
 }
 
 func SaveFileDTOFromHTTP(r *http.Request) (SaveFileDTO, error) {
@@ -48,15 +47,13 @@ func SaveFileDTOFromHTTP(r *http.Request) (SaveFileDTO, error) {
 	}
 
 	// Читаем JSON-данные из формы
-	title := r.FormValue("title")
-	description := r.FormValue("description")
+	nameFile := r.FormValue("name_file")
 
 	// Формируем DTO с данными
 	saveFileDTO := SaveFileDTO{
-		UserID:      userID,
-		Title:       title,
-		Description: description,
-		FileData:    fileData,
+		UserID:   userID,
+		NameFile: nameFile,
+		FileData: fileData,
 	}
 
 	return saveFileDTO, nil
