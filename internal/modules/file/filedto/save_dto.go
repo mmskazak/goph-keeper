@@ -16,12 +16,6 @@ type SaveFileDTO struct {
 }
 
 func SaveFileDTOFromHTTP(r *http.Request) (SaveFileDTO, error) {
-	// Ограничиваем размер загружаемого файла до 10MB
-	const maxUploadSize = 10 << 20
-	if err := r.ParseMultipartForm(maxUploadSize); err != nil {
-		return SaveFileDTO{}, fmt.Errorf("error parsing multipart form: %w", err)
-	}
-
 	// Получаем файл из формы
 	file, _, err := r.FormFile("file")
 	if err != nil {

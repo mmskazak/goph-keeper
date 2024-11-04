@@ -7,6 +7,8 @@ import (
 	"dario.cat/mergo"
 )
 
+const MaxFileSize = 10 * 1024 * 1024 // 10mb
+
 // Config содержит поля конфигурации.
 type Config struct {
 	Address             string   `json:"address"`            // Адрес сервера
@@ -15,6 +17,7 @@ type Config struct {
 	EncryptionKeyString string   `json:"encryption_key_hex"` // 32-байтный ключ для шифрования в hex
 	LogLevel            LogLevel `json:"log_level"`          // Уровень логирования
 	EncryptionKey       [32]byte `json:"-"`                  // 32-байтный ключ в байтах (не сериализуется)
+	MaxFileSize         int      `json:"max_file_size"`
 }
 
 // NewConfig ...
@@ -25,6 +28,7 @@ func NewConfig() *Config {
 		SecretKey:           "secret",
 		DataBaseDSN:         "postgresql://gkuser:gkpass@localhost:5432/goph_keeper?sslmode=disable",
 		EncryptionKeyString: "MySecretEncryptionKey1234567890a",
+		MaxFileSize:         MaxFileSize,
 	}
 }
 

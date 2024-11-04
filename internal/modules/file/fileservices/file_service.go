@@ -10,19 +10,26 @@ import (
 )
 
 type FileService struct {
-	pool      *pgxpool.Pool
-	cryptoKey [32]byte
+	pool        *pgxpool.Pool
+	cryptoKey   [32]byte
+	maxFileSize int // Максимально допустимый размер файла в байтах
 }
 
-func NewFileService(pool *pgxpool.Pool, enKey [32]byte) *FileService {
+func NewFileService(pool *pgxpool.Pool, enKey [32]byte, maxFileSize int) *FileService {
 	return &FileService{
-		pool:      pool,
-		cryptoKey: enKey,
+		pool:        pool,
+		cryptoKey:   enKey,
+		maxFileSize: maxFileSize,
 	}
 }
 
 // SaveFile сохраняет файл непосредственно в базу данных.
 func (fs *FileService) SaveFile(ctx context.Context, dto filedto.SaveFileDTO) error {
+	// Проверяем размер файла
+	if (len(dto.FileData)) > fs.maxFileSize {
+		return fmt.Errorf("file size exceeds the allowed limit of %d bytes", fs.maxFileSize)
+	}
+
 	// Шифруем данные файла
 	encryptedFile, err := crypto.Encrypt(fs.cryptoKey, dto.FileData)
 	if err != nil {
@@ -32,7 +39,7 @@ func (fs *FileService) SaveFile(ctx context.Context, dto filedto.SaveFileDTO) er
 	// Сохраняем файл и его метаданные в базу данных
 	_, err = fs.pool.Exec(ctx, `
 		INSERT INTO files (user_id, name_file, file_data) 
-		VALUES ($1, $2, $4)`,
+		VALUES ($1, $2, $3)`,
 		dto.UserID, dto.NameFile, encryptedFile)
 	if err != nil {
 		return fmt.Errorf("failed to insert file into database: %w", err)
