@@ -64,7 +64,7 @@ func NewApp(
 	authGRPSHandlers := authgrpc.NewAuthGRPCServer(authservice.NewAuthService(pool), cfg.SecretKey)
 	proto.RegisterAuthServiceServer(grpcServer, authGRPSHandlers) // Регистрация сервиса аутентификации
 	// Регистрация обработчиков для сохранения паролей
-	passwordGRPCHandlers := pwdgrpc.NewPasswordServiceServer(pwdservices.NewPwdService(pool, cfg.EncryptionKey))
+	passwordGRPCHandlers := pwdgrpc.NewPasswordGRPCServer(pwdservices.NewPwdService(pool, cfg.EncryptionKey))
 	proto2.RegisterPasswordServiceServer(grpcServer, passwordGRPCHandlers) // Регистрация сервиса паролей
 	// Регистрация обработчиков для сохранения файлов
 	fileGRPCHandlers := filegrpc.NewFileGRPCServer(fileservices.NewFileService(pool, cfg.EncryptionKey), cfg.SecretKey)
