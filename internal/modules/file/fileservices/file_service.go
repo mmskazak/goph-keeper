@@ -81,7 +81,7 @@ func (fs *FileService) DeleteFile(ctx context.Context, dto filedto.DeleteFileDTO
 // GetAllFiles возвращает список всех файлов пользователя с их информацией.
 func (fs *FileService) GetAllFiles(ctx context.Context, dto filedto.AllFilesDTO) ([]FileInfo, error) {
 	rows, err := fs.pool.Query(ctx, `
-		SELECT id, title, description FROM files WHERE user_id = $1`,
+		SELECT id, name_file FROM files WHERE user_id = $1`,
 		dto.UserID)
 	if err != nil {
 		logger.Log.Errorf("error querying all files: %v", err)

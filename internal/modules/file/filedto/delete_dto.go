@@ -1,10 +1,10 @@
 package filedto
 
 import (
-	"encoding/json"
+	"errors"
 	"fmt"
+	"github.com/go-chi/chi/v5"
 	"goph-keeper/internal/helpers"
-	"io"
 	"net/http"
 )
 
@@ -14,14 +14,10 @@ type DeleteFileDTO struct {
 }
 
 func DeleteFileDTOFromHTTP(r *http.Request) (DeleteFileDTO, error) {
-	data, err := io.ReadAll(r.Body)
-	if err != nil {
-		return DeleteFileDTO{}, fmt.Errorf("reading body for delete file.proto dto: %w", err)
-	}
-	var deletePwdDTO DeleteFileDTO
-	err = json.Unmarshal(data, &deletePwdDTO)
-	if err != nil {
-		return DeleteFileDTO{}, fmt.Errorf("unmarshalling body registration: %w", err)
+	// Извлекаем file_id из пути запроса
+	fileID := chi.URLParam(r, "file_id")
+	if fileID == "" {
+		return DeleteFileDTO{}, errors.New("file_id not found in the request path")
 	}
 
 	// Извлекаем userID из контекста
@@ -30,6 +26,8 @@ func DeleteFileDTOFromHTTP(r *http.Request) (DeleteFileDTO, error) {
 		return DeleteFileDTO{}, fmt.Errorf("error GetUserIDFromContext DeleteFileDTOFromHTTP: %w", err)
 	}
 
+	var deletePwdDTO DeleteFileDTO
 	deletePwdDTO.UserID = userID
+	deletePwdDTO.FileID = fileID
 	return deletePwdDTO, nil
 }

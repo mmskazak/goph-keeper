@@ -23,7 +23,7 @@ func SaveFileDTOFromHTTP(r *http.Request) (SaveFileDTO, error) {
 	}
 
 	// Получаем файл из формы
-	file, _, err := r.FormFile("file.proto")
+	file, _, err := r.FormFile("file")
 	if err != nil {
 		return SaveFileDTO{}, fmt.Errorf("error retrieving file.proto from form-data: %w", err)
 	}
