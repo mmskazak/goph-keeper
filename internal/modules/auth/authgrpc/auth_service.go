@@ -13,6 +13,8 @@ import (
 	pb "goph-keeper/internal/modules/auth/proto"
 )
 
+//go:generate protoc --proto_path=../proto --go_out=. --go-grpc_out=. auth.proto
+
 // AuthGRPCServer - сервер для Auth gRPC
 type AuthGRPCServer struct {
 	pb.UnimplementedAuthServiceServer
