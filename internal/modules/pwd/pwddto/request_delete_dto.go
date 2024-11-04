@@ -1,10 +1,10 @@
 package pwddto
 
 import (
-	"encoding/json"
+	"errors"
 	"fmt"
+	"github.com/go-chi/chi/v5"
 	"goph-keeper/internal/helpers"
-	"io"
 	"net/http"
 )
 
@@ -14,14 +14,10 @@ type DeletePwdDTO struct {
 }
 
 func DeletePwdDTOFromHTTP(r *http.Request) (DeletePwdDTO, error) {
-	data, err := io.ReadAll(r.Body)
-	if err != nil {
-		return DeletePwdDTO{}, fmt.Errorf("reading body for delete pwd dto: %w", err)
-	}
-	var deletePwdDTO DeletePwdDTO
-	err = json.Unmarshal(data, &deletePwdDTO)
-	if err != nil {
-		return DeletePwdDTO{}, fmt.Errorf("unmarshalling for deletePwdDTO: %w", err)
+	// Извлекаем текстовый PwdID из пути запроса (пример: text_id)
+	pwdID := chi.URLParam(r, "pwd_id")
+	if pwdID == "" {
+		return DeletePwdDTO{}, errors.New("pwd_id not found in the request path")
 	}
 
 	// Извлекаем userID из контекста
@@ -30,6 +26,8 @@ func DeletePwdDTOFromHTTP(r *http.Request) (DeletePwdDTO, error) {
 		return DeletePwdDTO{}, fmt.Errorf("error DeletePwdDTOFromHTTP GetUserIDFromContext: %w", err)
 	}
 
+	var deletePwdDTO DeletePwdDTO
+	deletePwdDTO.PwdID = pwdID
 	deletePwdDTO.UserID = userID
 	return deletePwdDTO, nil
 }
