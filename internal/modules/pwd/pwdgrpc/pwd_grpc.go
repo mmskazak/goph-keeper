@@ -73,7 +73,7 @@ func (s *PasswordGRPCServer) UpdatePassword(ctx context.Context, req *pb.UpdateP
 
 // DeletePassword удаляет пароль.
 func (s *PasswordGRPCServer) DeletePassword(ctx context.Context, req *pb.DeletePwdRequest) (*pb.BasicResponse, error) {
-	deletePwdDTO := pwddto.DeletePwdDTO{PwdID: req.PwdId}
+	deletePwdDTO := pwddto.DeletePwdDTO{PwdID: req.GetPwdId()}
 
 	if err := s.pwdService.DeletePassword(ctx, &deletePwdDTO); err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
@@ -88,7 +88,7 @@ func (s *PasswordGRPCServer) DeletePassword(ctx context.Context, req *pb.DeleteP
 
 // GetPassword получает один пароль.
 func (s *PasswordGRPCServer) GetPassword(ctx context.Context, req *pb.GetPwdRequest) (*pb.PwdResponse, error) {
-	getPwdDTO := pwddto.GetPwdDTO{PwdID: req.PwdId}
+	getPwdDTO := pwddto.GetPwdDTO{PwdID: req.GetPwdId()}
 	responsePwdDTO, err := s.pwdService.GetPassword(ctx, &getPwdDTO)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
