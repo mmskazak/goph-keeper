@@ -19,9 +19,8 @@ func TestPwdService_SavePassword(t *testing.T) {
 
 	ctx := context.Background()
 	dto := pwddto.SavePwdDTO{
-		UserID:      1,
-		Title:       "test title",
-		Description: "test description",
+		UserID: 1,
+		Title:  "test title",
 		Credentials: valueobj.Credentials{
 			Login:    "admin",
 			Password: "12345",

@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"github.com/jackc/pgx/v5"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"goph-keeper/internal/logger"
 	pb "goph-keeper/internal/modules/pwd/proto"
 	"goph-keeper/internal/modules/pwd/pwddto"
@@ -15,105 +17,90 @@ import (
 
 var ErrUpdatedRecordNotFound = errors.New("updated record not found")
 
-// PasswordServiceServer Структура, которая реализует gRPC сервис.
-type PasswordServiceServer struct {
+// PasswordGRPCServer - сервис GRPC отвечающий за работу с паролями.
+type PasswordGRPCServer struct {
 	pb.UnimplementedPasswordServiceServer
+
 	pwdService pwdservices.IPwdService
 }
 
-// NewPasswordServiceServer Функция для создания нового gRPC сервера.
-func NewPasswordServiceServer(service pwdservices.IPwdService) *PasswordServiceServer {
-	return &PasswordServiceServer{
+// NewPasswordGRPCServer - создаёт новый PasswordGRPCServer.
+func NewPasswordGRPCServer(service pwdservices.IPwdService) *PasswordGRPCServer {
+	return &PasswordGRPCServer{
 		pwdService: service,
 	}
 }
 
-// SavePassword Сохранение пароля.
-func (s *PasswordServiceServer) SavePassword(ctx context.Context, req *pb.SavePwdRequest) (*pb.BasicResponse, error) {
+// SavePassword сохраняет пароль.
+func (s *PasswordGRPCServer) SavePassword(ctx context.Context, req *pb.SavePwdRequest) (*pb.BasicResponse, error) {
 	savePwdDTO := pwddto.SavePwdDTO{
-		Title:       req.Title,
-		Description: req.Description,
+		Title: req.Title,
 		Credentials: valueobj.Credentials{
 			Login:    req.Credentials.Login,
 			Password: req.Credentials.Password,
 		},
 	}
-	err := s.pwdService.SavePassword(ctx, &savePwdDTO)
-	if err != nil {
+
+	if err := s.pwdService.SavePassword(ctx, &savePwdDTO); err != nil {
 		logger.Log.Errorf("Error in SavePassword: %v", err)
-		return nil, err
+		return nil, status.Errorf(codes.Internal, "Failed to save password: %v", err)
 	}
-	return &pb.BasicResponse{
-		Status:  "success",
-		Message: "Password saved successfully",
-	}, nil
+
+	return &pb.BasicResponse{}, nil
 }
 
-// UpdatePassword Обновление пароля.
-func (s *PasswordServiceServer) UpdatePassword(ctx context.Context, req *pb.UpdatePwdRequest) (*pb.BasicResponse, error) {
+// UpdatePassword обновляет пароль.
+func (s *PasswordGRPCServer) UpdatePassword(ctx context.Context, req *pb.UpdatePwdRequest) (*pb.BasicResponse, error) {
 	updatePwdDTO := pwddto.UpdatePwdDTO{
-		PwdID:       req.PwdId,
-		Title:       req.Title,
-		Description: req.Description,
+		PwdID: req.PwdId,
+		Title: req.Title,
 		Credentials: valueobj.Credentials{
 			Login:    req.Credentials.Login,
 			Password: req.Credentials.Password,
 		},
 	}
-	err := s.pwdService.UpdatePassword(ctx, &updatePwdDTO)
-	if err != nil {
+
+	if err := s.pwdService.UpdatePassword(ctx, &updatePwdDTO); err != nil {
 		if errors.Is(err, ErrUpdatedRecordNotFound) {
-			return &pb.BasicResponse{
-				Status:  "error",
-				Message: "Record not found for update",
-			}, nil
+			return nil, status.Errorf(codes.NotFound, "Record not found for update")
 		}
 		logger.Log.Errorf("Error in UpdatePassword: %v", err)
-		return nil, err
+		return nil, status.Errorf(codes.Internal, "Failed to update password: %v", err)
 	}
-	return &pb.BasicResponse{
-		Status:  "success",
-		Message: "Password updated successfully",
-	}, nil
+
+	return &pb.BasicResponse{}, nil
 }
 
-// DeletePassword Удаление пароля.
-func (s *PasswordServiceServer) DeletePassword(ctx context.Context, req *pb.DeletePwdRequest) (*pb.BasicResponse, error) {
+// DeletePassword удаляет пароль.
+func (s *PasswordGRPCServer) DeletePassword(ctx context.Context, req *pb.DeletePwdRequest) (*pb.BasicResponse, error) {
 	deletePwdDTO := pwddto.DeletePwdDTO{PwdID: req.PwdId}
-	err := s.pwdService.DeletePassword(ctx, &deletePwdDTO)
-	if err != nil {
+
+	if err := s.pwdService.DeletePassword(ctx, &deletePwdDTO); err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return &pb.BasicResponse{
-				Status:  "error",
-				Message: "Password not found",
-			}, nil
+			return nil, status.Errorf(codes.NotFound, "Password not found")
 		}
 		logger.Log.Errorf("Error in DeletePassword: %v", err)
-		return nil, err
+		return nil, status.Errorf(codes.Internal, "Failed to delete password: %v", err)
 	}
-	return &pb.BasicResponse{
-		Status:  "success",
-		Message: "Password deleted successfully",
-	}, nil
+
+	return &pb.BasicResponse{}, nil
 }
 
-// GetPassword Получение одного пароля.
-func (s *PasswordServiceServer) GetPassword(ctx context.Context, req *pb.GetPwdRequest) (*pb.PwdResponse, error) {
+// GetPassword получает один пароль.
+func (s *PasswordGRPCServer) GetPassword(ctx context.Context, req *pb.GetPwdRequest) (*pb.PwdResponse, error) {
 	getPwdDTO := pwddto.GetPwdDTO{PwdID: req.PwdId}
 	responsePwdDTO, err := s.pwdService.GetPassword(ctx, &getPwdDTO)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			logger.Log.Infoln("Password not found")
-			return nil, nil
+			return nil, status.Errorf(codes.NotFound, "Password not found")
 		}
 		logger.Log.Errorf("Error in GetPassword: %v", err)
-		return nil, err
+		return nil, status.Errorf(codes.Internal, "Failed to get password: %v", err)
 	}
 
 	return &pb.PwdResponse{
-		PwdId:       responsePwdDTO.PwdID,
-		Title:       responsePwdDTO.Title,
-		Description: responsePwdDTO.Description,
+		PwdId: responsePwdDTO.PwdID,
+		Title: responsePwdDTO.Title,
 		Credentials: &pb.Credentials{
 			Login:    responsePwdDTO.Credentials.Login,
 			Password: responsePwdDTO.Credentials.Password,
@@ -121,26 +108,26 @@ func (s *PasswordServiceServer) GetPassword(ctx context.Context, req *pb.GetPwdR
 	}, nil
 }
 
-// GetAllPasswords Получение всех паролей.
-func (s *PasswordServiceServer) GetAllPasswords(ctx context.Context, req *pb.AllPwdRequest) (*pb.AllPwdResponse, error) {
+// GetAllPasswords получает все пароли.
+func (s *PasswordGRPCServer) GetAllPasswords(ctx context.Context, req *pb.AllPwdRequest) (*pb.AllPwdResponse, error) {
 	allPwdDTO := pwddto.AllPwdDTO{}
 	allPasswords, err := s.pwdService.GetAllPasswords(ctx, &allPwdDTO)
 	if err != nil {
 		logger.Log.Errorf("Error in GetAllPasswords: %v", err)
-		return nil, err
+		return nil, status.Errorf(codes.Internal, "Failed to get all passwords: %v", err)
 	}
 
 	pwdResponses := make([]*pb.PwdResponse, 0, len(allPasswords))
 	for _, pwd := range allPasswords {
 		pwdResponses = append(pwdResponses, &pb.PwdResponse{
-			PwdId:       pwd.PwdID,
-			Title:       pwd.Title,
-			Description: pwd.Description,
+			PwdId: pwd.PwdID,
+			Title: pwd.Title,
 			Credentials: &pb.Credentials{
 				Login:    pwd.Credentials.Login,
 				Password: pwd.Credentials.Password,
 			},
 		})
 	}
+
 	return &pb.AllPwdResponse{Passwords: pwdResponses}, nil
 }

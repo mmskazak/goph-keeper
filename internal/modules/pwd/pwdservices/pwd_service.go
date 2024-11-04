@@ -27,7 +27,7 @@ func NewPwdService(pool storage.Database, enKey [32]byte) *PwdService {
 }
 
 func (pwd *PwdService) SavePassword(ctx context.Context, dto *pwddto.SavePwdDTO) error {
-	sql := `INSERT INTO passwords (user_id, title, description, credentials) VALUES ($1, $2, $3, $4)`
+	sql := `INSERT INTO passwords (user_id, title, credentials) VALUES ($1, $2, $3)`
 
 	// Шифруем
 	encryptedPassword, err := crypto.Encrypt(pwd.cryptoKey, []byte(dto.Credentials.Password))
@@ -41,7 +41,7 @@ func (pwd *PwdService) SavePassword(ctx context.Context, dto *pwddto.SavePwdDTO)
 		logger.Log.Errorf("error marshalling credentials: %v", err)
 		return fmt.Errorf("error marshalling credentials: %w", err)
 	}
-	_, err = pwd.pool.Exec(ctx, sql, dto.UserID, dto.Title, dto.Description, marshaledCredentials)
+	_, err = pwd.pool.Exec(ctx, sql, dto.UserID, dto.Title, marshaledCredentials)
 	if err != nil {
 		logger.Log.Errorf("error save password from pwd service: %v", err)
 		return fmt.Errorf("error save password from pwd service: %w", err)
@@ -66,7 +66,7 @@ func (pwd *PwdService) DeletePassword(ctx context.Context, dto *pwddto.DeletePwd
 }
 
 func (pwd *PwdService) GetPassword(ctx context.Context, dto *pwddto.GetPwdDTO) (pwddto.ResponsePwdDTO, error) {
-	sql := `SELECT id, title, description, credentials FROM passwords WHERE user_id = $1 AND id = $2;`
+	sql := `SELECT id, title, credentials FROM passwords WHERE user_id = $1 AND id = $2;`
 	row := pwd.pool.QueryRow(ctx, sql, dto.UserID, dto.PwdID)
 
 	var id, title, description string
@@ -92,7 +92,6 @@ func (pwd *PwdService) GetPassword(ctx context.Context, dto *pwddto.GetPwdDTO) (
 	// Заполнение всех необходимых данных для ответа
 	responsePwdDTO.PwdID = id
 	responsePwdDTO.Title = title
-	responsePwdDTO.Description = description
 
 	return responsePwdDTO, nil
 }
@@ -135,7 +134,6 @@ func (pwd *PwdService) GetAllPasswords(ctx context.Context, dto *pwddto.AllPwdDT
 		listPasswords = append(listPasswords, pwddto.ResponsePwdDTO{
 			PwdID:       id,
 			Title:       title,
-			Description: description,
 			Credentials: credentials,
 		})
 	}
@@ -159,7 +157,7 @@ func (pwd *PwdService) UpdatePassword(ctx context.Context, dto *pwddto.UpdatePwd
 	dto.Credentials.Password = encryptedPassword
 
 	sql := `UPDATE passwords SET title = $1, description = $2, credentials = $3 WHERE id = $4 AND user_id = $5`
-	result, err := pwd.pool.Exec(ctx, sql, dto.Title, dto.Description, marshaledCredentials, dto.PwdID, dto.UserID)
+	result, err := pwd.pool.Exec(ctx, sql, dto.Title, marshaledCredentials, dto.PwdID, dto.UserID)
 	if err != nil {
 		logger.Log.Errorf("error updating password: %v", err)
 		return fmt.Errorf("error updating password: %w", err)

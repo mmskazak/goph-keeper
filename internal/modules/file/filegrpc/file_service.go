@@ -99,7 +99,10 @@ func (s *FileGRPCServer) DeleteFile(ctx context.Context, req *proto.DeleteFileRe
 }
 
 // GetAllFiles возвращает список всех файлов пользователя.
-func (s *FileGRPCServer) GetAllFiles(ctx context.Context, req *proto.GetAllFilesRequest) (*proto.GetAllFilesResponse, error) {
+func (s *FileGRPCServer) GetAllFiles(
+	ctx context.Context,
+	req *proto.GetAllFilesRequest,
+) (*proto.GetAllFilesResponse, error) {
 	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt(), s.secretKey)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, "Failed to validate JWT token: %v", err)
