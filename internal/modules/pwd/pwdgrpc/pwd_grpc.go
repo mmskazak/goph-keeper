@@ -62,12 +62,19 @@ func (s *PasswordGRPCServer) SavePassword(ctx context.Context, req *pb.SavePwdRe
 
 // UpdatePassword обновляет пароль.
 func (s *PasswordGRPCServer) UpdatePassword(ctx context.Context, req *pb.UpdatePwdRequest) (*pb.BasicResponse, error) {
+	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt(), s.secretKey)
+	logger.Log.Infoln("USER ID:", userID)
+	if err != nil {
+		return nil, fmt.Errorf("parse jwt failed: %w", err)
+	}
+
 	updatePwdDTO := pwddto.UpdatePwdDTO{
-		PwdID: req.PwdId,
-		Title: req.Title,
+		UserID: userID,
+		PwdID:  req.GetPwdId(),
+		Title:  req.GetTitle(),
 		Credentials: valueobj.Credentials{
-			Login:    req.Credentials.Login,
-			Password: req.Credentials.Password,
+			Login:    req.Credentials.GetLogin(),
+			Password: req.Credentials.GetPassword(),
 		},
 	}
 
