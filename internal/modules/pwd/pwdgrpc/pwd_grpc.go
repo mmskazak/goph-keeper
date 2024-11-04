@@ -3,9 +3,11 @@ package pwdgrpc
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/jackc/pgx/v5"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"goph-keeper/internal/helpers"
 	"goph-keeper/internal/logger"
 	pb "goph-keeper/internal/modules/pwd/proto"
 	"goph-keeper/internal/modules/pwd/pwddto"
@@ -22,22 +24,31 @@ type PasswordGRPCServer struct {
 	pb.UnimplementedPasswordServiceServer
 
 	pwdService pwdservices.IPwdService
+	secretKey  string
 }
 
 // NewPasswordGRPCServer - создаёт новый PasswordGRPCServer.
-func NewPasswordGRPCServer(service pwdservices.IPwdService) *PasswordGRPCServer {
+func NewPasswordGRPCServer(service pwdservices.IPwdService, secretKey string) *PasswordGRPCServer {
 	return &PasswordGRPCServer{
 		pwdService: service,
+		secretKey:  secretKey,
 	}
 }
 
 // SavePassword сохраняет пароль.
 func (s *PasswordGRPCServer) SavePassword(ctx context.Context, req *pb.SavePwdRequest) (*pb.BasicResponse, error) {
+	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt(), s.secretKey)
+	logger.Log.Infoln("USER ID:", userID)
+	if err != nil {
+		return nil, fmt.Errorf("parse jwt failed: %w", err)
+	}
+
 	savePwdDTO := pwddto.SavePwdDTO{
-		Title: req.Title,
+		UserID: userID,
+		Title:  req.GetTitle(),
 		Credentials: valueobj.Credentials{
-			Login:    req.Credentials.Login,
-			Password: req.Credentials.Password,
+			Login:    req.Credentials.GetLogin(),
+			Password: req.Credentials.GetPassword(),
 		},
 	}
 

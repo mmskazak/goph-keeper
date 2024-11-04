@@ -7,6 +7,7 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
+// GenerateToken ...
 func GenerateToken(userID int, hmacSecret string) (string, error) {
 	// Create a new token object, specifying signing method and the claims
 	// you would like it to contain.
@@ -22,6 +23,7 @@ func GenerateToken(userID int, hmacSecret string) (string, error) {
 	return tokenString, nil
 }
 
+// ParseAndValidateToken ...
 func ParseAndValidateToken(tokenString, hmacSecret string) (*jwt.Token, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Don't forget to validate the alg is what you expect:
