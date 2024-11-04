@@ -19,22 +19,21 @@ func RegistrationRoutesPwd(
 	r.Post("/pwd/save", func(w http.ResponseWriter, req *http.Request) {
 		getPwdHandlers(pool, cfg.EncryptionKey).SavePassword(w, req)
 	})
+	// Получить конкретный пароль
+	r.Post("/pwd/update", func(w http.ResponseWriter, req *http.Request) {
+		getPwdHandlers(pool, cfg.EncryptionKey).UpdatePassword(w, req)
+	})
 	// Получить все пароли
-	r.Post("/pwd/all", func(w http.ResponseWriter, req *http.Request) {
+	r.Get("/pwd/all", func(w http.ResponseWriter, req *http.Request) {
 		getPwdHandlers(pool, cfg.EncryptionKey).GetAllPasswords(w, req)
 	})
 	// Удалить пароль
-	r.Post("/pwd/delete", func(w http.ResponseWriter, req *http.Request) {
+	r.Get("/pwd/delete/{id}", func(w http.ResponseWriter, req *http.Request) {
 		getPwdHandlers(pool, cfg.EncryptionKey).DeletePassword(w, req)
 	})
 	// Получить конкретный пароль
 	r.Get("/pwd/get/{pwd_id}", func(w http.ResponseWriter, req *http.Request) {
 		getPwdHandlers(pool, cfg.EncryptionKey).GetPassword(w, req)
-	})
-
-	// Получить конкретный пароль
-	r.Post("/pwd/update", func(w http.ResponseWriter, req *http.Request) {
-		getPwdHandlers(pool, cfg.EncryptionKey).UpdatePassword(w, req)
 	})
 }
 
