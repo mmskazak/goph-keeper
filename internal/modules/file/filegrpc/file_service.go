@@ -64,7 +64,7 @@ func (s *FileGRPCServer) SaveFile(ctx context.Context, req *proto.SaveFileReques
 
 // GetFile возвращает файл пользователю.
 func (s *FileGRPCServer) GetFile(ctx context.Context, req *proto.GetFileRequest) (*proto.GetFileResponse, error) {
-	userID, err := helpers.ParseTokenAndExtractUserID(req.Jwt, s.secretKey)
+	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt(), s.secretKey)
 	if err != nil {
 		return nil, fmt.Errorf(ErrParsingValidateJWT, err)
 	}

@@ -29,44 +29,28 @@ func (s *AuthHandlers) Login(w http.ResponseWriter, r *http.Request) {
 	inDTO, err := dto.LoginDTOFromRequestHTTP(r)
 	if err != nil {
 		logger.Log.Errorf("Error parsing login request: %v", err)
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-		_ = json.NewEncoder(w).Encode(map[string]string{
-			"status":  "error",
-			"message": "Invalid request format",
-		})
+		http.Error(w, "Invalid request format", http.StatusBadRequest)
 		return
 	}
 
 	userID, err := s.authService.Login(r.Context(), inDTO)
 	if err != nil {
 		logger.Log.Errorf("Error authService.Login: %v", err)
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusUnauthorized)
-		_ = json.NewEncoder(w).Encode(map[string]string{
-			"status":  "error",
-			"message": "Invalid username or password",
-		})
+		http.Error(w, "Invalid username or password", http.StatusUnauthorized)
 		return
 	}
 
 	token, err := authjwtservice.GenerateToken(userID, s.secretKey)
 	if err != nil {
 		logger.Log.Errorf("Error GenerateToken: %v", err)
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusInternalServerError)
-		_ = json.NewEncoder(w).Encode(map[string]string{
-			"status":  "error",
-			"message": "Failed to generate token",
-		})
+		http.Error(w, "Failed to generate token", http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	_ = json.NewEncoder(w).Encode(map[string]string{
-		"status": "success",
-		"token":  token,
+		"jwt": "Bearer " + token,
 	})
 }
 
@@ -74,12 +58,7 @@ func (s *AuthHandlers) Registration(w http.ResponseWriter, r *http.Request) {
 	regDTO, err := dto.GetRegistrationDTOFromHTTP(r)
 	if err != nil {
 		logger.Log.Errorf("Ошибка GetRegistrationDTOFromHTTP: %v", err)
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusBadRequest)
-		_ = json.NewEncoder(w).Encode(map[string]string{
-			"status":  "error",
-			"message": "Invalid registration data",
-		})
+		http.Error(w, "Invalid registration data", http.StatusBadRequest)
 		return
 	}
 
@@ -88,21 +67,11 @@ func (s *AuthHandlers) Registration(w http.ResponseWriter, r *http.Request) {
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) && pgErr.Code == pgerrcode.UniqueViolation {
 			logger.Log.Errorf("Ошибка регистрации: нарушение уникальности")
-			w.Header().Set("Content-Type", "application/json")
-			w.WriteHeader(http.StatusBadRequest)
-			_ = json.NewEncoder(w).Encode(map[string]string{
-				"status":  "error",
-				"message": "User was already registered",
-			})
+			http.Error(w, "User was already registered", http.StatusBadRequest)
 			return
 		}
 		logger.Log.Errorf("Ошибка authService.Registration: %v", err)
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusInternalServerError)
-		_ = json.NewEncoder(w).Encode(map[string]string{
-			"status":  "error",
-			"message": "Internal server error",
-		})
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
 
@@ -110,12 +79,7 @@ func (s *AuthHandlers) Registration(w http.ResponseWriter, r *http.Request) {
 	token, err := authjwtservice.GenerateToken(userID, s.secretKey)
 	if err != nil {
 		logger.Log.Errorf("Ошибка GenerateToken: %v", err)
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusInternalServerError)
-		_ = json.NewEncoder(w).Encode(map[string]string{
-			"status":  "error",
-			"message": "Failed to generate token",
-		})
+		http.Error(w, "Failed to generate token", http.StatusInternalServerError)
 		return
 	}
 
@@ -123,8 +87,6 @@ func (s *AuthHandlers) Registration(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	_ = json.NewEncoder(w).Encode(map[string]string{
-		"status":  "success",
-		"message": "User registered successfully",
-		"jwt":     "Bearer " + token,
+		"jwt": "Bearer " + token,
 	})
 }

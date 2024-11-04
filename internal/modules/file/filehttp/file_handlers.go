@@ -11,6 +11,8 @@ import (
 	"net/http"
 )
 
+const ContentType = "Content-Type"
+
 type FileHandlers struct {
 	fileService fileservices.IFileService
 }
@@ -26,7 +28,7 @@ func (p FileHandlers) SaveFile(w http.ResponseWriter, r *http.Request) {
 	saveFileDTO, err := filedto.SaveFileDTOFromHTTP(r)
 	if err != nil {
 		logger.Log.Errorf("Ошибка при построении DTO для сохранения файла: %v", err)
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set(ContentType, "application/json")
 		w.WriteHeader(http.StatusBadRequest)
 		_ = json.NewEncoder(w).Encode(map[string]string{
 			"status":  "error",
@@ -39,7 +41,7 @@ func (p FileHandlers) SaveFile(w http.ResponseWriter, r *http.Request) {
 	err = p.fileService.SaveFile(r.Context(), saveFileDTO)
 	if err != nil {
 		logger.Log.Errorf("Ошибка сохранения файла: %v", err)
-		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set(ContentType, "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		_ = json.NewEncoder(w).Encode(map[string]string{
 			"status":  "error",
@@ -49,7 +51,7 @@ func (p FileHandlers) SaveFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Успешный ответ при сохранении файла
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set(ContentType, "application/json")
 	w.WriteHeader(http.StatusCreated)
 	_ = json.NewEncoder(w).Encode(map[string]string{
 		"status":  "success",
@@ -74,7 +76,7 @@ func (p FileHandlers) GetFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Устанавливаем заголовки для скачивания файла
-	w.Header().Set("Content-Type", "application/octet-stream")
+	w.Header().Set(ContentType, "application/octet-stream")
 	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%q\"", getFileDTO.FileID))
 	w.Header().Set("Content-Length", strconv.Itoa(len(fileData)))
 
