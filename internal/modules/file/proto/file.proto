@@ -31,6 +31,7 @@ message GetFileRequest {
 // Ответ на запрос получения файла
 message GetFileResponse {
   bytes file_data = 1;
+  string name_file = 2;
 }
 
 // Запрос на удаление файла

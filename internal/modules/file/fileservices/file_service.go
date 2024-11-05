@@ -49,26 +49,30 @@ func (fs *FileService) SaveFile(ctx context.Context, dto filedto.SaveFileDTO) er
 }
 
 // GetFile возвращает расшифрованные данные файла.
-func (fs *FileService) GetFile(ctx context.Context, dto filedto.GetFileDTO) ([]byte, error) {
+func (fs *FileService) GetFile(ctx context.Context, dto filedto.GetFileDTO) (
+	[]byte,
+	string,
+	error,
+) {
+	var nameFile string
 	var encryptedData []byte
-
 	// Извлекаем зашифрованные данные из базы данных
 	err := fs.pool.QueryRow(ctx, `
-		SELECT file_data FROM files WHERE id = $1 AND user_id = $2`,
-		dto.FileID, dto.UserID).Scan(&encryptedData)
+		SELECT name_file, file_data FROM files WHERE id = $1 AND user_id = $2`,
+		dto.FileID, dto.UserID).Scan(&nameFile, &encryptedData)
 	if err != nil {
 		logger.Log.Errorf("error retrieving file data for file %d: %v", dto.FileID, err)
-		return nil, fmt.Errorf("error retrieving file data: %w", err)
+		return nil, "", fmt.Errorf("error retrieving file data: %w", err)
 	}
 
 	// Расшифровываем данные файла
 	decryptedData, err := crypto.Decrypt(fs.cryptoKey, string(encryptedData))
 	if err != nil {
 		logger.Log.Errorf("error decrypting file %d: %v", dto.FileID, err)
-		return nil, fmt.Errorf("error decrypting file: %w", err)
+		return nil, "", fmt.Errorf("error decrypting file: %w", err)
 	}
 
-	return decryptedData, nil
+	return decryptedData, nameFile, nil
 }
 
 // DeleteFile удаляет файл из базы данных.

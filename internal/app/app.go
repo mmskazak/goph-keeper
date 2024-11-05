@@ -70,7 +70,10 @@ func NewApp(
 	)
 	proto2.RegisterPasswordServiceServer(grpcServer, passwordGRPCHandlers) // Регистрация сервиса паролей
 	// Регистрация обработчиков для сохранения файлов
-	fileGRPCHandlers := filegrpc.NewFileGRPCServer(fileservices.NewFileService(pool, cfg.EncryptionKey), cfg.SecretKey)
+	fileGRPCHandlers := filegrpc.NewFileGRPCServer(
+		fileservices.NewFileService(pool, cfg.EncryptionKey, cfg.MaxFileSize),
+		cfg.SecretKey,
+	)
 	proto3.RegisterFileServiceServer(grpcServer, fileGRPCHandlers)
 
 	return &App{

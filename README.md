@@ -217,3 +217,6 @@ Goph-Keeper — это серверное приложение, предназн
 ```
 evans --host localhost --port 50051 --path ./internal/modules/auth/proto --proto auth.proto
 ```
+```
+Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOjJ9.I-xapPMRGU8mO60lRAw2cVgkJJv1NT_wxEjG9v3GDh4
+```

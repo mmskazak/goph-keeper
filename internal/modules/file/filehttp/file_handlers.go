@@ -68,7 +68,7 @@ func (p FileHandlers) GetFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Получаем байты файла из сервиса
-	fileData, err := p.fileService.GetFile(r.Context(), getFileDTO)
+	fileData, nameFile, err := p.fileService.GetFile(r.Context(), getFileDTO)
 	if err != nil {
 		logger.Log.Errorf("error getting file.proto: %v", err)
 		http.Error(w, "", http.StatusInternalServerError)
@@ -77,7 +77,7 @@ func (p FileHandlers) GetFile(w http.ResponseWriter, r *http.Request) {
 
 	// Устанавливаем заголовки для скачивания файла
 	w.Header().Set(ContentType, "application/octet-stream")
-	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%q\"", getFileDTO.FileID))
+	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%q\"", nameFile))
 	w.Header().Set("Content-Length", strconv.Itoa(len(fileData)))
 
 	// Отправляем байты файла в ответ

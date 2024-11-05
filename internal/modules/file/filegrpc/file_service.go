@@ -64,14 +64,15 @@ func (s *FileGRPCServer) GetFile(req *proto.GetFileRequest, stream proto.FileSer
 	}
 
 	// Получаем байты файла из сервиса
-	fileData, err := s.fileService.GetFile(stream.Context(), getFileDTO)
+	fileData, nameFile, err := s.fileService.GetFile(stream.Context(), getFileDTO)
 	if err != nil {
 		return status.Errorf(codes.Internal, "Failed to get file: %v", err)
 	}
 
 	// Отправляем данные файла в поток
 	if err := stream.Send(&proto.GetFileResponse{
-		FileData: fileData,
+		FileData: fileData, //отправляются байты
+		NameFile: nameFile,
 	}); err != nil {
 		return status.Errorf(codes.Internal, "Failed to send file data: %v", err)
 	}

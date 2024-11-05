@@ -13,6 +13,6 @@ type FileInfo struct {
 type IFileService interface {
 	SaveFile(ctx context.Context, dto filedto.SaveFileDTO) error
 	DeleteFile(ctx context.Context, dto filedto.DeleteFileDTO) error
-	GetFile(ctx context.Context, dto filedto.GetFileDTO) ([]byte, error)
+	GetFile(ctx context.Context, dto filedto.GetFileDTO) ([]byte, string, error)
 	GetAllFiles(ctx context.Context, dto filedto.AllFilesDTO) ([]FileInfo, error)
 }
