@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"go.uber.org/zap"
 	"goph-keeper/internal/helpers"
-	"goph-keeper/internal/logger"
 	pb "goph-keeper/internal/modules/pwd/proto"
 	"goph-keeper/internal/modules/pwd/pwddto"
 	"goph-keeper/internal/modules/pwd/pwdservices"
@@ -28,20 +28,21 @@ type PasswordGRPCServer struct {
 
 	pwdService pwdservices.IPwdService
 	secretKey  string
+	zapLogger  *zap.SugaredLogger
 }
 
 // NewPasswordGRPCServer - создаёт новый PasswordGRPCServer.
-func NewPasswordGRPCServer(service pwdservices.IPwdService, secretKey string) *PasswordGRPCServer {
+func NewPasswordGRPCServer(service pwdservices.IPwdService, secretKey string, zapLogger *zap.SugaredLogger) *PasswordGRPCServer {
 	return &PasswordGRPCServer{
 		pwdService: service,
 		secretKey:  secretKey,
+		zapLogger:  zapLogger,
 	}
 }
 
 // SavePassword сохраняет пароль.
 func (s *PasswordGRPCServer) SavePassword(ctx context.Context, req *pb.SavePwdRequest) (*pb.BasicResponse, error) {
 	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt(), s.secretKey)
-	logger.Log.Infoln("USER ID:", userID)
 	if err != nil {
 		return nil, fmt.Errorf(ErrParseJWTFailed, err)
 	}
@@ -56,7 +57,7 @@ func (s *PasswordGRPCServer) SavePassword(ctx context.Context, req *pb.SavePwdRe
 	}
 
 	if err := s.pwdService.SavePassword(ctx, &savePwdDTO); err != nil {
-		logger.Log.Errorf("Error in SavePassword: %v", err)
+		s.zapLogger.Errorf("Error in SavePassword: %v", err)
 		return nil, status.Errorf(codes.Internal, "Failed to save password: %v", err)
 	}
 
@@ -84,7 +85,7 @@ func (s *PasswordGRPCServer) UpdatePassword(ctx context.Context, req *pb.UpdateP
 		if errors.Is(err, ErrUpdatedRecordNotFound) {
 			return nil, status.Errorf(codes.NotFound, "Record not found for update")
 		}
-		logger.Log.Errorf("Error in UpdatePassword: %v", err)
+		s.zapLogger.Errorf("Error in UpdatePassword: %v", err)
 		return nil, status.Errorf(codes.Internal, "Failed to update password: %v", err)
 	}
 
@@ -107,7 +108,7 @@ func (s *PasswordGRPCServer) DeletePassword(ctx context.Context, req *pb.DeleteP
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, status.Errorf(codes.NotFound, "Password not found")
 		}
-		logger.Log.Errorf("Error in DeletePassword: %v", err)
+		s.zapLogger.Errorf("Error in DeletePassword: %v", err)
 		return nil, status.Errorf(codes.Internal, "Failed to delete password: %v", err)
 	}
 
@@ -131,7 +132,7 @@ func (s *PasswordGRPCServer) GetPassword(ctx context.Context, req *pb.GetPwdRequ
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, status.Errorf(codes.NotFound, "Password not found")
 		}
-		logger.Log.Errorf("Error in GetPassword: %v", err)
+		s.zapLogger.Errorf("Error in GetPassword: %v", err)
 		return nil, status.Errorf(codes.Internal, "Failed to get password: %v", err)
 	}
 
@@ -158,7 +159,7 @@ func (s *PasswordGRPCServer) GetAllPasswords(ctx context.Context, req *pb.AllPwd
 
 	allPasswords, err := s.pwdService.GetAllPasswords(ctx, &allPwdDTO)
 	if err != nil {
-		logger.Log.Errorf("Error in GetAllPasswords: %v", err)
+		s.zapLogger.Errorf("Error in GetAllPasswords: %v", err)
 		return nil, status.Errorf(codes.Internal, "Failed to get all passwords: %v", err)
 	}
 

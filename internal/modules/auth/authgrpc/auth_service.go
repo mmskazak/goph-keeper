@@ -3,6 +3,7 @@ package authgrpc
 import (
 	"context"
 	"errors"
+	"go.uber.org/zap"
 	"goph-keeper/internal/modules/auth/authdto"
 	"goph-keeper/internal/modules/auth/authservices/authjwtservice"
 	"goph-keeper/internal/modules/auth/authservices/authservice"
@@ -21,13 +22,19 @@ type AuthGRPCServer struct {
 	pb.UnimplementedAuthServiceServer
 	authService *authservice.AuthService
 	secretKey   string
+	zapLogger   *zap.SugaredLogger
 }
 
 // NewAuthGRPCServer - создаёт новый AuthGRPCServer.
-func NewAuthGRPCServer(authService *authservice.AuthService, secretKey string) *AuthGRPCServer {
+func NewAuthGRPCServer(
+	authService *authservice.AuthService,
+	secretKey string,
+	zapLogger *zap.SugaredLogger,
+) *AuthGRPCServer {
 	return &AuthGRPCServer{
 		authService: authService,
 		secretKey:   secretKey,
+		zapLogger:   zapLogger,
 	}
 }
 

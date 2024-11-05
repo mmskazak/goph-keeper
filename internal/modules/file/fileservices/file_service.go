@@ -3,7 +3,7 @@ package fileservices
 import (
 	"context"
 	"fmt"
-	"goph-keeper/internal/logger"
+	"go.uber.org/zap"
 	"goph-keeper/internal/modules/file/filedto"
 	"goph-keeper/pkg/crypto"
 
@@ -14,13 +14,15 @@ type FileService struct {
 	pool        *pgxpool.Pool
 	cryptoKey   [32]byte
 	maxFileSize int // Максимально допустимый размер файла в байтах
+	zapLogger   *zap.SugaredLogger
 }
 
-func NewFileService(pool *pgxpool.Pool, enKey [32]byte, maxFileSize int) *FileService {
+func NewFileService(pool *pgxpool.Pool, enKey [32]byte, maxFileSize int, zapLogger *zap.SugaredLogger) *FileService {
 	return &FileService{
 		pool:        pool,
 		cryptoKey:   enKey,
 		maxFileSize: maxFileSize,
+		zapLogger:   zapLogger,
 	}
 }
 
@@ -62,14 +64,14 @@ func (fs *FileService) GetFile(ctx context.Context, dto filedto.GetFileDTO) (
 		SELECT name_file, file_data FROM files WHERE id = $1 AND user_id = $2`,
 		dto.FileID, dto.UserID).Scan(&nameFile, &encryptedData)
 	if err != nil {
-		logger.Log.Errorf("error retrieving file data for file %d: %v", dto.FileID, err)
+		fs.zapLogger.Errorf("error retrieving file data for file %d: %v", dto.FileID, err)
 		return nil, "", fmt.Errorf("error retrieving file data: %w", err)
 	}
 
 	// Расшифровываем данные файла
 	decryptedData, err := crypto.Decrypt(fs.cryptoKey, string(encryptedData))
 	if err != nil {
-		logger.Log.Errorf("error decrypting file %d: %v", dto.FileID, err)
+		fs.zapLogger.Errorf("error decrypting file %d: %v", dto.FileID, err)
 		return nil, "", fmt.Errorf("error decrypting file: %w", err)
 	}
 
@@ -83,7 +85,7 @@ func (fs *FileService) DeleteFile(ctx context.Context, dto filedto.DeleteFileDTO
 		DELETE FROM files WHERE id = $1 AND user_id = $2`,
 		dto.FileID, dto.UserID)
 	if err != nil {
-		logger.Log.Errorf("failed to delete file %d: %v", dto.FileID, err)
+		fs.zapLogger.Errorf("failed to delete file %d: %v", dto.FileID, err)
 		return fmt.Errorf("failed to delete file: %w", err)
 	}
 
@@ -96,7 +98,7 @@ func (fs *FileService) GetAllFiles(ctx context.Context, dto filedto.AllFilesDTO)
 		SELECT id, name_file FROM files WHERE user_id = $1`,
 		dto.UserID)
 	if err != nil {
-		logger.Log.Errorf("error querying all files: %v", err)
+		fs.zapLogger.Errorf("error querying all files: %v", err)
 		return nil, fmt.Errorf("error getting all files: %w", err)
 	}
 	defer rows.Close()
@@ -105,7 +107,7 @@ func (fs *FileService) GetAllFiles(ctx context.Context, dto filedto.AllFilesDTO)
 	for rows.Next() {
 		var fileInfo FileInfo
 		if err = rows.Scan(&fileInfo.FileID, &fileInfo.NameFile); err != nil {
-			logger.Log.Errorf("error scanning row: %v", err)
+			fs.zapLogger.Errorf("error scanning row: %v", err)
 			return nil, fmt.Errorf("error getting all files: %w", err)
 		}
 		files = append(files, fileInfo)

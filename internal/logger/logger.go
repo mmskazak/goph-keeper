@@ -2,32 +2,11 @@ package logger
 
 import (
 	"fmt"
-	"goph-keeper/internal/config"
-
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
 
-var Log *zap.SugaredLogger
-
-// InitGlobalLogger создает и настраивает новый logger на основе уровня логирования.
-func InitGlobalLogger(cfg *config.Config) error {
-	// Получение уровня логирования из конфигурации.
-	level, err := cfg.LogLevel.Value()
-	if err != nil {
-		return fmt.Errorf("error getting log level: %w", err)
-	}
-
-	// Инициализация logger для установленного уровня
-	Log, err = initLogger(level)
-	if err != nil {
-		return fmt.Errorf("error initializing logger: %w", err)
-	}
-
-	return nil
-}
-
-func initLogger(level zapcore.Level) (*zap.SugaredLogger, error) {
+func InitLogger(level zapcore.Level) (*zap.SugaredLogger, error) {
 	// Создание конфигурации для logger с настройками по умолчанию.
 	zapCfg := zap.NewProductionConfig()
 	// Установка уровня логирования.

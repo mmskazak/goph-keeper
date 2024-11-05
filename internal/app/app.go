@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"go.uber.org/zap"
 	"goph-keeper/internal/config"
-	"goph-keeper/internal/logger"
 	"goph-keeper/internal/modules/auth/authgrpc"
 	"goph-keeper/internal/modules/auth/authservices/authservice"
 	"goph-keeper/internal/modules/auth/proto"
@@ -34,6 +34,7 @@ const writeTimeout = 5 * time.Second
 type App struct {
 	httpServer *http.Server
 	grpcServer *grpc.Server
+	zapLogger  *zap.SugaredLogger
 }
 
 // NewApp создает новый экземпляр приложения с HTTP и gRPC серверами.
@@ -41,7 +42,18 @@ func NewApp(
 	ctx context.Context,
 	cfg *config.Config,
 	pool *pgxpool.Pool,
+	zapLogger *zap.SugaredLogger,
 ) *App {
+
+	pwdServices := pwdservices.NewPwdService(pool, cfg.EncryptionKey, zapLogger)
+
+	fileService := fileservices.NewFileService(
+		pool,
+		cfg.EncryptionKey,
+		cfg.MaxFileSize,
+		zapLogger,
+	)
+
 	router := chi.NewRouter()
 	router = registrationHandlersHTTP(ctx, router, cfg, pool)
 
@@ -62,35 +74,42 @@ func NewApp(
 	grpcServer := grpc.NewServer()
 	// Регистрация gRPC-сервисов
 	// Регистрация обработчиков для аутентификации
-	authGRPSHandlers := authgrpc.NewAuthGRPCServer(authservice.NewAuthService(pool), cfg.SecretKey)
+	authGRPSHandlers := authgrpc.NewAuthGRPCServer(
+		authservice.NewAuthService(pool),
+		cfg.SecretKey,
+		zapLogger,
+	)
 	proto.RegisterAuthServiceServer(grpcServer, authGRPSHandlers) // Регистрация сервиса аутентификации
 	// Регистрация обработчиков для сохранения паролей
 	passwordGRPCHandlers := pwdgrpc.NewPasswordGRPCServer(
-		pwdservices.NewPwdService(pool, cfg.EncryptionKey),
+		pwdServices,
 		cfg.SecretKey,
+		zapLogger,
 	)
 	proto2.RegisterPasswordServiceServer(grpcServer, passwordGRPCHandlers) // Регистрация сервиса паролей
 	// Регистрация обработчиков для сохранения файлов
 	fileGRPCHandlers := filegrpc.NewFileGRPCServer(
-		fileservices.NewFileService(pool, cfg.EncryptionKey, cfg.MaxFileSize),
+		fileService,
 		cfg.SecretKey,
+		zapLogger,
 	)
 	proto3.RegisterFileServiceServer(grpcServer, fileGRPCHandlers)
 
 	return &App{
 		httpServer: httpServer,
 		grpcServer: grpcServer,
+		zapLogger:  zapLogger,
 	}
 }
 
 // Start запускает HTTP и gRPC сервера.
 func (a *App) Start() error {
-	logger.Log.Infoln("Приложение запущено.")
+	a.zapLogger.Infoln("Приложение запущено.")
 
 	// Запуск HTTP сервера в отдельной горутине
 	go func() {
 		if err := a.httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			logger.Log.Errorf("error listen and serve: %v", err)
+			a.zapLogger.Errorf("error listen and serve: %v", err)
 		}
 	}()
 
@@ -102,7 +121,7 @@ func (a *App) Start() error {
 
 	go func() {
 		if err := a.grpcServer.Serve(listener); err != nil {
-			logger.Log.Errorf("gRPC server failed: %v", err)
+			a.zapLogger.Errorf("gRPC server failed: %v", err)
 		}
 	}()
 

@@ -21,8 +21,12 @@ func main() {
 		log.Fatalf("Ошибка инициализации конфигурации: %v", err)
 	}
 
-	// Инициализация глобального logger
-	err = logger.InitGlobalLogger(cfg)
+	// Инициализация глобального zapLogger
+	level, err := cfg.LogLevel.Value()
+	if err != nil {
+		log.Fatalf("Ошибка получения уровня логирования: %v", err)
+	}
+	zapLogger, err := logger.InitLogger(level)
 	if err != nil {
 		log.Printf("Ошибка инициализации глобального логера: %v", err)
 	}
@@ -30,18 +34,18 @@ func main() {
 	// Инициализируем базу данных
 	pool, err := psql.NewPgxPool(ctx, cfg)
 	if err != nil {
-		logger.Log.Fatalf("Ошибка инициализаци базы данных Postgres: %v", err)
+		zapLogger.Fatalf("Ошибка инициализаци базы данных Postgres: %v", err)
 	}
 
 	// Накатываем миграции
 	err = psql.RunMigrations(cfg)
 	if err != nil {
-		logger.Log.Fatalf("Ошибка запуска миграций: %v", err)
+		zapLogger.Fatalf("Ошибка запуска миграций: %v", err)
 	}
 
 	// Запуск приложения
-	err = runApp(ctx, cfg, pool, shutdownDuration)
+	err = runApp(ctx, cfg, pool, shutdownDuration, zapLogger)
 	if err != nil {
-		logger.Log.Fatalf("Ошибка запусака приложения: %v", err)
+		zapLogger.Fatalf("Ошибка запусака приложения: %v", err)
 	}
 }

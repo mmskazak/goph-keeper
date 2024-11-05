@@ -2,6 +2,7 @@ package filegrpc
 
 import (
 	"context"
+	"go.uber.org/zap"
 	"goph-keeper/internal/helpers"
 	"goph-keeper/internal/modules/file/filedto"
 	"goph-keeper/internal/modules/file/fileservices"
@@ -22,13 +23,15 @@ type FileGRPCServer struct {
 
 	fileService fileservices.IFileService
 	secretKey   string
+	zapLogger   *zap.SugaredLogger
 }
 
 // NewFileGRPCServer - создаёт новый FileGRPCServer.
-func NewFileGRPCServer(fileService fileservices.IFileService, secretKey string) *FileGRPCServer {
+func NewFileGRPCServer(fileService fileservices.IFileService, secretKey string, zapLogger *zap.SugaredLogger) *FileGRPCServer {
 	return &FileGRPCServer{
 		fileService: fileService,
 		secretKey:   secretKey,
+		zapLogger:   zapLogger,
 	}
 }
 
