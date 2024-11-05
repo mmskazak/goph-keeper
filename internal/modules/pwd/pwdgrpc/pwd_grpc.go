@@ -20,6 +20,8 @@ import (
 
 var ErrUpdatedRecordNotFound = errors.New("updated record not found")
 
+const ErrParseJWTFailed = "parse jwt failed: %w"
+
 // PasswordGRPCServer - сервис GRPC отвечающий за работу с паролями.
 type PasswordGRPCServer struct {
 	pb.UnimplementedPasswordServiceServer
@@ -41,7 +43,7 @@ func (s *PasswordGRPCServer) SavePassword(ctx context.Context, req *pb.SavePwdRe
 	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt(), s.secretKey)
 	logger.Log.Infoln("USER ID:", userID)
 	if err != nil {
-		return nil, fmt.Errorf("parse jwt failed: %w", err)
+		return nil, fmt.Errorf(ErrParseJWTFailed, err)
 	}
 
 	savePwdDTO := pwddto.SavePwdDTO{
@@ -65,7 +67,7 @@ func (s *PasswordGRPCServer) SavePassword(ctx context.Context, req *pb.SavePwdRe
 func (s *PasswordGRPCServer) UpdatePassword(ctx context.Context, req *pb.UpdatePwdRequest) (*pb.BasicResponse, error) {
 	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt(), s.secretKey)
 	if err != nil {
-		return nil, fmt.Errorf("parse jwt failed: %w", err)
+		return nil, fmt.Errorf(ErrParseJWTFailed, err)
 	}
 
 	updatePwdDTO := pwddto.UpdatePwdDTO{
@@ -93,7 +95,7 @@ func (s *PasswordGRPCServer) UpdatePassword(ctx context.Context, req *pb.UpdateP
 func (s *PasswordGRPCServer) DeletePassword(ctx context.Context, req *pb.DeletePwdRequest) (*pb.BasicResponse, error) {
 	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt(), s.secretKey)
 	if err != nil {
-		return nil, fmt.Errorf("parse jwt failed: %w", err)
+		return nil, fmt.Errorf(ErrParseJWTFailed, err)
 	}
 
 	deletePwdDTO := pwddto.DeletePwdDTO{
@@ -116,7 +118,7 @@ func (s *PasswordGRPCServer) DeletePassword(ctx context.Context, req *pb.DeleteP
 func (s *PasswordGRPCServer) GetPassword(ctx context.Context, req *pb.GetPwdRequest) (*pb.PwdResponse, error) {
 	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt(), s.secretKey)
 	if err != nil {
-		return nil, fmt.Errorf("parse jwt failed: %w", err)
+		return nil, fmt.Errorf(ErrParseJWTFailed, err)
 	}
 
 	getPwdDTO := pwddto.GetPwdDTO{
@@ -147,7 +149,7 @@ func (s *PasswordGRPCServer) GetPassword(ctx context.Context, req *pb.GetPwdRequ
 func (s *PasswordGRPCServer) GetAllPasswords(ctx context.Context, req *pb.AllPwdRequest) (*pb.AllPwdResponse, error) {
 	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt(), s.secretKey)
 	if err != nil {
-		return nil, fmt.Errorf("parse jwt failed: %w", err)
+		return nil, fmt.Errorf(ErrParseJWTFailed, err)
 	}
 
 	allPwdDTO := pwddto.AllPwdDTO{

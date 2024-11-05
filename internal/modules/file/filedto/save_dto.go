@@ -11,8 +11,8 @@ import (
 
 type SaveFileDTO struct {
 	NameFile string `json:"name_file"` // Описание в байтовом формате
-	UserID   int    `json:"user_id"`
 	FileData []byte `json:"file_data"` // Содержимое файла
+	UserID   int    `json:"user_id"`
 }
 
 func SaveFileDTOFromHTTP(r *http.Request) (SaveFileDTO, error) {
@@ -24,7 +24,7 @@ func SaveFileDTOFromHTTP(r *http.Request) (SaveFileDTO, error) {
 	defer func(file multipart.File) {
 		err := file.Close()
 		if err != nil {
-			logger.Log.Errorf("error closing file.proto: %w", err)
+			logger.Log.Errorf("error closing file.proto: %v", err)
 		}
 	}(file)
 

@@ -10,9 +10,9 @@ import (
 )
 
 type SavePwdDTO struct {
+	Credentials valueobj.Credentials `json:"credentials"`
 	Title       string               `json:"title"`
 	UserID      int                  `json:"user_id"`
-	Credentials valueobj.Credentials `json:"credentials"`
 }
 
 func SavePwdDTOFromHTTP(r *http.Request) (SavePwdDTO, error) {
