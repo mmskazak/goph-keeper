@@ -6,7 +6,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// GenerateHashFromPassword генерирует хеш из пароля
+// GenerateHashFromPassword генерирует хеш из пароля.
 func GenerateHashFromPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {

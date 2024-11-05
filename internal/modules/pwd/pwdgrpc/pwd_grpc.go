@@ -4,15 +4,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/jackc/pgx/v5"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"goph-keeper/internal/helpers"
 	"goph-keeper/internal/logger"
 	pb "goph-keeper/internal/modules/pwd/proto"
 	"goph-keeper/internal/modules/pwd/pwddto"
 	"goph-keeper/internal/modules/pwd/pwdservices"
 	"goph-keeper/internal/modules/pwd/valueobj"
+
+	"github.com/jackc/pgx/v5"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 //go:generate protoc --proto_path=../proto --go_out=. --go-grpc_out=. pwd.proto
@@ -47,8 +48,8 @@ func (s *PasswordGRPCServer) SavePassword(ctx context.Context, req *pb.SavePwdRe
 		UserID: userID,
 		Title:  req.GetTitle(),
 		Credentials: valueobj.Credentials{
-			Login:    req.Credentials.GetLogin(),
-			Password: req.Credentials.GetPassword(),
+			Login:    req.GetCredentials().GetLogin(),
+			Password: req.GetCredentials().GetPassword(),
 		},
 	}
 
@@ -72,8 +73,8 @@ func (s *PasswordGRPCServer) UpdatePassword(ctx context.Context, req *pb.UpdateP
 		PwdID:  req.GetPwdId(),
 		Title:  req.GetTitle(),
 		Credentials: valueobj.Credentials{
-			Login:    req.Credentials.GetLogin(),
-			Password: req.Credentials.GetPassword(),
+			Login:    req.GetCredentials().GetLogin(),
+			Password: req.GetCredentials().GetPassword(),
 		},
 	}
 

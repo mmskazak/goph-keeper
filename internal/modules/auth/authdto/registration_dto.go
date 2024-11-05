@@ -27,7 +27,7 @@ func GetRegistrationDTOFromHTTP(r *http.Request) (*RegistrationDTO, error) {
 	return &regDTO, nil
 }
 
-// GetRegistrationDTOFromRegistrationRequestGRPC преобразует RegistrationRequest в RegistrationDTO
+// GetRegistrationDTOFromRegistrationRequestGRPC преобразует RegistrationRequest в RegistrationDTO.
 func GetRegistrationDTOFromRegistrationRequestGRPC(req *pb.RegistrationRequest) (*RegistrationDTO, error) {
 	// Проверяем, что логин и пароль не пустые
 	if req.GetUsername() == "" || req.GetPassword() == "" {

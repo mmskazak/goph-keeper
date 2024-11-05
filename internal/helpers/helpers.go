@@ -35,13 +35,13 @@ func GetUserIDFromContext(ctx context.Context) (int, error) {
 func ExtractUserIDFromToken(token *jwt.Token) (int, error) {
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok || !token.Valid {
-		return 0, fmt.Errorf("invalid JWT claims")
+		return 0, errors.New("invalid JWT claims")
 	}
 
 	// Извлечение и проверка userID
 	userIDFloat, ok := claims["userID"].(float64)
 	if !ok {
-		return 0, fmt.Errorf("error extracting userID from claims")
+		return 0, errors.New("error extracting userID from claims")
 	}
 
 	return int(userIDFloat), nil

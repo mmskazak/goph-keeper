@@ -2,11 +2,12 @@ package pwdhttp
 
 import (
 	"context"
-	"github.com/stretchr/testify/assert"
 	"goph-keeper/internal/modules/pwd/pwddto"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type FakePwdService struct{}

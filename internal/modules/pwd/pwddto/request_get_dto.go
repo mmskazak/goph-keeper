@@ -3,9 +3,10 @@ package pwddto
 import (
 	"errors"
 	"fmt"
-	"github.com/go-chi/chi/v5"
 	"goph-keeper/internal/helpers"
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
 )
 
 type GetPwdDTO struct {

@@ -3,11 +3,12 @@ package pwdservices
 import (
 	"context"
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"goph-keeper/internal/modules/pwd/pwddto"
 	"goph-keeper/internal/modules/pwd/valueobj"
 	"goph-keeper/internal/storage/mocks"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/stretchr/testify/mock"

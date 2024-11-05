@@ -3,11 +3,12 @@ package pwdhttp
 import (
 	"encoding/json"
 	"errors"
-	"github.com/jackc/pgx/v5"
 	"goph-keeper/internal/logger"
 	"goph-keeper/internal/modules/pwd/pwddto"
 	"goph-keeper/internal/modules/pwd/pwdservices"
 	"net/http"
+
+	"github.com/jackc/pgx/v5"
 )
 
 var ErrUpdatedRecordNotFound = errors.New("updated record not found")

@@ -18,11 +18,12 @@ import (
 	"net/http"
 	"time"
 
+	"net"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"golang.org/x/crypto/acme/autocert"
 	"google.golang.org/grpc"
-	"net"
 )
 
 // Константы для таймаутов.

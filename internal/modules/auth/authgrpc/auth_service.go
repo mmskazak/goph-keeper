@@ -3,26 +3,27 @@ package authgrpc
 import (
 	"context"
 	"errors"
-	"github.com/jackc/pgerrcode"
-	"github.com/jackc/pgx/v5/pgconn"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"goph-keeper/internal/modules/auth/authdto"
 	"goph-keeper/internal/modules/auth/authservices/authjwtservice"
 	"goph-keeper/internal/modules/auth/authservices/authservice"
 	pb "goph-keeper/internal/modules/auth/proto"
+
+	"github.com/jackc/pgerrcode"
+	"github.com/jackc/pgx/v5/pgconn"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 //go:generate protoc --proto_path=../proto --go_out=. --go-grpc_out=. auth.proto
 
-// AuthGRPCServer - сервер для Auth gRPC
+// AuthGRPCServer - сервер для Auth gRPC.
 type AuthGRPCServer struct {
 	pb.UnimplementedAuthServiceServer
 	authService *authservice.AuthService
 	secretKey   string
 }
 
-// NewAuthGRPCServer - создаёт новый AuthGRPCServer
+// NewAuthGRPCServer - создаёт новый AuthGRPCServer.
 func NewAuthGRPCServer(authService *authservice.AuthService, secretKey string) *AuthGRPCServer {
 	return &AuthGRPCServer{
 		authService: authService,
@@ -30,7 +31,7 @@ func NewAuthGRPCServer(authService *authservice.AuthService, secretKey string) *
 	}
 }
 
-// Login - авторизация пользователя
+// Login - авторизация пользователя.
 func (s *AuthGRPCServer) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginResponse, error) {
 	inDTO, err := authdto.LoginDTOFromLoginRequestGRPC(req)
 	if err != nil {
@@ -52,8 +53,11 @@ func (s *AuthGRPCServer) Login(ctx context.Context, req *pb.LoginRequest) (*pb.L
 	}, nil
 }
 
-// Registration - регистрация пользователя
-func (s *AuthGRPCServer) Registration(ctx context.Context, req *pb.RegistrationRequest) (*pb.RegistrationResponse, error) {
+// Registration - регистрация пользователя.
+func (s *AuthGRPCServer) Registration(
+	ctx context.Context,
+	req *pb.RegistrationRequest,
+) (*pb.RegistrationResponse, error) {
 	regDTO, err := authdto.GetRegistrationDTOFromRegistrationRequestGRPC(req)
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "Invalid registration data: %v", err)
@@ -77,7 +81,7 @@ func (s *AuthGRPCServer) Registration(ctx context.Context, req *pb.RegistrationR
 	}, nil
 }
 
-// Helper function to identify unique violation errors
+// Helper function to identify unique violation errors.
 func isUniqueViolationError(err error) bool {
 	var pgErr *pgconn.PgError
 	return errors.As(err, &pgErr) && pgErr.Code == pgerrcode.UniqueViolation

@@ -11,7 +11,7 @@ import (
 
 const shutdownDuration = 5 * time.Second
 
-// Главная функция запуска приложения
+// Главная функция запуска приложения.
 func main() {
 	ctx := context.Background()
 

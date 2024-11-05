@@ -3,10 +3,11 @@ package fileservices
 import (
 	"context"
 	"fmt"
-	"github.com/jackc/pgx/v5/pgxpool"
 	"goph-keeper/internal/logger"
 	"goph-keeper/internal/modules/file/filedto"
 	"goph-keeper/pkg/crypto"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type FileService struct {
