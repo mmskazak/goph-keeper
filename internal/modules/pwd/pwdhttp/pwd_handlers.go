@@ -26,7 +26,7 @@ func NewPwdHandlersHTTP(service pwdservices.IPwdService) PwdHandlers {
 func (p PwdHandlers) SavePassword(w http.ResponseWriter, r *http.Request) {
 	savePwdDTO, err := pwddto.SavePwdDTOFromHTTP(r)
 	if err != nil {
-		logger.Log.Errorf("Error make SavePwdDTOFromHTTP: %v", err)
+		//logger.Log.Errorf("Error make SavePwdDTOFromHTTP: %v", err)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}

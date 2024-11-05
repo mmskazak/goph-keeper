@@ -20,6 +20,10 @@ func SavePwdDTOFromHTTP(r *http.Request) (SavePwdDTO, error) {
 	if err != nil {
 		return SavePwdDTO{}, fmt.Errorf("reading body for SavePwdDTOFromHTTP: %w", err)
 	}
+	if len(data) == 0 {
+		return SavePwdDTO{}, fmt.Errorf("request body is empty")
+	}
+
 	var savePwdDTO SavePwdDTO
 	err = json.Unmarshal(data, &savePwdDTO)
 	if err != nil {

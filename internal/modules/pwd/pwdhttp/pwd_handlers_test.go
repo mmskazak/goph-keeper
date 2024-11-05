@@ -33,7 +33,7 @@ func (f FakePwdService) UpdatePassword(ctx context.Context, dto *pwddto.UpdatePw
 func TestPwdHandlers_SavePassword(t *testing.T) {
 	fake := FakePwdService{}
 	authHandlers := NewPwdHandlersHTTP(fake)
-	r := httptest.NewRequest(http.MethodPost, "/save-password", http.NoBody)
+	r := httptest.NewRequest(http.MethodPost, "/pwd/save", http.NoBody)
 	w := httptest.NewRecorder()
 	authHandlers.SavePassword(w, r)
 	assert.Equal(t, http.StatusBadRequest, w.Code)
