@@ -1,10 +1,11 @@
 package routespwd
 
 import (
-	"go.uber.org/zap"
 	"goph-keeper/internal/modules/pwd/pwdhttp"
 	"goph-keeper/internal/modules/pwd/pwdservices"
 	"net/http"
+
+	"go.uber.org/zap"
 
 	"github.com/go-chi/chi/v5"
 )

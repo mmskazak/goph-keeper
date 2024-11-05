@@ -3,13 +3,14 @@ package main
 import (
 	"context"
 	"fmt"
-	"go.uber.org/zap"
 	"goph-keeper/internal/app"
 	"goph-keeper/internal/config"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"go.uber.org/zap"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )

@@ -3,10 +3,11 @@ package pwdhttp
 import (
 	"encoding/json"
 	"errors"
-	"go.uber.org/zap"
 	"goph-keeper/internal/modules/pwd/pwddto"
 	"goph-keeper/internal/modules/pwd/pwdservices"
 	"net/http"
+
+	"go.uber.org/zap"
 
 	"github.com/jackc/pgx/v5"
 )

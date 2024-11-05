@@ -2,11 +2,12 @@ package filegrpc
 
 import (
 	"context"
-	"go.uber.org/zap"
 	"goph-keeper/internal/helpers"
 	"goph-keeper/internal/modules/file/filedto"
 	"goph-keeper/internal/modules/file/fileservices"
 	"goph-keeper/internal/modules/file/proto"
+
+	"go.uber.org/zap"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -20,14 +21,17 @@ const ErrFailedToValidateJWT = "Failed to validate JWT token: %v"
 // FileGRPCServer - сервис GRPC отвечающий за работу с файлами.
 type FileGRPCServer struct {
 	proto.UnimplementedFileServiceServer
-
 	fileService fileservices.IFileService
-	secretKey   string
 	zapLogger   *zap.SugaredLogger
+	secretKey   string
 }
 
 // NewFileGRPCServer - создаёт новый FileGRPCServer.
-func NewFileGRPCServer(fileService fileservices.IFileService, secretKey string, zapLogger *zap.SugaredLogger) *FileGRPCServer {
+func NewFileGRPCServer(
+	fileService fileservices.IFileService,
+	secretKey string,
+	zapLogger *zap.SugaredLogger,
+) *FileGRPCServer {
 	return &FileGRPCServer{
 		fileService: fileService,
 		secretKey:   secretKey,

@@ -8,6 +8,8 @@ import (
 	"goph-keeper/internal/storage/mocks"
 	"testing"
 
+	"go.uber.org/zap"
+
 	"github.com/stretchr/testify/assert"
 
 	"github.com/jackc/pgx/v5/pgconn"
@@ -41,7 +43,7 @@ func TestPwdService_SavePassword(t *testing.T) {
 		mock.Anything,
 		mock.Anything,
 	).Return(ct, nil)
-	s := NewPwdService(mockPool, key)
+	s := NewPwdService(mockPool, key, zap.NewNop().Sugar())
 	err := s.SavePassword(ctx, &dto)
 	require.Nil(t, err)
 }
@@ -67,7 +69,7 @@ func TestPwdService_DeletePassword(t *testing.T) {
 		mock.Anything,
 		mock.Anything,
 	).Return(ct, nil)
-	s := NewPwdService(mockPool, key)
+	s := NewPwdService(mockPool, key, zap.NewNop().Sugar())
 	err := s.DeletePassword(ctx, &dto)
 	require.Nil(t, err)
 }
@@ -103,7 +105,7 @@ func TestPwdService_GetPassword(t *testing.T) {
 		}).
 		Return(nil)
 
-	s := NewPwdService(mockPool, key)
+	s := NewPwdService(mockPool, key, zap.NewNop().Sugar())
 	pwd, err := s.GetPassword(ctx, &dto)
 	assert.EqualError(t, err, "error decrypt for GetPassword invalid format: expected nonce:ciphertext")
 	fmt.Println(pwd)

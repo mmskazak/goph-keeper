@@ -2,6 +2,7 @@ package pwddto
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"goph-keeper/internal/helpers"
 	"goph-keeper/internal/modules/pwd/valueobj"
@@ -21,7 +22,7 @@ func SavePwdDTOFromHTTP(r *http.Request) (SavePwdDTO, error) {
 		return SavePwdDTO{}, fmt.Errorf("reading body for SavePwdDTOFromHTTP: %w", err)
 	}
 	if len(data) == 0 {
-		return SavePwdDTO{}, fmt.Errorf("request body is empty")
+		return SavePwdDTO{}, errors.New("request body is empty")
 	}
 
 	var savePwdDTO SavePwdDTO

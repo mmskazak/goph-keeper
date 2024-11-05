@@ -3,7 +3,6 @@ package authmiddleware
 import (
 	"context"
 	"encoding/json"
-	"goph-keeper/internal/logger"
 	"goph-keeper/internal/modules/auth/authservices/authjwtservice"
 	"net/http"
 	"strings"
@@ -21,10 +20,9 @@ func Authentication(next http.Handler, secretKey string) http.Handler {
 		w.Header().Set("Content-Type", "application/json")
 
 		jwtBearer := r.Header.Get("Authorization")
-		logger.Log.Infoln(jwtBearer)
+
 		strArr := strings.Split(jwtBearer, " ")
 		if len(strArr) != 2 { //nolint:gomnd // 2 части - Bearer + JWT
-			logger.Log.Errorln("jwt bearer format error")
 			w.WriteHeader(http.StatusUnauthorized)
 			_ = json.NewEncoder(w).Encode(map[string]string{
 				"status":  "error",
@@ -35,7 +33,6 @@ func Authentication(next http.Handler, secretKey string) http.Handler {
 
 		token, err := authjwtservice.ParseAndValidateToken(strArr[1], secretKey)
 		if err != nil {
-			logger.Log.Errorln("Error parsing token:", err)
 			w.WriteHeader(http.StatusUnauthorized)
 			_ = json.NewEncoder(w).Encode(map[string]string{
 				"status":  "error",
@@ -45,9 +42,7 @@ func Authentication(next http.Handler, secretKey string) http.Handler {
 		}
 
 		claims, ok := token.Claims.(jwt.MapClaims)
-		if ok && token.Valid {
-			logger.Log.Infoln("Token valid, claims: ", claims)
-		} else {
+		if !ok || !token.Valid {
 			w.WriteHeader(http.StatusUnauthorized)
 			_ = json.NewEncoder(w).Encode(map[string]string{
 				"status":  "error",

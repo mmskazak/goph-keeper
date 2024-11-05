@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"go.uber.org/zap"
 	"goph-keeper/internal/config"
 	"goph-keeper/internal/modules/auth/authgrpc"
 	"goph-keeper/internal/modules/auth/authhttp"
@@ -21,6 +20,8 @@ import (
 	"goph-keeper/internal/modules/pwd/routespwd"
 	"net/http"
 	"time"
+
+	"go.uber.org/zap"
 
 	"net"
 
@@ -60,10 +61,10 @@ func NewApp(
 	router := chi.NewRouter()
 	router.Group(func(r chi.Router) {
 		r.Post("/registration", func(w http.ResponseWriter, req *http.Request) {
-			getAuthHandlers(authService, cfg.SecretKey).Registration(w, req)
+			getAuthHandlers(authService, cfg.SecretKey, zapLogger).Registration(w, req)
 		})
 		r.Post("/login", func(w http.ResponseWriter, req *http.Request) {
-			getAuthHandlers(authService, cfg.SecretKey).Login(w, req)
+			getAuthHandlers(authService, cfg.SecretKey, zapLogger).Login(w, req)
 		})
 	})
 
@@ -161,7 +162,11 @@ func (a *App) Stop(ctx context.Context) error {
 }
 
 // getAuthHandlers ...
-func getAuthHandlers(authService *authservice.AuthService, secretKey string) *authhttp.AuthHandlers {
-	authHandlers := authhttp.NewAuthHandlersHTTP(authService, secretKey)
+func getAuthHandlers(
+	authService *authservice.AuthService,
+	secretKey string,
+	zapLogger *zap.SugaredLogger,
+) *authhttp.AuthHandlers {
+	authHandlers := authhttp.NewAuthHandlersHTTP(authService, secretKey, zapLogger)
 	return &authHandlers
 }

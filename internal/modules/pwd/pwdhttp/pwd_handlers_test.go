@@ -7,6 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"go.uber.org/zap"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -32,7 +34,7 @@ func (f FakePwdService) UpdatePassword(ctx context.Context, dto *pwddto.UpdatePw
 
 func TestPwdHandlers_SavePassword(t *testing.T) {
 	fake := FakePwdService{}
-	authHandlers := NewPwdHandlersHTTP(fake)
+	authHandlers := NewPwdHandlersHTTP(fake, zap.NewNop().Sugar())
 	r := httptest.NewRequest(http.MethodPost, "/pwd/save", http.NoBody)
 	w := httptest.NewRecorder()
 	authHandlers.SavePassword(w, r)

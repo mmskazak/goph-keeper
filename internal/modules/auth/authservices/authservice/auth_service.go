@@ -4,9 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"go.uber.org/zap"
 	dto2 "goph-keeper/internal/modules/auth/authdto"
 	"goph-keeper/internal/modules/auth/authservices/authhashpwd"
+
+	"go.uber.org/zap"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )

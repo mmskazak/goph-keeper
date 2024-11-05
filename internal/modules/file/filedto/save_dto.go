@@ -3,8 +3,8 @@ package filedto
 import (
 	"fmt"
 	"goph-keeper/internal/helpers"
-	"goph-keeper/internal/logger"
 	"io"
+	"log"
 	"mime/multipart"
 	"net/http"
 )
@@ -24,7 +24,7 @@ func SaveFileDTOFromHTTP(r *http.Request) (SaveFileDTO, error) {
 	defer func(file multipart.File) {
 		err := file.Close()
 		if err != nil {
-			logger.Log.Errorf("error closing file.proto: %v", err)
+			log.Printf("error closing file after uploading file: %v", err)
 		}
 	}(file)
 

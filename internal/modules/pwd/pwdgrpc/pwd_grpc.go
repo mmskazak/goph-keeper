@@ -4,12 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"go.uber.org/zap"
 	"goph-keeper/internal/helpers"
 	pb "goph-keeper/internal/modules/pwd/proto"
 	"goph-keeper/internal/modules/pwd/pwddto"
 	"goph-keeper/internal/modules/pwd/pwdservices"
 	"goph-keeper/internal/modules/pwd/valueobj"
+
+	"go.uber.org/zap"
 
 	"github.com/jackc/pgx/v5"
 	"google.golang.org/grpc/codes"
@@ -26,13 +27,17 @@ const ErrParseJWTFailed = "parse jwt failed: %w"
 type PasswordGRPCServer struct {
 	pb.UnimplementedPasswordServiceServer
 
+	zapLogger  *zap.SugaredLogger
 	pwdService pwdservices.IPwdService
 	secretKey  string
-	zapLogger  *zap.SugaredLogger
 }
 
 // NewPasswordGRPCServer - создаёт новый PasswordGRPCServer.
-func NewPasswordGRPCServer(service pwdservices.IPwdService, secretKey string, zapLogger *zap.SugaredLogger) *PasswordGRPCServer {
+func NewPasswordGRPCServer(
+	service pwdservices.IPwdService,
+	secretKey string,
+	zapLogger *zap.SugaredLogger,
+) *PasswordGRPCServer {
 	return &PasswordGRPCServer{
 		pwdService: service,
 		secretKey:  secretKey,

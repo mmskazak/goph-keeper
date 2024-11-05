@@ -3,18 +3,20 @@ package fileservices
 import (
 	"context"
 	"fmt"
-	"go.uber.org/zap"
 	"goph-keeper/internal/modules/file/filedto"
 	"goph-keeper/pkg/crypto"
+
+	"go.uber.org/zap"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type FileService struct {
 	pool        *pgxpool.Pool
+	zapLogger   *zap.SugaredLogger
 	cryptoKey   [32]byte
 	maxFileSize int // Максимально допустимый размер файла в байтах
-	zapLogger   *zap.SugaredLogger
+
 }
 
 func NewFileService(pool *pgxpool.Pool, enKey [32]byte, maxFileSize int, zapLogger *zap.SugaredLogger) *FileService {

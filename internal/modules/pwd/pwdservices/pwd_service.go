@@ -5,19 +5,20 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"go.uber.org/zap"
 	"goph-keeper/internal/modules/pwd/pwddto"
 	"goph-keeper/internal/modules/pwd/valueobj"
 	"goph-keeper/internal/storage"
 	"goph-keeper/pkg/crypto"
 
+	"go.uber.org/zap"
+
 	"github.com/jackc/pgx/v5"
 )
 
 type PwdService struct {
+	zapLogger *zap.SugaredLogger
 	pool      storage.Database
 	cryptoKey [32]byte
-	zapLogger *zap.SugaredLogger
 }
 
 func NewPwdService(pool storage.Database, enKey [32]byte, zapLogger *zap.SugaredLogger) *PwdService {
