@@ -3,7 +3,7 @@ package filehttp
 import (
 	"encoding/json"
 	"fmt"
-	"goph-keeper/internal/logger"
+	"go.uber.org/zap"
 	"goph-keeper/internal/modules/file/filedto"
 	"goph-keeper/internal/modules/file/fileservices"
 	"strconv"
@@ -15,11 +15,13 @@ const ContentType = "Content-Type"
 
 type FileHandlers struct {
 	fileService fileservices.IFileService
+	zapLogger   *zap.SugaredLogger
 }
 
-func NewFileHandlersHTTP(service fileservices.IFileService) FileHandlers {
+func NewFileHandlersHTTP(service fileservices.IFileService, zapLogger *zap.SugaredLogger) FileHandlers {
 	return FileHandlers{
 		fileService: service,
+		zapLogger:   zapLogger,
 	}
 }
 
@@ -27,7 +29,7 @@ func (p FileHandlers) SaveFile(w http.ResponseWriter, r *http.Request) {
 	// Преобразуем HTTP-запрос в DTO
 	saveFileDTO, err := filedto.SaveFileDTOFromHTTP(r)
 	if err != nil {
-		logger.Log.Errorf("Ошибка при построении DTO для сохранения файла: %v", err)
+		p.zapLogger.Errorf("Ошибка при построении DTO для сохранения файла: %v", err)
 		w.Header().Set(ContentType, "application/json")
 		w.WriteHeader(http.StatusBadRequest)
 		_ = json.NewEncoder(w).Encode(map[string]string{
@@ -40,7 +42,7 @@ func (p FileHandlers) SaveFile(w http.ResponseWriter, r *http.Request) {
 	// Сохраняем файл
 	err = p.fileService.SaveFile(r.Context(), saveFileDTO)
 	if err != nil {
-		logger.Log.Errorf("Ошибка сохранения файла: %v", err)
+		p.zapLogger.Errorf("Ошибка сохранения файла: %v", err)
 		w.Header().Set(ContentType, "application/json")
 		w.WriteHeader(http.StatusInternalServerError)
 		_ = json.NewEncoder(w).Encode(map[string]string{
@@ -62,7 +64,7 @@ func (p FileHandlers) SaveFile(w http.ResponseWriter, r *http.Request) {
 func (p FileHandlers) GetFile(w http.ResponseWriter, r *http.Request) {
 	getFileDTO, err := filedto.GetFileDTOFromHTTP(r)
 	if err != nil {
-		logger.Log.Errorf("error build DTO for get file.proto: %v", err)
+		p.zapLogger.Errorf("error build DTO for get file.proto: %v", err)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
@@ -70,7 +72,7 @@ func (p FileHandlers) GetFile(w http.ResponseWriter, r *http.Request) {
 	// Получаем байты файла из сервиса
 	fileData, nameFile, err := p.fileService.GetFile(r.Context(), getFileDTO)
 	if err != nil {
-		logger.Log.Errorf("error getting file.proto: %v", err)
+		p.zapLogger.Errorf("error getting file.proto: %v", err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
@@ -82,7 +84,7 @@ func (p FileHandlers) GetFile(w http.ResponseWriter, r *http.Request) {
 
 	// Отправляем байты файла в ответ
 	if _, err := w.Write(fileData); err != nil {
-		logger.Log.Errorf("error writing file data to response: %v", err)
+		p.zapLogger.Errorf("error writing file data to response: %v", err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
@@ -91,20 +93,20 @@ func (p FileHandlers) GetFile(w http.ResponseWriter, r *http.Request) {
 func (p FileHandlers) DeleteFile(w http.ResponseWriter, r *http.Request) {
 	deletePwdDTO, err := filedto.DeleteFileDTOFromHTTP(r)
 	if err != nil {
-		logger.Log.Errorf("error build DTO for delete file.proto: %v", err)
+		p.zapLogger.Errorf("error build DTO for delete file.proto: %v", err)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
 	err = p.fileService.DeleteFile(r.Context(), deletePwdDTO)
 	if err != nil {
-		logger.Log.Errorf("error deleting file.proto: %v", err)
+		p.zapLogger.Errorf("error deleting file.proto: %v", err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
 	_, err = w.Write([]byte("OK"))
 	if err != nil {
-		logger.Log.Errorf("error writing response: %v", err)
+		p.zapLogger.Errorf("error writing response: %v", err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
@@ -118,7 +120,7 @@ func (p FileHandlers) GetAllFiles(w http.ResponseWriter, r *http.Request) {
 	}
 	allPasswords, err := p.fileService.GetAllFiles(r.Context(), allPwdDTO)
 	if err != nil {
-		logger.Log.Errorf("error getting all files: %v", err)
+		p.zapLogger.Errorf("error getting all files: %v", err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
@@ -130,7 +132,7 @@ func (p FileHandlers) GetAllFiles(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	_, err = w.Write(marshaledAllPasswords)
 	if err != nil {
-		logger.Log.Errorf("error writing response: %v", err)
+		p.zapLogger.Errorf("error writing response: %v", err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}

@@ -7,14 +7,18 @@ import (
 	"go.uber.org/zap"
 	"goph-keeper/internal/config"
 	"goph-keeper/internal/modules/auth/authgrpc"
+	"goph-keeper/internal/modules/auth/authhttp"
+	"goph-keeper/internal/modules/auth/authmiddleware"
 	"goph-keeper/internal/modules/auth/authservices/authservice"
 	"goph-keeper/internal/modules/auth/proto"
 	"goph-keeper/internal/modules/file/filegrpc"
 	"goph-keeper/internal/modules/file/fileservices"
 	proto3 "goph-keeper/internal/modules/file/proto"
+	"goph-keeper/internal/modules/file/routesfile"
 	proto2 "goph-keeper/internal/modules/pwd/proto"
 	"goph-keeper/internal/modules/pwd/pwdgrpc"
 	"goph-keeper/internal/modules/pwd/pwdservices"
+	"goph-keeper/internal/modules/pwd/routespwd"
 	"net/http"
 	"time"
 
@@ -39,14 +43,13 @@ type App struct {
 
 // NewApp создает новый экземпляр приложения с HTTP и gRPC серверами.
 func NewApp(
-	ctx context.Context,
+	_ context.Context,
 	cfg *config.Config,
 	pool *pgxpool.Pool,
 	zapLogger *zap.SugaredLogger,
 ) *App {
-
-	pwdServices := pwdservices.NewPwdService(pool, cfg.EncryptionKey, zapLogger)
-
+	authService := authservice.NewAuthService(pool, zapLogger)
+	pwdService := pwdservices.NewPwdService(pool, cfg.EncryptionKey, zapLogger)
 	fileService := fileservices.NewFileService(
 		pool,
 		cfg.EncryptionKey,
@@ -55,7 +58,23 @@ func NewApp(
 	)
 
 	router := chi.NewRouter()
-	router = registrationHandlersHTTP(ctx, router, cfg, pool)
+	router.Group(func(r chi.Router) {
+		r.Post("/registration", func(w http.ResponseWriter, req *http.Request) {
+			getAuthHandlers(authService, cfg.SecretKey).Registration(w, req)
+		})
+		r.Post("/login", func(w http.ResponseWriter, req *http.Request) {
+			getAuthHandlers(authService, cfg.SecretKey).Login(w, req)
+		})
+	})
+
+	router.Group(func(r chi.Router) {
+		r.Use(func(next http.Handler) http.Handler {
+			return authmiddleware.Authentication(next, cfg.SecretKey)
+		})
+
+		routespwd.RegistrationRoutesPwd(r, pwdService, zapLogger)
+		routesfile.RegistrationRoutesFile(r, fileService, zapLogger)
+	})
 
 	manager := &autocert.Manager{
 		// перечень доменов, для которых будут поддерживаться сертификаты
@@ -75,14 +94,14 @@ func NewApp(
 	// Регистрация gRPC-сервисов
 	// Регистрация обработчиков для аутентификации
 	authGRPSHandlers := authgrpc.NewAuthGRPCServer(
-		authservice.NewAuthService(pool),
+		authService,
 		cfg.SecretKey,
 		zapLogger,
 	)
 	proto.RegisterAuthServiceServer(grpcServer, authGRPSHandlers) // Регистрация сервиса аутентификации
 	// Регистрация обработчиков для сохранения паролей
 	passwordGRPCHandlers := pwdgrpc.NewPasswordGRPCServer(
-		pwdServices,
+		pwdService,
 		cfg.SecretKey,
 		zapLogger,
 	)
@@ -139,4 +158,10 @@ func (a *App) Stop(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+// getAuthHandlers ...
+func getAuthHandlers(authService *authservice.AuthService, secretKey string) *authhttp.AuthHandlers {
+	authHandlers := authhttp.NewAuthHandlersHTTP(authService, secretKey)
+	return &authHandlers
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"go.uber.org/zap"
 	dto2 "goph-keeper/internal/modules/auth/authdto"
 	"goph-keeper/internal/modules/auth/authservices/authhashpwd"
 
@@ -11,11 +12,15 @@ import (
 )
 
 type AuthService struct {
-	pool *pgxpool.Pool
+	pool      *pgxpool.Pool
+	zapLogger *zap.SugaredLogger
 }
 
-func NewAuthService(pool *pgxpool.Pool) *AuthService {
-	return &AuthService{pool: pool}
+func NewAuthService(pool *pgxpool.Pool, zapLogger *zap.SugaredLogger) *AuthService {
+	return &AuthService{
+		pool:      pool,
+		zapLogger: zapLogger,
+	}
 }
 
 // Registration выполняет регистрацию нового пользователя.
