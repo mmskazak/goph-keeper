@@ -10,19 +10,31 @@ service AuthService {
 }
 
 message LoginRequest {
-  google.protobuf.StringValue username = 1;
-  google.protobuf.StringValue password = 2;
+  Username username = 1;
+  Password password = 2;
 }
 
 message LoginResponse {
-  google.protobuf.StringValue jwt = 1;      // JWT токен
+  Jwt jwt = 1;      // JWT токен
 }
 
 message RegistrationRequest {
-  google.protobuf.StringValue username = 1;
-  google.protobuf.StringValue password = 2;
+  Username username = 1;
+  Password password = 2;
 }
 
 message RegistrationResponse {
-  google.protobuf.StringValue jwt = 1;      // JWT токен
+  Jwt jwt = 1;      // JWT токен
+}
+
+message Username {
+  google.protobuf.StringValue username = 1;
+}
+
+message Password {
+  google.protobuf.StringValue password = 1;
+}
+
+message Jwt {
+  google.protobuf.StringValue jwt = 1;
 }

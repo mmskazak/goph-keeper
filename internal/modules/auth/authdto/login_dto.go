@@ -32,12 +32,12 @@ func LoginDTOFromRequestHTTP(r *http.Request) (*LoginDTO, error) {
 
 // LoginDTOFromLoginRequestGRPC преобразует LoginRequest в LoginDTO.
 func LoginDTOFromLoginRequestGRPC(req *pb.LoginRequest) (*LoginDTO, error) {
-	if req.GetUsername() == "" || req.GetPassword() == "" {
+	if req.GetUsername().GetUsername().GetValue() == "" || req.GetPassword().GetPassword().GetValue() == "" {
 		return nil, errors.New("username and password must not be empty")
 	}
 
 	return &LoginDTO{
-		Username: req.GetUsername(),
-		Password: req.GetPassword(),
+		Username: req.GetUsername().GetUsername().GetValue(),
+		Password: req.GetPassword().GetPassword().GetValue(),
 	}, nil
 }

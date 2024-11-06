@@ -58,7 +58,9 @@ func (s *AuthGRPCServer) Login(ctx context.Context, req *pb.LoginRequest) (*pb.L
 	}
 
 	return &pb.LoginResponse{
-		Jwt: wrapperspb.String("Bearer " + token),
+		Jwt: &pb.Jwt{
+			Jwt: wrapperspb.String("Bearer " + token),
+		},
 	}, nil
 }
 
@@ -86,7 +88,9 @@ func (s *AuthGRPCServer) Registration(
 	}
 
 	return &pb.RegistrationResponse{
-		Jwt: wrapperspb.String("Bearer " + token),
+		Jwt: &pb.Jwt{
+			Jwt: wrapperspb.String("Bearer " + token),
+		},
 	}, nil
 }
 
