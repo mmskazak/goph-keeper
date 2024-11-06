@@ -3,27 +3,31 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/jackc/pgx/v5/pgxpool"
-	"gophKeeper/internal/app"
-	"gophKeeper/internal/config"
-	"gophKeeper/internal/logger"
+	"goph-keeper/internal/app"
+	"goph-keeper/internal/config"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"go.uber.org/zap"
+
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+// runApp запуск приложения.
 func runApp(
 	ctx context.Context,
 	cfg *config.Config,
 	pool *pgxpool.Pool,
 	shutdownDuration time.Duration,
+	zapLogger *zap.SugaredLogger,
 ) error {
-	newApp := app.NewApp(ctx, cfg, pool)
+	newApp := app.NewApp(ctx, cfg, pool, zapLogger)
 	go func() {
 		err := newApp.Start()
 		if err != nil {
-			logger.Log.Errorf("error start app: %v", err)
+			zapLogger.Errorf("error start app: %v", err)
 		}
 	}()
 
@@ -32,9 +36,9 @@ func runApp(
 
 	select {
 	case <-quit: // Ожидание сигнала завершения
-		logger.Log.Infoln("Получен сигнал завершения, остановка сервера...")
+		zapLogger.Infoln("Получен сигнал завершения, остановка сервера...")
 	case <-ctx.Done(): // Завершение по контексту
-		logger.Log.Infoln("Контекст завершён, остановка сервера...")
+		zapLogger.Infoln("Контекст завершён, остановка сервера...")
 	}
 
 	ctxShutdown, cancel := context.WithTimeout(context.Background(), shutdownDuration)
@@ -43,7 +47,7 @@ func runApp(
 	if err := newApp.Stop(ctxShutdown); err != nil {
 		return fmt.Errorf("error stop app: %w", err)
 	}
-	logger.Log.Infoln("Приложение завершило работу.")
+	zapLogger.Infoln("Приложение завершило работу.")
 
 	return nil
 }

@@ -3,8 +3,9 @@ package psql
 import (
 	"context"
 	"fmt"
+	"goph-keeper/internal/config"
+
 	"github.com/jackc/pgx/v5/pgxpool"
-	"gophKeeper/internal/config"
 )
 
 func NewPgxPool(ctx context.Context, cfg *config.Config) (*pgxpool.Pool, error) {

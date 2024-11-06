@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+package file;
+
+option go_package = "../proto";
+
+service FileService {
+  rpc SaveFile (SaveFileRequest) returns (BasicResponse);
+  rpc GetFile (GetFileRequest) returns (stream GetFileResponse);
+  rpc DeleteFile (DeleteFileRequest) returns (BasicResponse);
+  rpc GetAllFiles (GetAllFilesRequest) returns (GetAllFilesResponse);
+}
+
+// Общий ответ для операций, которые не возвращают специфичные данные
+message BasicResponse {
+}
+
+// Запрос на сохранение файла
+message SaveFileRequest {
+  google.protobuf.StringValue jwt = 1;
+  google.protobuf.StringValue name_file = 2;
+  google.protobuf.BytesValue file_data = 3;
+}
+
+// Запрос на получение файла
+message GetFileRequest {
+  google.protobuf.StringValue jwt = 1;
+  google.protobuf.StringValue file_id = 2;
+}
+
+// Ответ на запрос получения файла
+message GetFileResponse {
+  google.protobuf.BytesValue file_data = 1;
+  google.protobuf.StringValue name_file = 2;
+}
+
+// Запрос на удаление файла
+message DeleteFileRequest {
+  google.protobuf.StringValue jwt = 1;
+  google.protobuf.StringValue file_id = 2;
+}
+
+// Запрос на получение всех файлов пользователя
+message GetAllFilesRequest {
+  google.protobuf.StringValue jwt = 1;
+}
+
+// Ответ на запрос всех файлов
+message GetAllFilesResponse {
+  repeated FileInfo files = 1;
+}
+
+// Информация о файле в ответе GetAllFilesResponse
+message FileInfo {
+  google.protobuf.StringValue file_id = 1;
+  google.protobuf.StringValue name_file = 2;
+}

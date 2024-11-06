@@ -2,8 +2,9 @@ package config
 
 import (
 	"errors"
-	"go.uber.org/zap/zapcore"
 	"strings"
+
+	"go.uber.org/zap/zapcore"
 )
 
 // LogLevel представляет уровень логирования.

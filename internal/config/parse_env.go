@@ -4,6 +4,7 @@ import "os"
 
 func parseEnv() *Config {
 	config := NewConfig()
+
 	if envServAddr, ok := os.LookupEnv("SERVER_ADDRESS"); ok {
 		config.Address = envServAddr
 	}
@@ -18,6 +19,11 @@ func parseEnv() *Config {
 
 	if secretKey, ok := os.LookupEnv("SECRET_KEY"); ok {
 		config.SecretKey = secretKey
+	}
+
+	// Добавление поддержки 32-байтного ключа для шифрования
+	if encryptionKeyHex, ok := os.LookupEnv("ENCRYPTION_KEY"); ok {
+		config.EncryptionKeyString = encryptionKeyHex
 	}
 
 	return config

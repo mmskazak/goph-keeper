@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+import "google/protobuf/wrappers.proto";
+
+package pwd;
+
+option go_package = "../proto";
+
+// Сервис для работы с паролями
+service PasswordService {
+  rpc SavePassword(SavePwdRequest) returns (BasicResponse);       // Используем BasicResponse вместо пустого ответа
+  rpc UpdatePassword(UpdatePwdRequest) returns (BasicResponse);   // Также возвращает BasicResponse
+  rpc DeletePassword(DeletePwdRequest) returns (BasicResponse);
+  rpc GetPassword(GetPwdRequest) returns (PwdResponse);           // Возвращает один объект пароля
+  rpc GetAllPasswords(AllPwdRequest) returns (AllPwdResponse);    // Возвращает список всех паролей
+}
+
+// Общий ответ для операций, которые не возвращают данные
+message BasicResponse {
+}
+
+// Запрос на сохранение пароля
+message SavePwdRequest {
+  google.protobuf.StringValue jwt = 1;
+  google.protobuf.StringValue title = 2;
+  Credentials credentials = 4;
+}
+
+// Запрос на обновление пароля
+message UpdatePwdRequest {
+  google.protobuf.StringValue jwt = 1;
+  google.protobuf.StringValue pwd_id = 2;
+  google.protobuf.StringValue title = 3;
+  Credentials credentials = 5;
+}
+
+// Запрос на удаление пароля
+message DeletePwdRequest {
+  google.protobuf.StringValue jwt = 1;
+  google.protobuf.StringValue pwd_id =2;
+}
+
+// Запрос на получение пароля
+message GetPwdRequest {
+  google.protobuf.StringValue jwt = 1;
+  google.protobuf.StringValue pwd_id = 2;
+}
+
+// Запрос на получение всех паролей
+message AllPwdRequest {
+  google.protobuf.StringValue jwt = 1;
+}
+
+// Ответ с информацией о пароле
+message PwdResponse {
+  google.protobuf.StringValue pwd_id = 1; // Идентификатор пароля
+  google.protobuf.StringValue title = 2;
+  Credentials credentials = 4;
+}
+
+// Ответ на запрос всех паролей
+message AllPwdResponse {
+  repeated PwdResponse passwords = 1; // Список паролей пользователя
+}
+
+// Определение структуры учетных данных
+message Credentials {
+  google.protobuf.StringValue login = 1;
+  google.protobuf.StringValue password = 2;
+}
