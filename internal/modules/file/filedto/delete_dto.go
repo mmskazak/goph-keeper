@@ -24,7 +24,7 @@ func DeleteFileDTOFromHTTP(r *http.Request) (DeleteFileDTO, error) {
 	// Извлекаем userID из контекста
 	userID, err := helpers.GetUserIDFromContext(r.Context())
 	if err != nil {
-		return DeleteFileDTO{}, fmt.Errorf("error GetUserIDFromContext DeleteFileDTOFromHTTP: %w", err)
+		return DeleteFileDTO{}, fmt.Errorf("error GetUserIDFromContext for delete file: %w", err)
 	}
 
 	var deletePwdDTO DeleteFileDTO

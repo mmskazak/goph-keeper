@@ -3,11 +3,12 @@ package authgrpc
 import (
 	"context"
 	"errors"
-	"google.golang.org/protobuf/types/known/wrapperspb"
 	"goph-keeper/internal/modules/auth/authdto"
 	"goph-keeper/internal/modules/auth/authservices/authjwtservice"
 	"goph-keeper/internal/modules/auth/authservices/authservice"
 	pb "goph-keeper/internal/modules/auth/proto"
+
+	"google.golang.org/protobuf/types/known/wrapperspb"
 
 	"go.uber.org/zap"
 
