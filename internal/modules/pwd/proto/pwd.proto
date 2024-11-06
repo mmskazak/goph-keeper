@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package pwd;
+import "google/protobuf/wrappers.proto";
 
 option go_package = "../proto";
 
@@ -19,40 +19,40 @@ message BasicResponse {
 
 // Запрос на сохранение пароля
 message SavePwdRequest {
-  string jwt = 1;
-  string title = 2;
+  google.protobuf.StringValue jwt = 1;
+  google.protobuf.StringValue title = 2;
   Credentials credentials = 4;
 }
 
 // Запрос на обновление пароля
 message UpdatePwdRequest {
-  string jwt = 1;
-  string pwd_id = 2;
-  string title = 3;
+  google.protobuf.StringValue jwt = 1;
+  google.protobuf.StringValue pwd_id = 2;
+  google.protobuf.StringValue title = 3;
   Credentials credentials = 5;
 }
 
 // Запрос на удаление пароля
 message DeletePwdRequest {
-  string jwt = 1;
-  string pwd_id =2;
+  google.protobuf.StringValue jwt = 1;
+  google.protobuf.StringValue pwd_id =2;
 }
 
 // Запрос на получение пароля
 message GetPwdRequest {
-  string jwt = 1;
-  string pwd_id = 2;
+  google.protobuf.StringValue jwt = 1;
+  google.protobuf.StringValue pwd_id = 2;
 }
 
 // Запрос на получение всех паролей
 message AllPwdRequest {
-  string jwt = 1;
+  google.protobuf.StringValue jwt = 1;
 }
 
 // Ответ с информацией о пароле
 message PwdResponse {
-  string pwd_id = 1; // Идентификатор пароля
-  string title = 2;
+  google.protobuf.StringValue pwd_id = 1; // Идентификатор пароля
+  google.protobuf.StringValue title = 2;
   Credentials credentials = 4;
 }
 
@@ -63,6 +63,6 @@ message AllPwdResponse {
 
 // Определение структуры учетных данных
 message Credentials {
-  string login = 1;
-  string password = 2;
+  google.protobuf.StringValue login = 1;
+  google.protobuf.StringValue password = 2;
 }

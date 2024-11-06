@@ -2,6 +2,7 @@ package filegrpc
 
 import (
 	"context"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 	"goph-keeper/internal/helpers"
 	"goph-keeper/internal/modules/file/filedto"
 	"goph-keeper/internal/modules/file/fileservices"
@@ -15,7 +16,6 @@ import (
 
 //go:generate protoc --proto_path=../proto --go_out=. --go-grpc_out=. file.proto
 
-const ErrParsingValidateJWT = "error parsing and validating JWT token: %w"
 const ErrFailedToValidateJWT = "Failed to validate JWT token: %v"
 
 // FileGRPCServer - сервис GRPC отвечающий за работу с файлами.
@@ -41,15 +41,15 @@ func NewFileGRPCServer(
 
 // SaveFile сохраняет файл на сервере.
 func (s *FileGRPCServer) SaveFile(ctx context.Context, req *proto.SaveFileRequest) (*proto.BasicResponse, error) {
-	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt(), s.secretKey)
+	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt().GetValue(), s.secretKey)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, ErrFailedToValidateJWT, err)
 	}
 
 	saveFileDTO := filedto.SaveFileDTO{
 		UserID:   userID,
-		NameFile: req.GetNameFile(),
-		FileData: req.GetFileData(),
+		NameFile: req.GetNameFile().GetValue(),
+		FileData: req.GetFileData().GetValue(),
 	}
 
 	if err := s.fileService.SaveFile(ctx, saveFileDTO); err != nil {
@@ -62,14 +62,14 @@ func (s *FileGRPCServer) SaveFile(ctx context.Context, req *proto.SaveFileReques
 
 // GetFile возвращает файл пользователю.
 func (s *FileGRPCServer) GetFile(req *proto.GetFileRequest, stream proto.FileService_GetFileServer) error {
-	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt(), s.secretKey)
+	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt().GetValue(), s.secretKey)
 	if err != nil {
 		return status.Errorf(codes.Unauthenticated, ErrFailedToValidateJWT, err)
 	}
 
 	getFileDTO := filedto.GetFileDTO{
 		UserID: userID,
-		FileID: req.GetFileId(),
+		FileID: req.GetFileId().GetValue(),
 	}
 
 	// Получаем байты файла из сервиса
@@ -80,8 +80,8 @@ func (s *FileGRPCServer) GetFile(req *proto.GetFileRequest, stream proto.FileSer
 
 	// Отправляем данные файла в поток
 	if err := stream.Send(&proto.GetFileResponse{
-		FileData: fileData, // отправляются байты
-		NameFile: nameFile,
+		FileData: wrapperspb.Bytes(fileData), // отправляются байты
+		NameFile: wrapperspb.String(nameFile),
 	}); err != nil {
 		return status.Errorf(codes.Internal, "Failed to send file data: %v", err)
 	}
@@ -91,14 +91,14 @@ func (s *FileGRPCServer) GetFile(req *proto.GetFileRequest, stream proto.FileSer
 
 // DeleteFile удаляет файл с сервера.
 func (s *FileGRPCServer) DeleteFile(ctx context.Context, req *proto.DeleteFileRequest) (*proto.BasicResponse, error) {
-	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt(), s.secretKey)
+	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt().GetValue(), s.secretKey)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, ErrFailedToValidateJWT, err)
 	}
 
 	deleteFileDTO := filedto.DeleteFileDTO{
 		UserID: userID,
-		FileID: req.GetFileId(),
+		FileID: req.GetFileId().GetValue(),
 	}
 
 	if err := s.fileService.DeleteFile(ctx, deleteFileDTO); err != nil {
@@ -113,7 +113,7 @@ func (s *FileGRPCServer) GetAllFiles(
 	ctx context.Context,
 	req *proto.GetAllFilesRequest,
 ) (*proto.GetAllFilesResponse, error) {
-	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt(), s.secretKey)
+	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt().GetValue(), s.secretKey)
 	if err != nil {
 		return nil, status.Errorf(codes.Unauthenticated, ErrFailedToValidateJWT, err)
 	}
@@ -130,8 +130,8 @@ func (s *FileGRPCServer) GetAllFiles(
 	fileItems := make([]*proto.FileInfo, 0, len(files)) // Предвыделяем память
 	for _, file := range files {
 		fileItems = append(fileItems, &proto.FileInfo{
-			FileId:   file.FileID,
-			NameFile: file.NameFile, // Используем название из DTO
+			FileId:   wrapperspb.String(file.FileID),
+			NameFile: wrapperspb.String(file.NameFile), // Используем название из DTO
 		})
 	}
 

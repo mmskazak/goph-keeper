@@ -8,7 +8,6 @@ package proto
 
 import (
 	context "context"
-
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -20,8 +19,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AuthService_Login_FullMethodName        = "/auth.AuthService/Login"
-	AuthService_Registration_FullMethodName = "/auth.AuthService/Registration"
+	AuthService_Login_FullMethodName        = "/AuthService/Login"
+	AuthService_Registration_FullMethodName = "/AuthService/Registration"
 )
 
 // AuthServiceClient is the client API for AuthService service.
@@ -143,7 +142,7 @@ func _AuthService_Registration_Handler(srv interface{}, ctx context.Context, dec
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var AuthService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "auth.AuthService",
+	ServiceName: "AuthService",
 	HandlerType: (*AuthServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

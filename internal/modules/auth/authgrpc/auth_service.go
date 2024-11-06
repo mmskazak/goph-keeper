@@ -3,6 +3,7 @@ package authgrpc
 import (
 	"context"
 	"errors"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 	"goph-keeper/internal/modules/auth/authdto"
 	"goph-keeper/internal/modules/auth/authservices/authjwtservice"
 	"goph-keeper/internal/modules/auth/authservices/authservice"
@@ -57,7 +58,7 @@ func (s *AuthGRPCServer) Login(ctx context.Context, req *pb.LoginRequest) (*pb.L
 	}
 
 	return &pb.LoginResponse{
-		Jwt: "Bearer " + token,
+		Jwt: wrapperspb.String("Bearer " + token),
 	}, nil
 }
 
@@ -85,7 +86,7 @@ func (s *AuthGRPCServer) Registration(
 	}
 
 	return &pb.RegistrationResponse{
-		Jwt: "Bearer " + token,
+		Jwt: wrapperspb.String("Bearer " + token),
 	}, nil
 }
 

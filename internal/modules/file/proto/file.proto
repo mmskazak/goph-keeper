@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package file;
+import "google/protobuf/wrappers.proto";
 
 option go_package = "../proto";
 
@@ -17,32 +17,32 @@ message BasicResponse {
 
 // Запрос на сохранение файла
 message SaveFileRequest {
-  string jwt = 1;
-  string name_file = 2;
-  bytes file_data = 3;
+  google.protobuf.StringValue jwt = 1;
+  google.protobuf.StringValue name_file = 2;
+  google.protobuf.BytesValue file_data = 3;
 }
 
 // Запрос на получение файла
 message GetFileRequest {
-  string jwt = 1;
-  string file_id = 2;
+  google.protobuf.StringValue jwt = 1;
+  google.protobuf.StringValue file_id = 2;
 }
 
 // Ответ на запрос получения файла
 message GetFileResponse {
-  bytes file_data = 1;
-  string name_file = 2;
+  google.protobuf.BytesValue file_data = 1;
+  google.protobuf.StringValue name_file = 2;
 }
 
 // Запрос на удаление файла
 message DeleteFileRequest {
-  string jwt = 1;
-  string file_id = 2;
+  google.protobuf.StringValue jwt = 1;
+  google.protobuf.StringValue file_id = 2;
 }
 
 // Запрос на получение всех файлов пользователя
 message GetAllFilesRequest {
-  string jwt = 1;
+  google.protobuf.StringValue jwt = 1;
 }
 
 // Ответ на запрос всех файлов
@@ -52,6 +52,6 @@ message GetAllFilesResponse {
 
 // Информация о файле в ответе GetAllFilesResponse
 message FileInfo {
-  string file_id = 1;
-  string name_file = 2;
+  google.protobuf.StringValue file_id = 1;
+  google.protobuf.StringValue name_file = 2;
 }

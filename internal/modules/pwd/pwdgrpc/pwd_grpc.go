@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"google.golang.org/protobuf/types/known/wrapperspb"
 	"goph-keeper/internal/helpers"
 	pb "goph-keeper/internal/modules/pwd/proto"
 	"goph-keeper/internal/modules/pwd/pwddto"
@@ -47,17 +48,17 @@ func NewPasswordGRPCServer(
 
 // SavePassword сохраняет пароль.
 func (s *PasswordGRPCServer) SavePassword(ctx context.Context, req *pb.SavePwdRequest) (*pb.BasicResponse, error) {
-	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt(), s.secretKey)
+	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt().GetValue(), s.secretKey)
 	if err != nil {
 		return nil, fmt.Errorf(ErrParseJWTFailed, err)
 	}
 
 	savePwdDTO := pwddto.SavePwdDTO{
 		UserID: userID,
-		Title:  req.GetTitle(),
+		Title:  req.GetTitle().GetValue(),
 		Credentials: valueobj.Credentials{
-			Login:    req.GetCredentials().GetLogin(),
-			Password: req.GetCredentials().GetPassword(),
+			Login:    req.GetCredentials().GetLogin().GetValue(),
+			Password: req.GetCredentials().GetPassword().GetValue(),
 		},
 	}
 
@@ -71,18 +72,18 @@ func (s *PasswordGRPCServer) SavePassword(ctx context.Context, req *pb.SavePwdRe
 
 // UpdatePassword обновляет пароль.
 func (s *PasswordGRPCServer) UpdatePassword(ctx context.Context, req *pb.UpdatePwdRequest) (*pb.BasicResponse, error) {
-	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt(), s.secretKey)
+	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt().GetValue(), s.secretKey)
 	if err != nil {
 		return nil, fmt.Errorf(ErrParseJWTFailed, err)
 	}
 
 	updatePwdDTO := pwddto.UpdatePwdDTO{
 		UserID: userID,
-		PwdID:  req.GetPwdId(),
-		Title:  req.GetTitle(),
+		PwdID:  req.GetPwdId().GetValue(),
+		Title:  req.GetTitle().GetValue(),
 		Credentials: valueobj.Credentials{
-			Login:    req.GetCredentials().GetLogin(),
-			Password: req.GetCredentials().GetPassword(),
+			Login:    req.GetCredentials().GetLogin().GetValue(),
+			Password: req.GetCredentials().GetPassword().GetValue(),
 		},
 	}
 
@@ -99,13 +100,13 @@ func (s *PasswordGRPCServer) UpdatePassword(ctx context.Context, req *pb.UpdateP
 
 // DeletePassword удаляет пароль.
 func (s *PasswordGRPCServer) DeletePassword(ctx context.Context, req *pb.DeletePwdRequest) (*pb.BasicResponse, error) {
-	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt(), s.secretKey)
+	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt().GetValue(), s.secretKey)
 	if err != nil {
 		return nil, fmt.Errorf(ErrParseJWTFailed, err)
 	}
 
 	deletePwdDTO := pwddto.DeletePwdDTO{
-		PwdID:  req.GetPwdId(),
+		PwdID:  req.GetPwdId().GetValue(),
 		UserID: userID,
 	}
 
@@ -122,13 +123,13 @@ func (s *PasswordGRPCServer) DeletePassword(ctx context.Context, req *pb.DeleteP
 
 // GetPassword получает один пароль.
 func (s *PasswordGRPCServer) GetPassword(ctx context.Context, req *pb.GetPwdRequest) (*pb.PwdResponse, error) {
-	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt(), s.secretKey)
+	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt().GetValue(), s.secretKey)
 	if err != nil {
 		return nil, fmt.Errorf(ErrParseJWTFailed, err)
 	}
 
 	getPwdDTO := pwddto.GetPwdDTO{
-		PwdID:  req.GetPwdId(),
+		PwdID:  req.GetPwdId().GetValue(),
 		UserID: userID,
 	}
 
@@ -142,18 +143,18 @@ func (s *PasswordGRPCServer) GetPassword(ctx context.Context, req *pb.GetPwdRequ
 	}
 
 	return &pb.PwdResponse{
-		PwdId: responsePwdDTO.PwdID,
-		Title: responsePwdDTO.Title,
+		PwdId: wrapperspb.String(responsePwdDTO.PwdID),
+		Title: wrapperspb.String(responsePwdDTO.Title),
 		Credentials: &pb.Credentials{
-			Login:    responsePwdDTO.Credentials.Login,
-			Password: responsePwdDTO.Credentials.Password,
+			Login:    wrapperspb.String(responsePwdDTO.Credentials.Login),
+			Password: wrapperspb.String(responsePwdDTO.Credentials.Password),
 		},
 	}, nil
 }
 
 // GetAllPasswords получает все пароли.
 func (s *PasswordGRPCServer) GetAllPasswords(ctx context.Context, req *pb.AllPwdRequest) (*pb.AllPwdResponse, error) {
-	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt(), s.secretKey)
+	userID, err := helpers.ParseTokenAndExtractUserID(req.GetJwt().GetValue(), s.secretKey)
 	if err != nil {
 		return nil, fmt.Errorf(ErrParseJWTFailed, err)
 	}
@@ -171,11 +172,11 @@ func (s *PasswordGRPCServer) GetAllPasswords(ctx context.Context, req *pb.AllPwd
 	pwdResponses := make([]*pb.PwdResponse, 0, len(allPasswords))
 	for _, pwd := range allPasswords {
 		pwdResponses = append(pwdResponses, &pb.PwdResponse{
-			PwdId: pwd.PwdID,
-			Title: pwd.Title,
+			PwdId: wrapperspb.String(pwd.PwdID),
+			Title: wrapperspb.String(pwd.Title),
 			Credentials: &pb.Credentials{
-				Login:    pwd.Credentials.Login,
-				Password: pwd.Credentials.Password,
+				Login:    wrapperspb.String(pwd.Credentials.Login),
+				Password: wrapperspb.String(pwd.Credentials.Password),
 			},
 		})
 	}

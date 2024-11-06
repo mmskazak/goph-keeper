@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package auth;
+import "google/protobuf/wrappers.proto";
 
 option go_package = "../proto";
 
@@ -10,19 +10,19 @@ service AuthService {
 }
 
 message LoginRequest {
-  string username = 1;
-  string password = 2;
+  google.protobuf.StringValue username = 1;
+  google.protobuf.StringValue password = 2;
 }
 
 message LoginResponse {
-  string jwt = 1;      // JWT токен, если статус "success"
+  google.protobuf.StringValue jwt = 1;      // JWT токен
 }
 
 message RegistrationRequest {
-  string username = 1;
-  string password = 2;
+  google.protobuf.StringValue username = 1;
+  google.protobuf.StringValue password = 2;
 }
 
 message RegistrationResponse {
-  string jwt = 1;      // JWT токен, если статус "success"
+  google.protobuf.StringValue jwt = 1;      // JWT токен
 }
