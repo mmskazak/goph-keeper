@@ -49,8 +49,8 @@ func TestPwdService_SavePassword(t *testing.T) {
 }
 
 func TestPwdService_DeletePassword(t *testing.T) {
-	t.Skip()
 	mockPool := new(mocks.MockDatabase)
+	mockRow := new(mocks.MockRow)
 	ctx := context.Background()
 	dto := pwddto.DeletePwdDTO{
 		UserID: 1,
@@ -62,13 +62,15 @@ func TestPwdService_DeletePassword(t *testing.T) {
 	// Преобразуем строку в массив байтов
 	var key [32]byte
 	copy(key[:], strKey)
-	ct := pgconn.NewCommandTag("success")
-	mockPool.On("Exec", ctx,
+
+	mockRow.On("Scan", mock.Anything).Return(nil)
+	mockPool.On("QueryRow", ctx,
 		mock.Anything,
 		mock.Anything,
 		mock.Anything,
 		mock.Anything,
-	).Return(ct, nil)
+	).Return(mockRow, nil)
+
 	s := NewPwdService(mockPool, key, zap.NewNop().Sugar())
 	err := s.DeletePassword(ctx, &dto)
 	require.Nil(t, err)
