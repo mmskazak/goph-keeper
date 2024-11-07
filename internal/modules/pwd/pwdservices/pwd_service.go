@@ -78,7 +78,7 @@ func (pwd *PwdService) GetPassword(ctx context.Context, dto *pwddto.GetPwdDTO) (
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			// Обработка случая, когда запись не найдена
-			pwd.zapLogger.Errorf("password not found for user %s: %v", dto.UserID, err)
+			pwd.zapLogger.Errorf("password not found for user %v: %v", dto.UserID, err)
 			return pwddto.ResponsePwdDTO{}, fmt.Errorf("password not found for user: %w", err)
 		}
 		// Обработка других ошибок

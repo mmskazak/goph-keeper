@@ -2,7 +2,7 @@ package pwdservices
 
 import (
 	"context"
-	"fmt"
+	"errors"
 	"goph-keeper/internal/modules/pwd/pwddto"
 	"goph-keeper/internal/modules/pwd/valueobj"
 	"goph-keeper/internal/storage/mocks"
@@ -77,7 +77,6 @@ func TestPwdService_DeletePassword(t *testing.T) {
 }
 
 func TestPwdService_GetPassword(t *testing.T) {
-	t.Skip()
 	mockPool := new(mocks.MockDatabase)
 	ctx := context.Background()
 	dto := pwddto.GetPwdDTO{
@@ -92,23 +91,30 @@ func TestPwdService_GetPassword(t *testing.T) {
 	copy(key[:], strKey)
 	mkRow := new(mocks.MockRow)
 
+	errDecrypt := errors.New("error decrypt")
 	mockPool.On("QueryRow", ctx,
-		mock.Anything,
 		mock.Anything,
 		mock.Anything,
 		mock.Anything,
 	).Return(mkRow)
 
-	mkRow.On("Scan", mock.Anything).
+	mkRow.On("Scan", mock.Anything, mock.Anything, mock.Anything).
 		Run(func(args mock.Arguments) {
-			if dest, ok := args.Get(0).(*[]byte); ok {
-				*dest = []byte("error credentials")
+			if dest1, ok := args.Get(0).(*string); ok {
+				*dest1 = "1"
+			}
+			if dest2, ok := args.Get(1).(*string); ok {
+				*dest2 = "title"
+			}
+			if dest3, ok := args.Get(2).(*[]byte); ok {
+				*dest3 = []byte("credentials")
 			}
 		}).
-		Return(nil)
+		Return(errDecrypt)
 
 	s := NewPwdService(mockPool, key, zap.NewNop().Sugar())
-	pwd, err := s.GetPassword(ctx, &dto)
-	assert.EqualError(t, err, "error decrypt for GetPassword invalid format: expected nonce:ciphertext")
-	fmt.Println(pwd)
+	_, err := s.GetPassword(ctx, &dto)
+	assert.EqualError(t,
+		err,
+		"error scanning password from pwd service: error MockRow func Scan: error decrypt")
 }
