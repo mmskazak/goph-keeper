@@ -26,6 +26,12 @@
 клиентом, то можете воспользоваться примерами запросов представленных ниже.
 
 ---
+### proto файлы:
+internal/modules/auth/proto/auth.proto
+internal/modules/pwd/proto/pwd.proto
+internal/modules/file/proto/file.proto
+
+---
 ### API приложения
 
 ### Регистрация
