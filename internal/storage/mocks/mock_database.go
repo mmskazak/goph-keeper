@@ -2,6 +2,7 @@ package mocks
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/jackc/pgx/v5"
@@ -76,4 +77,22 @@ func (m *MockDatabase) Begin(ctx context.Context) (pgx.Tx, error) {
 // Close - мок для метода Close.
 func (m *MockDatabase) Close() {
 	m.Called()
+}
+
+// Query - мок для метода QueryRow.
+func (m *MockDatabase) Query(ctx context.Context, sql string, args ...interface{}) (pgx.Rows, error) {
+	a := m.Called(ctx, sql, args)
+	// Приведение типа с проверкой
+	rows, ok := a.Get(0).(pgx.Rows)
+	if !ok {
+		return nil, errors.New("error ger rows")
+	}
+
+	// Приведение типа с проверкой
+	err, ok := a.Get(1).(error)
+	if ok {
+		return nil, fmt.Errorf("error from MockDatabase.Query: %w", err)
+	}
+
+	return rows, nil
 }

@@ -118,3 +118,26 @@ func TestPwdService_GetPassword(t *testing.T) {
 		err,
 		"error scanning password from pwd service: error MockRow func Scan: error decrypt")
 }
+
+func TestPwdService_GetAllPasswords(t *testing.T) {
+	ctx := context.Background()
+	mockPool := new(mocks.MockDatabase)
+	mockRows := new(mocks.MockRows)
+	// Строка длиной 32 символа
+	strKey := "MySecretEncryptionKey1234567890a"
+	// Преобразуем строку в массив байтов
+	var key [32]byte
+	copy(key[:], strKey)
+	s := NewPwdService(mockPool, key, zap.NewNop().Sugar())
+	dto := pwddto.AllPwdDTO{
+		UserID: 1,
+	}
+	queryError := errors.New("query error")
+	mockPool.On("Query", ctx,
+		mock.Anything,
+		mock.Anything,
+	).Return(mockRows, queryError)
+
+	_, err := s.GetAllPasswords(ctx, &dto)
+	assert.ErrorIs(t, err, queryError)
+}
