@@ -119,7 +119,7 @@ func TestPwdService_GetPassword(t *testing.T) {
 		"error scanning password from pwd service: error MockRow func Scan: error decrypt")
 }
 
-func TestPwdService_GetAllPasswords(t *testing.T) {
+func TestPwdService_GetAllPasswordsQueryError(t *testing.T) {
 	ctx := context.Background()
 	mockPool := new(mocks.MockDatabase)
 	mockRows := new(mocks.MockRows)
@@ -140,4 +140,50 @@ func TestPwdService_GetAllPasswords(t *testing.T) {
 
 	_, err := s.GetAllPasswords(ctx, &dto)
 	assert.ErrorIs(t, err, queryError)
+}
+
+func TestPwdService_GetAllPasswords(t *testing.T) {
+	ctx := context.Background()
+	mockPool := new(mocks.MockDatabase)
+	mockRows := new(mocks.MockRows)
+	// Строка длиной 32 символа
+	strKey := "MySecretEncryptionKey1234567890a"
+	// Преобразуем строку в массив байтов
+	var key [32]byte
+	copy(key[:], strKey)
+	s := NewPwdService(mockPool, key, zap.NewNop().Sugar())
+	dto := pwddto.AllPwdDTO{
+		UserID: 1,
+	}
+	mockPool.On("Query", ctx,
+		mock.Anything,
+		mock.Anything,
+	).Return(mockRows, nil)
+
+	mockRows.On("Next").Return(true).Once()  // Первый вызов вернет true
+	mockRows.On("Next").Return(false).Once() // Второй вызов вернет false
+	mockRows.On("Err").Return(nil).Once()
+	mockRows.On("Scan",
+		mock.AnythingOfType("*string"),
+		mock.AnythingOfType("*string"),
+		mock.AnythingOfType("*[]uint8"),
+	).
+		Run(func(args mock.Arguments) {
+			id, ok := args.Get(0).(*string)
+			if ok {
+				*id = "1"
+			}
+			title, ok := args.Get(1).(*string)
+			if ok {
+				*title = "http://google.com"
+			}
+			credential, ok := args.Get(2).(*[]byte)
+			if ok {
+				*credential = []byte("{\"login\": \"myemail@example.com\", \"password\": \"17c5d99202bd0e1141d3dcee:2ac2a44261925c17213821b8c4\"}")
+			}
+		}).Return(nil)
+
+	listPasswords, err := s.GetAllPasswords(ctx, &dto)
+	assert.NoError(t, err)
+	assert.Equal(t, "mypassword123", listPasswords[0].Credentials.Password)
 }
