@@ -3,9 +3,9 @@ package pwdservices
 import (
 	"context"
 	"errors"
+	mocksPwd "goph-keeper/internal/modules/pwd/mocks"
 	"goph-keeper/internal/modules/pwd/pwddto"
 	"goph-keeper/internal/modules/pwd/valueobj"
-	"goph-keeper/internal/storage/mocks"
 	"testing"
 
 	"go.uber.org/zap"
@@ -18,7 +18,7 @@ import (
 )
 
 func TestPwdService_SavePassword(t *testing.T) {
-	mockPool := new(mocks.MockDatabase)
+	mockPool := new(mocksPwd.MockDatabase)
 
 	ctx := context.Background()
 	dto := pwddto.SavePwdDTO{
@@ -49,8 +49,8 @@ func TestPwdService_SavePassword(t *testing.T) {
 }
 
 func TestPwdService_DeletePassword(t *testing.T) {
-	mockPool := new(mocks.MockDatabase)
-	mockRow := new(mocks.MockRow)
+	mockPool := new(mocksPwd.MockDatabase)
+	mockRow := new(mocksPwd.MockRow)
 	ctx := context.Background()
 	dto := pwddto.DeletePwdDTO{
 		UserID: 1,
@@ -77,7 +77,7 @@ func TestPwdService_DeletePassword(t *testing.T) {
 }
 
 func TestPwdService_GetPasswordErrorDecrypt(t *testing.T) {
-	mockPool := new(mocks.MockDatabase)
+	mockPool := new(mocksPwd.MockDatabase)
 	ctx := context.Background()
 	dto := pwddto.GetPwdDTO{
 		UserID: 1,
@@ -89,7 +89,7 @@ func TestPwdService_GetPasswordErrorDecrypt(t *testing.T) {
 	// Преобразуем строку в массив байтов
 	var key [32]byte
 	copy(key[:], strKey)
-	mkRow := new(mocks.MockRow)
+	mkRow := new(mocksPwd.MockRow)
 
 	errDecrypt := errors.New("error decrypt")
 	mockPool.On("QueryRow", ctx,
@@ -120,7 +120,7 @@ func TestPwdService_GetPasswordErrorDecrypt(t *testing.T) {
 }
 
 func TestPwdService_GetPassword(t *testing.T) {
-	mockPool := new(mocks.MockDatabase)
+	mockPool := new(mocksPwd.MockDatabase)
 	ctx := context.Background()
 	dto := pwddto.GetPwdDTO{
 		UserID: 1,
@@ -132,7 +132,7 @@ func TestPwdService_GetPassword(t *testing.T) {
 	// Преобразуем строку в массив байтов
 	var key [32]byte
 	copy(key[:], strKey)
-	mkRow := new(mocks.MockRow)
+	mkRow := new(mocksPwd.MockRow)
 
 	mockPool.On("QueryRow", ctx,
 		mock.Anything,
@@ -170,8 +170,8 @@ func TestPwdService_GetPassword(t *testing.T) {
 
 func TestPwdService_GetAllPasswordsQueryError(t *testing.T) {
 	ctx := context.Background()
-	mockPool := new(mocks.MockDatabase)
-	mockRows := new(mocks.MockRows)
+	mockPool := new(mocksPwd.MockDatabase)
+	mockRows := new(mocksPwd.MockRows)
 	// Строка длиной 32 символа
 	strKey := "MySecretEncryptionKey1234567890a"
 	// Преобразуем строку в массив байтов
@@ -193,8 +193,8 @@ func TestPwdService_GetAllPasswordsQueryError(t *testing.T) {
 
 func TestPwdService_GetAllPasswords(t *testing.T) {
 	ctx := context.Background()
-	mockPool := new(mocks.MockDatabase)
-	mockRows := new(mocks.MockRows)
+	mockPool := new(mocksPwd.MockDatabase)
+	mockRows := new(mocksPwd.MockRows)
 	// Строка длиной 32 символа
 	strKey := "MySecretEncryptionKey1234567890a"
 	// Преобразуем строку в массив байтов
@@ -239,8 +239,8 @@ func TestPwdService_GetAllPasswords(t *testing.T) {
 
 func TestPwdService_GetAllPasswordsErrUnmarshallingCredentials(t *testing.T) {
 	ctx := context.Background()
-	mockPool := new(mocks.MockDatabase)
-	mockRows := new(mocks.MockRows)
+	mockPool := new(mocksPwd.MockDatabase)
+	mockRows := new(mocksPwd.MockRows)
 	// Строка длиной 32 символа
 	strKey := "MySecretEncryptionKey1234567890a"
 	// Преобразуем строку в массив байтов
