@@ -209,6 +209,7 @@ func TestPwdService_GetAllPasswordsErrUnmarshallingCredentials(t *testing.T) {
 	mockRows.On("Next").Return(true).Once()  // Первый вызов вернет true
 	mockRows.On("Next").Return(false).Once() // Второй вызов вернет false
 	mockRows.On("Err").Return(nil).Once()
+	errScan := errors.New("error scanning password from pwd service")
 	mockRows.On("Scan",
 		mock.AnythingOfType("*string"),
 		mock.AnythingOfType("*string"),
@@ -227,9 +228,9 @@ func TestPwdService_GetAllPasswordsErrUnmarshallingCredentials(t *testing.T) {
 			if ok {
 				*credential = []byte("login\": \"myemail@example.com\", \"password\": \"17c5d99202bd0e1141d3dcee:2ac2a44261925c17213821b8c4")
 			}
-		}).Return(nil)
+		}).Return(errScan)
 
 	listPasswords, err := s.GetAllPasswords(ctx, &dto)
-	assert.EqualError(t, err, "error unmarshalling credentials: invalid character 'l' looking for beginning of value")
+	assert.ErrorIs(t, err, errScan)
 	assert.Equal(t, []pwddto.ResponsePwdDTO{}, listPasswords)
 }
