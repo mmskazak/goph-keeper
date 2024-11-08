@@ -242,3 +242,16 @@ internal/modules/file/proto/file.proto
     }
   ]
 ```
+
+---
+
+Оценка покрытия кода
+Для вычисления покрытия кода используйте следующие команды:
+Запустить тесты и сгенерировать отчет покрытия
+go test -v -coverpkg=./... -coverprofile=profile.cov ./...
+
+Проанализировать отчет покрытия
+go tool cover -func profile.cov
+
+Посмотреть покрытие в веб-браузере
+go tool cover -html=profile.cov
