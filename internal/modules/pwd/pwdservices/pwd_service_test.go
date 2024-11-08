@@ -76,7 +76,7 @@ func TestPwdService_DeletePassword(t *testing.T) {
 	require.Nil(t, err)
 }
 
-func TestPwdService_GetPassword(t *testing.T) {
+func TestPwdService_GetPasswordErrorDecrypt(t *testing.T) {
 	mockPool := new(mocks.MockDatabase)
 	ctx := context.Background()
 	dto := pwddto.GetPwdDTO{
@@ -117,6 +117,55 @@ func TestPwdService_GetPassword(t *testing.T) {
 	assert.EqualError(t,
 		err,
 		"error scanning password from pwd service: error MockRow func Scan: error decrypt")
+}
+
+func TestPwdService_GetPassword(t *testing.T) {
+	mockPool := new(mocks.MockDatabase)
+	ctx := context.Background()
+	dto := pwddto.GetPwdDTO{
+		UserID: 1,
+		PwdID:  "1",
+	}
+
+	// Строка длиной 32 символа
+	strKey := "MySecretEncryptionKey1234567890a"
+	// Преобразуем строку в массив байтов
+	var key [32]byte
+	copy(key[:], strKey)
+	mkRow := new(mocks.MockRow)
+
+	mockPool.On("QueryRow", ctx,
+		mock.Anything,
+		mock.Anything,
+		mock.Anything,
+	).Return(mkRow)
+
+	mkRow.On("Scan", mock.Anything, mock.Anything, mock.Anything).
+		Run(func(args mock.Arguments) {
+			if dest1, ok := args.Get(0).(*string); ok {
+				*dest1 = "1"
+			}
+			if dest2, ok := args.Get(1).(*string); ok {
+				*dest2 = "title"
+			}
+			if dest3, ok := args.Get(2).(*[]byte); ok {
+				*dest3 = []byte("{\"login\": \"myemail@example.com\", \"password\": \"17c5d99202bd0e1141d3dcee:2ac2a44261925c17213821b8c4\"}")
+			}
+		}).
+		Return(nil)
+
+	s := NewPwdService(mockPool, key, zap.NewNop().Sugar())
+	responsePwdDTO, err := s.GetPassword(ctx, &dto)
+	require.NoError(t, err)
+	expectedDTO := pwddto.ResponsePwdDTO{
+		PwdID: "1",
+		Title: "title",
+		Credentials: valueobj.Credentials{
+			Login:    "myemail@example.com",
+			Password: "mypassword123",
+		},
+	}
+	assert.Equal(t, expectedDTO, responsePwdDTO)
 }
 
 func TestPwdService_GetAllPasswordsQueryError(t *testing.T) {
